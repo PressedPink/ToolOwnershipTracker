@@ -3,8 +3,8 @@ Repository for Group 3 - Tool Ownership Tracker
 
 ## File Structure
 ```
-README.md 
-.gitignore (add your virtual environment name if you don't stick with standard name like env) 
+|- README.md 
+|- .gitignore (add your virtual environment name if you don't stick with standard name like env) 
 |- ToolOwnershipTracker (Main Project Files)
   |- base (sub-app / feature-app)
     |- templates  
