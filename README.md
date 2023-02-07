@@ -3,15 +3,24 @@ Repository for Group 3 - Tool Ownership Tracker
 
 #File Structure:
 
-README.md
-.gitignore (add your virtual environment name if you don't stick with standard name like env)
-| - ToolOwnershipTracker (Main Project Files)
-  | - base (sub-app / feature-app)
-    | - templates
-      | - base (Holds templates for sub-app / feature-app)
-    | - __pycache___
-    | - migrations
-    | - __init__.py
+README.md  
+
+.gitignore (add your virtual environment name if you don't stick with standard name like env)  
+
+| - ToolOwnershipTracker (Main Project Files)  
+
+  | - base (sub-app / feature-app)  
+  
+    | - templates  
+    
+      | - base (Holds templates for sub-app / feature-app)  
+      
+    | - __pycache___  
+    
+    | - migrations  
+    
+    | - __init__.py  
+    
     | - admin.py
     | - apps.py
     | - modles.py
