@@ -8,7 +8,8 @@ Repository for Group 3 - Tool Ownership Tracker
 |- ToolOwnershipTracker (Main Project Files)
   |- base (sub-app / feature-app)
     |- templates  
-      |- base (Holds templates for sub-app / feature-app)  
+      |- base (Holds templates for sub-apps / feature-apps)
+          | - untitled.html
     |- __pycache___  
     |- migrations  
     |- __init__.py  
@@ -25,4 +26,5 @@ Repository for Group 3 - Tool Ownership Tracker
     |- settings.py
     |- urls.py
     |- wsgi.py
- |- templates
+ |- templates (templates that will occur throughout the application such as a navbar)
+    | - untitled.html
