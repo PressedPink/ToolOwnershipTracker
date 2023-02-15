@@ -11,7 +11,8 @@ import logging
 # Create your views here.
 
 class Login(View):
-    #todo
+    email = str(request.POST['Email Address']).strip()
+    password = str(request.POST['Password'])
 
 class SignUp(View):
     firstName = str(request.POST['First Name'])
@@ -19,6 +20,5 @@ class SignUp(View):
     email = str(request.POST['Email Address']).strip()
     password = str(request.POST['Password'])
     Role = int(request.P0ST['User Type'])
-    Active = False
 
 
