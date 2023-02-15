@@ -68,9 +68,19 @@ class User():
         newUser = user(firstName, lastName,email, role, hashPass, address, phone)
         newUser.save()
 
+        # Possibly device these checks into submethods todo
+
         def checkPassword(self, password):
             pw = hashlib.md5(password)
             if this.password is not pw:
                 return False
             return True
+
+        def clearSessions(self):
+            #todo clear all active sessions, set active to false
+
+        def login(self, email, password):
+
+            clearSessions(self)
+            self.active = true
 
