@@ -25,6 +25,13 @@ class User():
             raise Exception("Address may not be left blank")
         if phone is None:
             raise Exception("Phone Number may not be left blank")
+        #phone length
+        if phone.length is 10:
+            raise Exception("Please include your country code")
+        if phone.length is 7:
+            raise Exception("Please include your country and area codes")
+        if phone.length is not 11:
+            raise Exception("Please enter a valid phone number")
         tempDigit = True
         for number in phone:
             if not number.isnumeric():
@@ -60,3 +67,10 @@ class User():
         hashPass = hashlib.md5(password)
         newUser = user(firstName, lastName,email, role, hashPass, address, phone)
         newUser.save()
+
+        def checkPassword(self, password):
+            pw = hashlib.md5(password)
+            if this.password is not pw:
+                return False
+            return True
+
