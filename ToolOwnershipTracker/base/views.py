@@ -19,6 +19,9 @@ class SignUp(View):
     lastName = str(request.POST['Last Name'])
     email = str(request.POST['Email Address']).strip()
     password = str(request.POST['Password'])
-    Role = int(request.P0ST['User Type'])
+    confirmPassword = str(request.POST['Confirm Password'])
+    Role = str(request.P0ST['User Type'])
+    address = str(request.POST['Address'])
+    phoneNumber = str(reques.POST['Phone Number'])
 
 
