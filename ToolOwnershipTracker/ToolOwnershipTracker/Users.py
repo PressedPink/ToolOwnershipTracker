@@ -17,7 +17,7 @@ class User():
         checkPhone(self,phone)
         verifyPasswordRequirements(self,password,confirmPassword)
         hashPass = hashPass(password)
-        newUser = user(firstName, lastName,email, 1, hashPass, address, phone) #1 = basic user
+        newUser = user(firstName, lastName,email, 'U', hashPass, address, phone) #U = basic user, S = Supervisor A = Admin
         newUser.save()
 
         def checkAddress(self,address):
