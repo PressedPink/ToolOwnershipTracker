@@ -1,12 +1,12 @@
 from django.test import TestCase, Client
-from base.models import User
+from base.models import user
 
 
 class TestLoginSuccess(TestCase):
 
     def setUp(self):
         self.testClient = Client()
-        myuser = User(firstName="userfirst",
+        myuser = user(firstName="userfirst",
                       lastName="userlast",
                       email="email1@gmail.com",
                       role="U",
@@ -15,16 +15,16 @@ class TestLoginSuccess(TestCase):
                       phoneNumber="14141234567")
         myuser.save()
 
-        mysupervisor = User(firstName="superfirst",
-                        lastName="superlast",
-                        email="email2@gmail.com",
-                        role="S",
-                        password="superpass",
-                        address="456 N Road St",
-                        phoneNumber="12621234567")
+        mysupervisor = user(firstName="superfirst",
+                            lastName="superlast",
+                            email="email2@gmail.com",
+                            role="S",
+                            password="superpass",
+                            address="456 N Road St",
+                            phoneNumber="12621234567")
         mysupervisor.save()
 
-        myadmin = User(firstName="adminfirst",
+        myadmin = user(firstName="adminfirst",
                        lastName="adminlast",
                        email="email3@gmail.com",
                        role="A",
@@ -50,7 +50,7 @@ class TestLoginFailure(TestCase):
 
     def setUp(self):
         self.testClient = Client()
-        myuser = User(firstName="userfirst",
+        myuser = user(firstName="userfirst",
                       lastName="userlast",
                       email="email1@gmail.com",
                       role="U",
