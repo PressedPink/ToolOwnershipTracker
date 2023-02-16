@@ -80,7 +80,13 @@ class User():
             #todo clear all active sessions, set active to false
 
         def login(self, email, password):
-
+            if self.email.upper() is not email.upper():
+                raise Exception("Email is not valid")
+            if self.password is not hashlib.md5(password):
+                raise Exception("Password is not correct")
             clearSessions(self)
             self.active = true
+
+        def redirect():
+
 
