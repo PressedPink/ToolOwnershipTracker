@@ -2,7 +2,7 @@ import hashlib
 import re
 import uuid
 from re import search
-
+import urls.py
 from django.forms import models
 
 from ToolOwnershipTracker.base.models import user
@@ -107,9 +107,13 @@ class User():
         def logout(self):
             clear.Sessions(self)
             self.active = False
+            redirectLogin()
 
-        def redirect(self):
+        def redirectProfile(self):
             return redirect('profile-page', email=request.user.email, name=request.user.firstName)
+
+        def redirectLogin(self):
+            return redirect('login-page')
 
 
 
