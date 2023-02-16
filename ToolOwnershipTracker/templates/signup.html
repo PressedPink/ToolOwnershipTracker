@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <form action="/signup/" method="post">
+      {%  csrf_token %}
+      <div>
+          <label for="username">Username:</label><br>
+              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+                     id="username" type="text" name="username"><br>
+          <label for="password">Password:</label><br>
+              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+                     id="password" type="text" name="password"><br>
+          <label for="email">Email:</label><br>
+              <input required pattern="[a-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="only valid emails accepted"
+                     id="email" type="email" name="email"><br>
+          <label for="phone">Phone Number:</label><br>
+              <input required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Only valid phone numbers in the xxx-xxx-xxxx format will be accepted."
+                     id="phone" type="tel" name="phone"><br>
+          <label for="address">Address: </label><br>
+              <input required id="address" type="text" name="address"><br>
+          <input type = "submit">
+      </div>
+  </form>
+  </body>
+</html>
