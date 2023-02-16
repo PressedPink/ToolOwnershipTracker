@@ -85,7 +85,11 @@ class User():
             if self.password is not hashlib.md5(password):
                 raise Exception("Password is not correct")
             clearSessions(self)
-            self.active = true
+            self.active = True
+
+        def logout(self):
+            clear.Sessions(self)
+            self.active = False
 
         def redirect(self):
             return redirect('profile-page', email=request.user.email, name=request.user.firstName)
