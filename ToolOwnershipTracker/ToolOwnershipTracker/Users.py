@@ -87,6 +87,8 @@ class User():
             clearSessions(self)
             self.active = true
 
-        def redirect():
+        def redirect(self):
+            return redirect('profile-page', email=request.user.email, name=request.user.firstName)
+
 
 
