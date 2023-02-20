@@ -10,9 +10,11 @@ import logging
 
 # Create your views here.
 
+
 class Login(View):
     email = str(request.POST['Email Address']).strip()
     password = str(request.POST['Password'])
+
 
 class SignUp(View):
     firstName = str(request.POST['First Name'])
@@ -22,6 +24,4 @@ class SignUp(View):
     confirmPassword = str(request.POST['Confirm Password'])
     Role = str(request.P0ST['User Type'])
     address = str(request.POST['Address'])
-    phoneNumber = str(reques.POST['Phone Number'])
-
-
+    phoneNumber = str(request.POST['Phone Number'])
