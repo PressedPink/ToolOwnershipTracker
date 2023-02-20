@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.forms import models
 
-from ToolOwnershipTracker.ToolOwnershipTracker.models import user
+from ToolOwnershipTracker.models import User
 
 
 class User():
