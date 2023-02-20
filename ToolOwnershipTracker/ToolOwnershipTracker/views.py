@@ -1,3 +1,6 @@
+from django.shortcuts import render, redirect
+from classes.profile import Profile
+from base.models import User, UserType
 import uuid
 
 from django.http import request
@@ -25,3 +28,14 @@ class SignUp(View):
     Role = str(request.P0ST['User Type'])
     address = str(request.POST['Address'])
     phoneNumber = str(request.POST['Phone Number'])
+
+
+# For the signup.html page, which allows the user to be redirected to the signup page when successfully or unsuccesfully signing up.
+
+
+class Profile(View):
+    def get(self, request):
+        a = request.session["email"]
+        b = User.objects.get(email=a)
+
+        return render(request, "profile.html", {"currentUser": b})
