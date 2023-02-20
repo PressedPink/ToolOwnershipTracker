@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from classes.profile import Profile
-from base.models import User, UserType
+from models import User, UserType
 import uuid
 
 from django.http import request
