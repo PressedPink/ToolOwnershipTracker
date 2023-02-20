@@ -2,7 +2,8 @@ import hashlib
 import re
 import uuid
 from re import search
-import urls.py
+from django.shortcuts import render, redirect
+from django.views import View
 from django.forms import models
 
 from ToolOwnershipTracker.base.models import user
@@ -10,17 +11,19 @@ from ToolOwnershipTracker.base.models import user
 
 class User():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        checkEmail(self,email)
-        checkFirstName(self,firstName)
-        checkLastName(self,lastName)
-        checkAddress(self,address)
-        checkPhone(self,phone)
-        verifyPasswordRequirements(self,password,confirmPassword)
+        checkEmail(self, email)
+        checkFirstName(self, firstName)
+        checkLastName(self, lastName)
+        checkAddress(self, address)
+        checkPhone(self, phone)
+        verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = hashPass(password)
-        newUser = user(firstName, lastName,email, 'U', hashPass, address, phone) #U = basic user, S = Supervisor A = Admin
+        # U = basic user, S = Supervisor A = Admin
+        newUser = user(firstName, lastName, email,
+                       'U', hashPass, address, phone)
         newUser.save()
 
-        def checkAddress(self,address):
+        def checkAddress(self, address):
             if address is None:
                 raise Exception("Address may not be left blank")
 
@@ -28,12 +31,12 @@ class User():
             if firstName is None:
                 raise Exception("First Name may not be left blank")
 
-        def checkLastName(self,lastName):
+        def checkLastName(self, lastName):
             if lastName is None:
                 raise Exception("Last Name may not be left blank")
 
         # Possibly device these checks into submethods todo
-        def checkEmail(self,email):
+        def checkEmail(self, email):
             if email is None:
                 raise Exception("Unique Email Required")
             test = list(map(str, user.objects.filter(email=email)))
@@ -42,7 +45,7 @@ class User():
             if not '@' & '.' in email:
                 raise Exception("Email is Invalid")
 
-        def checkPhone(self,phone):
+        def checkPhone(self, phone):
             if phone is None:
                 raise Exception("Phone Number may not be left blank")
             if phone.length is 10:
@@ -64,10 +67,10 @@ class User():
                 return False
             return True
 
-        def hashPass(self,password):
+        def hashPass(self, password):
             return hashlib.md5(password)
 
-        def verifyPasswordRequirements(self,password,confirmPassword):
+        def verifyPasswordRequirements(self, password, confirmPassword):
             if password.length < 12:
                 raise Exception("Password must be at least 12 characters")
             if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
@@ -89,12 +92,14 @@ class User():
             if not tempDigit:
                 raise Exception("Password must contain a number")
             if firstName in password:
-                raise Exception("Password may not contain any part of your name")
+                raise Exception(
+                    "Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
 
         def clearSessions(self):
-            #todo clear all active sessions, set active to false
+            # todo clear all active sessions, set active to false
+            return
 
         def login(self, email, password):
             if self.email.upper() is not email.upper():
@@ -104,16 +109,13 @@ class User():
             clearSessions(self)
             self.active = True
 
-        def logout(self):
-            clear.Sessions(self)
+        def logout(self, request):
+            request.clear.Sessions(self)
             self.active = False
             redirectLogin()
 
-        def redirectProfile(self):
+        def redirectProfile(self, request):
             return redirect('profile-page', email=request.user.email, name=request.user.firstName)
 
-        def redirectLogin(self):
+        def redirectLogin(self, resquest):
             return redirect('login-page')
-
-
-
