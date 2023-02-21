@@ -7,7 +7,6 @@ from django.forms import models
 
 from ToolOwnershipTracker.base.models import user
 
-
 class User():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         checkEmail(self,email)
