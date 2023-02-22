@@ -5,8 +5,11 @@
     <label class="tab text" for="signin">
       Sign In</label>
   </div>
+   
   <div class="pages">
+    <form method="post" action="/">
     <div class="page">
+      {% csrf_token %}
       <div class="input">
         <input class="text" type="text" placeholder="Email"/>
       </div>
@@ -16,9 +19,12 @@
       <div class="input">
         <input type="button" value="Forgot Password?"/>
       </div>
+
       <div class="input">
-        <input type="submit" value="ENTER"/>
+        <input type="submit" value="ENTER" />
       </div>
+
     </div>
+    </form>
   </div>
 </div>

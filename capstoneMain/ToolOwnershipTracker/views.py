@@ -44,3 +44,7 @@ class Profile(View):
 class Login(View):
     def get(self, request):
         return render(request, "LoginHTML.html")
+
+    def post(self, request):
+
+        return redirect("/profile/")
