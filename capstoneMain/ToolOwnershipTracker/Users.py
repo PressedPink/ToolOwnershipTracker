@@ -26,16 +26,17 @@ class User():
     def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
+        return True
 
     def checkFirstName(self, firstName):
         if firstName is None:
             raise Exception("First Name may not be left blank")
+        return True
 
     def checkLastName(self, lastName):
         if lastName is None:
             raise Exception("Last Name may not be left blank")
-
-        # Possibly device these checks into submethods todo
+        return True
 
     def checkEmail(self, email):
         if email is None:
@@ -45,6 +46,7 @@ class User():
             raise Exception("User already exists")
         if not '@' & '.' in email:
             raise Exception("Email is Invalid")
+        return True
 
     def checkPhone(self, phone):
         if phone is None:
@@ -61,12 +63,13 @@ class User():
                     tempDigit = False
                 if tempDigit:
                     raise Exception("Phone Number Invalid")
+        return True
 
     def checkPassword(self, password):
         pw = self.hashPass(password)
         if self.password is not pw:
             return False
-            return True
+        return True
 
     def hashPass(self, password):
         return hashlib.md5(password)
@@ -96,10 +99,11 @@ class User():
                 raise Exception("Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
+        return True
 
     def clearSessions(self):
         # todo clear all active sessions, set active to false
-        return
+        return True
 
     def login(self, email, password):
         if self.email.upper() is not email.upper():
