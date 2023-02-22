@@ -7,5 +7,5 @@ from ToolOwnershipTracker.views import Profile, Login
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('profile/', Profile.as_view()),
-    path('', Login.as_view(), name='login'),
+    path('', Login.as_view(), name='LoginHTML'),
 ]
