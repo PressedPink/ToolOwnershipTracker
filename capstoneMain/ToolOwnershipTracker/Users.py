@@ -9,9 +9,6 @@ from django.forms import models
 import models
 
 
-
-
-
 class User():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
@@ -39,6 +36,7 @@ class User():
             raise Exception("Last Name may not be left blank")
 
         # Possibly device these checks into submethods todo
+
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
@@ -46,7 +44,7 @@ class User():
         if test.length != 0:
             raise Exception("User already exists")
         if not '@' & '.' in email:
-                raise Exception("Email is Invalid")
+            raise Exception("Email is Invalid")
 
     def checkPhone(self, phone):
         if phone is None:
@@ -73,7 +71,7 @@ class User():
     def hashPass(self, password):
         return hashlib.md5(password)
 
-    def verifyPasswordRequirements(self, password, confirmPassword,firstName):
+    def verifyPasswordRequirements(self, password, confirmPassword, firstName):
         if password.length < 12:
             raise Exception("Password must be at least 12 characters")
         if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
@@ -108,7 +106,7 @@ class User():
             raise Exception("Email is not valid")
         if self.password is not hashlib.md5(password):
             raise Exception("Password is not correct")
-        clearSessions(self)
+        self.clearSessions(self)
         active = True
         return True
 
