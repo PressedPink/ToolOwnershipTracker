@@ -39,3 +39,8 @@ class Profile(View):
         b = User.objects.get(email=a)
 
         return render(request, "profile.html", {"currentUser": b})
+
+
+class Login(View):
+    def get(self, request):
+        return render(request, "LoginHTML.html")
