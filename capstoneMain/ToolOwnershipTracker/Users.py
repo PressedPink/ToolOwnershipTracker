@@ -19,7 +19,7 @@ class User():
         verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = hashPass(password)
         # U = basic user, S = Supervisor A = Admin
-        newUser = user(firstName, lastName, email,
+        newUser = User(firstName, lastName, email,
                        'U', hashPass, address, phone)
         newUser.save()
 
@@ -39,7 +39,7 @@ class User():
         def checkEmail(self, email):
             if email is None:
                 raise Exception("Unique Email Required")
-            test = list(map(str, user.objects.filter(email=email)))
+            test = list(map(str, User.objects.filter(email=email)))
             if test.length != 0:
                 raise Exception("User already exists")
             if not '@' & '.' in email:
