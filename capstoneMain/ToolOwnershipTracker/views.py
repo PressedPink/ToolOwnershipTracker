@@ -5,7 +5,7 @@ import uuid
 
 from django.http import request
 from django.shortcuts import render
-from ToolOwnershipTracker.classes.Users import User
+from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
 from .models import User
 from django.views import View

@@ -9,7 +9,7 @@ from django.forms import models
 from ToolOwnershipTracker.models import User
 
 
-class User():
+class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         checkEmail(self, email)
         checkFirstName(self, firstName)
