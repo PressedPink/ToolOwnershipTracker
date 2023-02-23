@@ -1,15 +1,15 @@
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render, redirect
 import hashlib
 import re
-import uuid
-from re import search
-from django.shortcuts import render, redirect
-from django.views import View
-from django.forms import models
-
-import models
 
 
-class User():
+from ToolOwnershipTracker.models import User
+
+
+class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
@@ -19,11 +19,11 @@ class User():
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
         # U = basic user, S = Supervisor A = Admin
-        newUser = User(firstName, lastName, email,
+        newUser = UserClass(firstName, lastName, email,
                        'U', hashPass, address, phone)
         newUser.save()
 
-    def checkAddress(self, address):
+    def checkAddress(self, address) -> object:
         if address is None:
             raise Exception("Address may not be left blank")
         return True
@@ -38,25 +38,25 @@ class User():
             raise Exception("Last Name may not be left blank")
         return True
 
-        # Possibly device these checks into submethods todo
-        def checkEmail(self, email):
-            if email is None:
-                raise Exception("Unique Email Required")
-            test = list(map(str, User.objects.filter(email=email)))
-            if test.length != 0:
-                raise Exception("User already exists")
-            if not '@' & '.' in email:
-                raise Exception("Email is Invalid")
+    def checkEmail(self, email):
+        if email is None:
+            raise Exception("Unique Email Required")
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length != 0:
+            raise Exception("User already exists")
+        if not '@' & '.' in email:
+            raise Exception("Email is Invalid")
+        return True
 
-        def checkPhone(self, phone):
-            if phone is None:
-                raise Exception("Phone Number may not be left blank")
-            if phone.length is 10:
-                raise Exception("Please include your country code")
-            if phone.length is 7:
-                raise Exception("Please include your country and area codes")
-            if phone.length is not 11:
-                raise Exception("Please enter a valid phone number")
+    def checkPhone(self, phone):
+        if phone is None:
+            raise Exception("Phone Number may not be left blank")
+        if phone.length is 10:
+            raise Exception("Please include your country code")
+        if phone.length is 7:
+            raise Exception("Please include your country and area codes")
+        if phone.length is not 11:
+            raise Exception("Please enter a valid phone number")
             tempDigit = True
             for number in phone:
                 if not number.isnumeric():
@@ -99,29 +99,105 @@ class User():
                 raise Exception("Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
+        return True
 
-        def clearSessions(self):
-            # todo clear all active sessions, set active to false
-            return
+    def clearSessions(self):
+        # todo clear all active sessions, set active to false
+        return True
 
-        def login(self, email, password):
-            if self.email.upper() is not email.upper():
-                raise Exception("Email is not valid")
-            if self.password is not hashlib.md5(password):
-                raise Exception("Password is not correct")
-            clearSessions(self)
-            self.active = True
+    def login(self, email, password):
+        if self.email.upper() is not email.upper():
+            raise Exception("Email is not valid")
+        if self.password is not hashlib.md5(password):
+            raise Exception("Password is not correct")
+        self.clearSessions(self)
+        active = True
+        return True
 
-        def logout(self, request):
-            # do not use
-            request.clear.Sessions(self)
-            self.active = False
-            redirectLogin()
+    def logout(self, request):
+        request.clear.Sessions(self)
+        active = False
+        return True
 
-        def redirectProfile(self, request):
-            # do not use
-            return redirect('profile-page', email=request.user.email, name=request.user.firstName)
+    def editFirstName(self, firstName):
+        if self.checkFirstName(self, firstName):
+            self.firstName = firstName
+            self.save()
 
-        def redirectLogin(self, resquest):
-            # do not use
-            return redirect('login-page')
+    def editLastName(self, lastName):
+        if self.checkLastName(self, lastName):
+            self.lastName = lastName
+            self.save()
+
+    def editAddress(self, address):
+        if self.checkAddress(self, address):
+            self.address = address
+            self.save()
+
+    def editEmail(self, email):
+        if self.checkEmail(self, email):
+            self.email = email
+            self.save()
+
+    def editPhone(self, phone):
+        if self.checkPhone(self, phone):
+            self.phone = phone
+            self.save()
+
+    def updatePassword(self, password):
+        if self.verifyPasswordRequirements(self, password):
+            self.password = self.hashPass(password)
+            return True
+        else:
+            return False
+
+    def send_forget_password_mail(email, token):
+        subject = 'Your password reset link'
+        message = f'Hello, click the following link to be redirected to form to reset your password: http://127.0.0.1:8000/password_reset_form/{token}'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [email]
+        send_mail(subject, message, email_from, recipient_list)
+        return True
+
+    def forget_password(request):
+        try:
+            if request.method == 'POST':
+                tempEmail = request.POST.get('email')
+                test = list(map(str, UserClass.objects.filter(email=tempEmail)))
+
+                if test.length == 0:
+                    return redirect('')
+
+                token = str(uuid.uuid4())
+                tempUser = User.objects.get(email = tempEmail)
+                tempUser.forget_password_token = token
+                tempUser.save()
+                UserClass.send_forget_password_mail(tempUser.email, token)
+                return redirect('/password_reset_sent/')
+
+        except Exception as e:
+            print(e)
+
+        return render(request, '')
+    
+    def change_password(request, token):
+        context = {}
+        try:
+            tempUser = User.objects.get(forget_password_token = token).first()
+
+            if request.method == 'POST':
+                tempPassword = request.POST.get('new_password')
+                confirmPassword = request.POST.get('confirm_password')
+                if(UserClass.updatePassword(tempUser, tempPassword)):
+                    if(tempPassword == confirmPassword):
+                        return redirect('/password_reset_done/')
+                    else:
+                else:
+                    
+            context = {'user_email' : tempUser.email}
+            
+
+        except Exception as e:
+            print(e)
+        return render(request, 'change-password.html')
+

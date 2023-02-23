@@ -5,7 +5,7 @@ import uuid
 
 from django.http import request
 from django.shortcuts import render
-from ToolOwnershipTracker.classes.Users import User
+from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
 from .models import User
 from django.views import View
@@ -40,11 +40,35 @@ class Profile(View):
 
         return render(request, "profile.html", {"currentUser": b})
 
-
 class Login(View):
     def get(self, request):
         return render(request, "LoginHTML.html")
 
     def post(self, request):
-
         return redirect("/profile/")
+        
+class PasswordReset(View):
+
+    def get(self, request):
+        return render(request, "ForgotPasswordTemplates/password_reset.html")
+
+    def post(self, request):
+        return UserClass.forget_password(request)
+
+class PasswordResetSent(View):
+    def get(self, request):
+        return render(request, "/ForgotPasswordTemplates/password_reset_sent.html")
+
+class PasswordResetForm(View):
+    def get(self, request):
+        return render(request, "/ForgotPasswordTemplates/password_reset_form.html")
+    
+    def post(self, request):
+        return redirect("/password_reset_done/")
+
+class PasswordResetDone(View):
+    def get(self, request):
+        return render(request, "/ForgotPasswordTemplates/password_reset_done.html")
+    
+    def post(self, request):
+        return render("")
