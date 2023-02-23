@@ -8,9 +8,9 @@
     <form action="/signup/" method="post">
       {%  csrf_token %}
       <div>
-          <label for="username">Email:</label><br>
+          <label for="email">Email:</label><br>
               <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
-                     id="username" type="text" name="username"><br>
+                     id="email" type="text" name="email"><br>
 
           <label for="password">Password:</label><br>
               <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
