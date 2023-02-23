@@ -10,3 +10,23 @@ class Profile(View):
         b = User.objects.get(email = a)
 
         return render(request, "profile.html", {"currentUser": b})
+
+    #class SignUp(View):
+    #def get(self, request):
+        #m = request.session["email"]
+        #return render(request, "signup.html")
+    
+    #def post(self, request):
+        #profile = Profile(email=request.session['email'])
+        #accountType = request.POST['type']
+        #password = request.POST['password']
+        #email = request.POST['email']
+        #phone = request.POST['phone']
+        #address = request.POST['address']
+        #userEdit = profile.editUser(password=str(password), accountType=str(accountType), email=str(email), phone=str(phone), address=str(address))
+        #if userEdit:
+            #return redirect("/edituser/")
+        #else:
+            #m = request.session["username"]
+            #a = request.session["accountType"]
+            #return render(request, "edituser.html", {"username": m, "accountType": a, "message": "invalid login"})
