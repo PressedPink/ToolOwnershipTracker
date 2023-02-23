@@ -120,7 +120,7 @@ class User():
         return True
 
     def editFirstName(self, firstName):
-        if checkFirstName(self,firstName)
+        if checkFirstName(self,firstName):
             self.firstName = firstName
             self.save()
 
