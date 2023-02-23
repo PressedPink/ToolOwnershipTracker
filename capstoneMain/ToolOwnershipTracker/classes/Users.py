@@ -41,7 +41,7 @@ class User():
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
-            test = list(map(str, user.objects.filter(email=email)))
+        test = list(map(str, User.objects.filter(email=email)))
         if test.length != 0:
             raise Exception("User already exists")
         if not '@' & '.' in email:
