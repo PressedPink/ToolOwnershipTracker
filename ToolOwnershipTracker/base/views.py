@@ -11,7 +11,7 @@ class Profile(View):
 
         return render(request, "profile.html", {"currentUser": b})
 
-    #class SignUp(View):
+    #class EditUser(View):
     #def get(self, request):
         #m = request.session["email"]
         #return render(request, "signup.html")
