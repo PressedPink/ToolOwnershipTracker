@@ -17,3 +17,7 @@ class Profile:
             return True
         else:
             return False
+        
+    def editUser(self, password, email, phone, address):
+        toEdit = User.objects.get(username=self.username)
+        toEdit = User.objects.update(password=password, email=email, phone=phone, address=address)
