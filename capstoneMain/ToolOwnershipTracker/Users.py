@@ -118,3 +118,9 @@ class User():
         request.clear.Sessions(self)
         active = False
         return True
+
+    def editFirstName(self, firstName):
+        if checkFirstName(self,firstName)
+            self.firstName = firstName
+            self.save()
+
