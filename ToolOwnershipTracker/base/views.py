@@ -23,7 +23,7 @@ class Profile(View):
         #email = request.POST['email']
         #phone = request.POST['phone']
         #address = request.POST['address']
-        #userEdit = profile.editUser(password=str(password), accountType=str(accountType), email=str(email), phone=str(phone), address=str(address))
+        #userEdit = profile.editUser(password=str(password), email=str(email), phone=str(phone), address=str(address))
         #if userEdit:
             #return redirect("/edituser/")
         #else:
