@@ -1,7 +1,8 @@
 import hashlib
 import re
 
-import capstoneMain.ToolOwnershipTracker.models
+
+#import capstoneMain.ToolOwnershipTracker.models
 
 
 class User():
