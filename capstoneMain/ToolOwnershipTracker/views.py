@@ -5,7 +5,7 @@ import uuid
 
 from django.http import request
 from django.shortcuts import render
-from ToolOwnershipTracker.Users import User
+from ToolOwnershipTracker.classes.Users import User
 from . import models
 from .models import User
 from django.views import View
@@ -39,3 +39,12 @@ class Profile(View):
         b = User.objects.get(email=a)
 
         return render(request, "profile.html", {"currentUser": b})
+
+
+class Login(View):
+    def get(self, request):
+        return render(request, "LoginHTML.html")
+
+    def post(self, request):
+
+        return redirect("/profile/")
