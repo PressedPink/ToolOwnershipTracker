@@ -110,12 +110,15 @@ class User():
             self.active = True
 
         def logout(self, request):
+            # do not use
             request.clear.Sessions(self)
             self.active = False
             redirectLogin()
 
         def redirectProfile(self, request):
+            # do not use
             return redirect('profile-page', email=request.user.email, name=request.user.firstName)
 
         def redirectLogin(self, resquest):
+            # do not use
             return redirect('login-page')
