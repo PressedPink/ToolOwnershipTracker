@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
+
 import base
-from ToolOwnershipTracker.views import Profile
+from ToolOwnershipTracker.views import Profile, Login
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('profile/', Profile.as_view()),
@@ -14,4 +15,5 @@ urlpatterns = [
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"), name="password_reset_complete"),
     
 
+    path('', Login.as_view(), name='LoginHTML'),
 ]
