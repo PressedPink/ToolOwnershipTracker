@@ -22,3 +22,7 @@ class User(models.Model):
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
     phone = models.CharField(max_length=14, default="")
+    active = models.BooleanField
+
+
+
