@@ -11,7 +11,8 @@ class UserType(models.TextChoices):
     User = "U"
 
 
-# defines the user model, which contains the following fields: username, password, accountType, email, address and phone number
+# defines the user model, which contains the following fields: username, password, accountType, email, address,
+# phone number and active status
 
 
 class User(models.Model):
@@ -28,6 +29,6 @@ class User(models.Model):
 
 
 class Jobsite(models.Model):
-    id = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
+    id = models.ForeignKey(unique=True, primary_key=True)
     owner = models.CharField(max_length=40)
     title = models.CharField(max_length=40)
