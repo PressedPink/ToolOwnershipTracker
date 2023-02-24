@@ -30,5 +30,6 @@ class User(models.Model):
 
 class Jobsite(models.Model):
     id = models.ForeignKey(unique=True, primary_key=True)
-    owner = models.CharField(max_length=40)
+    owner = models.CharField(User, on_delete=models.CASCADE, null=False)
     title = models.CharField(max_length=40)
+    assigned = models.CharField(User, on_delete=models.CASCAD, null=True)
