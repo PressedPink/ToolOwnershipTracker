@@ -2,6 +2,12 @@
 <!DOCTYPE html>
 
 <html lang="en">
+<head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="UTF-8">
+      <title>Tool Login</title>
+      <link rel="stylesheet" href="static/css/bootstrap.css">
+  </head>
   <div class="container">
   <!--input id="signin" type="radio" name="tab" checked="checked"/>
   <div class="tabs">
@@ -9,49 +15,46 @@
       Sign In</label>
   </div-->
  
-  <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta charset="UTF-8">
-      <title>Tool Login</title>
-      <link rel="stylesheet" href="/static/css/bootstrap.css">
-  </head>
-  <div class="pages">
-    <form method="post" class="text-center" style="text-align: center" action="/">
-    <div class="page">
-      {% csrf_token %}
-
-      <form>
-        <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
+  <section class="mx-auto my-5" style="max-width: 23rem;">
+    <div class="pages" class="card-body rounded-top">
+      <form method="post" class="text-center" style="text-align: center" action="/">
+      <div class="page">
+        {% csrf_token %}
         
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="submit" class="btn btn-secondary">Submit</button>
+        <form>
+          <div class="form-group">
+            <label for="InputUsername">Email address</label>
+            <input type="email" class="form-control" name="InputUsername" id="InputUsername" aria-describedby="emailHelp" placeholder="Enter email">
+            
+          </div>
+          <div class="form-group">
+            <label for="InputPassword">Password</label>
+            <input type="password" class="form-control" name="InputPassword" id="InputPassword" placeholder="Password">
+          </div>
+          <br>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-secondary">Forgot Password?
+          </button>
+        </form>
+
+        <!--div class="input">
+          <input class="text" name="InputUsername" id="InputUsername" type="text" placeholder="Email"/>
+        </div>
+        <div class="input">
+          <input class="text" name="InputPassword" id="InputPassword" type="password" placeholder="Password"/>
+        </div>
+        <div class="input">
+          <input type="button" value="Forgot Password?"/>
+        </div>
+
+        <div class="input">
+          <button type="submit" class="btn btn-primary">Enter</button>
+        </div>
+
+      </div-->
       </form>
-
-      <!--div class="input">
-        <input class="text" name="InputUsername" id="InputUsername" type="text" placeholder="Email"/>
-      </div>
-      <div class="input">
-        <input class="text" name="InputPassword" id="InputPassword" type="password" placeholder="Password"/>
-      </div>
-      <div class="input">
-        <input type="button" value="Forgot Password?"/>
-      </div>
-
-      <div class="input">
-        <button type="submit" class="btn btn-primary">Enter</button>
-      </div>
-
-    </div-->
-    </form>
-  </div>
+    </div>
+    </section>
 </div>
 </html>
 
