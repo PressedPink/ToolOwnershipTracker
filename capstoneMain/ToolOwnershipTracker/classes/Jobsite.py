@@ -33,8 +33,15 @@ def Jobsite():
             self.save()
 
     def removeJobsite(self):
+        #check to see if toolbox is full
+        # if not, delete
 
     def removeUser(self,email):
+        if self.owner == email:
+            raise Exception("Cannot remove the owner")
+        if isValid:
+            self.assigned(email).delete()
+        raise Exception("That user is not on this jobsite")
 
     def isValid(self,email):
         test = list(map(str, User.objects.filter(email=email)))
