@@ -14,8 +14,7 @@ def Jobsite():
         return True
 
     def checkOwner(self, owner):
-        test = list(map(str, User.objects.filter(email=owner)))
-        if test.length == 0:
+        if not isValid(self,owner):
             raise Exception("User does not exist")
         return True
 
@@ -31,4 +30,14 @@ def Jobsite():
     def changeTitle(self,title):
         if checkTitle(self,title):
             self.title=title
-            self.save
+            self.save()
+
+    def removeJobsite(self):
+
+    def removeUser(self,email):
+
+    def isValid(self,email):
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length == 0:
+            return False
+        return True
