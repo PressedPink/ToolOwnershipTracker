@@ -17,3 +17,18 @@ def Jobsite():
         test = list(map(str, User.objects.filter(email=owner)))
         if test.length == 0:
             raise Exception("User does not exist")
+        return True
+
+    def assignOwner(self, owner):
+        if checkOwner(self, owner):
+            self.owner = owner
+            self.save()
+
+    def addUser(self, user):
+        #check to see if user is valid
+        #add user to assigned users
+
+    def changeTitle(self,title):
+        if checkTitle(self,title):
+            self.title=title
+            self.save
