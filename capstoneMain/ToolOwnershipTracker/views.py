@@ -35,7 +35,7 @@ import logging
 
 class Profile(View):
     def get(self, request):
-        a = request.session["email"]
+        a = request.session["username"]
         b = User.objects.get(email=a)
 
         return render(request, "profile.html", {"currentUser": b})
@@ -46,5 +46,23 @@ class Login(View):
         return render(request, "LoginHTML.html")
 
     def post(self, request):
+        noSuchUser = False
+        blankName = False
+        badPassword = False
 
-        return redirect("/profile/")
+        try:
+            email = request.POST['InputUsername']
+            user = User.objects.get(email=email)
+            badPassword = (user.password != request.POST['InputPassword'])
+        except Exception as e:
+            noSuchUser = True
+
+        if noSuchUser:
+            return render(request, "LoginHTML.html", {"message": "no user"})
+
+        elif badPassword:
+            return render(request, "LoginHTML.html", {"message": "bad password"})
+        else:
+            request.session["username"] = user.email
+            # request.session["name"] = user.name
+            return redirect("/profile/")
