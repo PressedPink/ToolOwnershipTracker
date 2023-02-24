@@ -6,7 +6,7 @@ import re
 
 
 class User():
-    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
+    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, active):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
         self.checkLastName(self, lastName)
@@ -16,7 +16,7 @@ class User():
         hashPass = self.hashPass(password)
         # U = basic user, S = Supervisor A = Admin
         newUser = User(firstName, lastName, email,
-                       'U', hashPass, address, phone)
+                       'U', hashPass, address, phone, False)
         newUser.save()
 
     def checkAddress(self, address) -> object:
@@ -107,12 +107,12 @@ class User():
         if self.password is not hashlib.md5(password):
             raise Exception("Password is not correct")
         self.clearSessions(self)
-        active = True
+        self.active = True
         return True
 
     def logout(self, request):
         request.clear.Sessions(self)
-        active = False
+        self.active = False
         return True
 
     def editFirstName(self, firstName):
