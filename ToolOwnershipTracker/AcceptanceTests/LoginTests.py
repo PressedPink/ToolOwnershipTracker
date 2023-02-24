@@ -36,14 +36,17 @@ class TestLoginSuccess(TestCase):
     def test_user_login(self):
         resp = self.testClient.post("login/", {"email": "email1@gmail.com", "password": "userpass"}, follow=True)
         self.assertEqual("/userhome/", resp.request.get("PATH"))
+        self.assertTrue(user.active)
 
     def test_supervisor_login(self):
         resp = self.testClient.post("login/", {"email": "email2@gmail.com", "password": "superpass"}, follow=True)
         self.assertEqual("/superhome/", resp.request.get("PATH"))
+        self.assertTrue(user.active)
 
     def test_admin_login(self):
         resp = self.testClient.post("login/", {"email": "email3@gmail.com", "password": "adminpass"}, follow=True)
         self.assertEqual("/adminhome/", resp.request.get("PATH"))
+        self.assertTrue(user.active)
 
 
 class TestLoginFailure(TestCase):
