@@ -1,12 +1,12 @@
 from django.test import TestCase, Client
-from ToolOwnershipTracker.base.models import user
+from ToolOwnershipTracker.base.models import User
 
 
 class TestLoginSuccess(TestCase):
 
     def setUp(self):
         self.testClient = Client()
-        myuser = user(firstName="userfirst",
+        myuser = User(firstName="userfirst",
                       lastName="userlast",
                       email="email1@gmail.com",
                       role="U",
@@ -15,7 +15,7 @@ class TestLoginSuccess(TestCase):
                       phoneNumber="14141234567")
         myuser.save()
 
-        mysupervisor = user(firstName="superfirst",
+        mysupervisor = User(firstName="superfirst",
                             lastName="superlast",
                             email="email2@gmail.com",
                             role="S",
@@ -24,7 +24,7 @@ class TestLoginSuccess(TestCase):
                             phoneNumber="12621234567")
         mysupervisor.save()
 
-        myadmin = user(firstName="adminfirst",
+        myadmin = User(firstName="adminfirst",
                        lastName="adminlast",
                        email="email3@gmail.com",
                        role="A",
@@ -34,26 +34,26 @@ class TestLoginSuccess(TestCase):
         myadmin.save()
 
     def test_user_login(self):
-        resp = self.testClient.post("login/", {"email": "email1@gmail.com", "password": "userpass"}, follow=True)
+        resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "userpass"}, follow=True)
         self.assertEqual("/userhome/", resp.request.get("PATH"))
-        self.assertTrue(user.active)
+        self.assertTrue(User.active)
 
     def test_supervisor_login(self):
-        resp = self.testClient.post("login/", {"email": "email2@gmail.com", "password": "superpass"}, follow=True)
+        resp = self.testClient.post("login/", {"Inputemail": "email2@gmail.com", "Inputpassword": "superpass"}, follow=True)
         self.assertEqual("/superhome/", resp.request.get("PATH"))
-        self.assertTrue(user.active)
+        self.assertTrue(User.active)
 
     def test_admin_login(self):
-        resp = self.testClient.post("login/", {"email": "email3@gmail.com", "password": "adminpass"}, follow=True)
+        resp = self.testClient.post("login/", {"Inputemail": "email3@gmail.com", "Inputpassword": "adminpass"}, follow=True)
         self.assertEqual("/adminhome/", resp.request.get("PATH"))
-        self.assertTrue(user.active)
+        self.assertTrue(User.active)
 
 
 class TestLoginFailure(TestCase):
 
     def setUp(self):
         self.testClient = Client()
-        myuser = user(firstName="userfirst",
+        myuser = User(firstName="userfirst",
                       lastName="userlast",
                       email="email1@gmail.com",
                       role="U",
@@ -63,11 +63,11 @@ class TestLoginFailure(TestCase):
         myuser.save()
 
     def test_invalid_username(self):
-        resp = self.testClient.post("login/", {"email": "notemail@gmail.com", "password": "userpass"}, follow=True)
+        resp = self.testClient.post("login/", {"Inputemail": "notemail@gmail.com", "Inputpassword": "userpass"}, follow=True)
         self.assertRedirects(resp, "login/")
         self.assertEqual(resp.context["message"], "username or password is incorrect")
 
     def test_invalid_password(self):
-        resp = self.testClient.post("login/", {"email": "email1@gmail.com", "password": "notpass"}, follow=True)
+        resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "notpass"}, follow=True)
         self.assertRedirects(resp, "login/")
         self.assertEqual(resp.context["message"], "username or password is incorrect")
