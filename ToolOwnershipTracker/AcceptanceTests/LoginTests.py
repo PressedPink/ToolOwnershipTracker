@@ -36,17 +36,17 @@ class TestLoginSuccess(TestCase):
     def test_user_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "userpass"}, follow=True)
         self.assertEqual("/userhome/", resp.request.get("PATH"))
-        self.assertTrue(User.active)
+        self.assertEqual(resp.session["email"], "email1@gmail.com", msg="Session key not equal to User's email")
 
     def test_supervisor_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email2@gmail.com", "Inputpassword": "superpass"}, follow=True)
         self.assertEqual("/superhome/", resp.request.get("PATH"))
-        self.assertTrue(User.active)
+        self.assertEqual(resp.session["email"], "email2@gmail.com", msg="Session key not equal to User's email")
 
     def test_admin_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email3@gmail.com", "Inputpassword": "adminpass"}, follow=True)
         self.assertEqual("/adminhome/", resp.request.get("PATH"))
-        self.assertTrue(User.active)
+        self.assertEqual(resp.session["email"], "email3@gmail.com", msg="Session key not equal to User's email")
 
 
 class TestLoginFailure(TestCase):
