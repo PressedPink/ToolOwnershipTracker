@@ -48,7 +48,6 @@ class Login(View):
         return redirect("/profile/")
         
 class PasswordReset(View):
-
     def get(self, request):
         return render(request, "ForgotPasswordTemplates/password_reset.html")
 
@@ -77,7 +76,7 @@ class PasswordResetForm(View):
         if(destination):
             return redirect("/password_reset_done/")
         else:
-            pass
+            return redirect("")
 
 
 class PasswordResetDone(View):
