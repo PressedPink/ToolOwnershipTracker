@@ -18,9 +18,10 @@ class UserClass():
         self.checkPhone(self, phone)
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
+        forgotPasswordToken = ''
         # U = basic user, S = Supervisor A = Admin
-        newUser = UserClass(firstName, lastName, email,
-                       'U', hashPass, address, phone)
+        newUser = User(firstName, lastName, email,
+                       'U', hashPass, address, phone, forgotPasswordToken)
         newUser.save()
 
     def checkAddress(self, address) -> object:
@@ -74,7 +75,8 @@ class UserClass():
     def hashPass(self, password):
         return hashlib.md5(password)
 
-    def verifyPasswordRequirements(self, password, confirmPassword, firstName):
+    def verifyPasswordRequirements(self, password, confirmPassword):
+        firstName = self.firstName
         if password.length < 12:
             raise Exception("Password must be at least 12 characters")
         if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
@@ -145,11 +147,8 @@ class UserClass():
             self.save()
 
     def updatePassword(self, password):
-        if self.verifyPasswordRequirements(self, password):
-            self.password = self.hashPass(password)
-            return True
-        else:
-            return False
+        self.password = self.hashPass(password)
+        return True
 
     def send_forget_password_mail(email, token):
         subject = 'Your password reset link'
@@ -159,45 +158,24 @@ class UserClass():
         send_mail(subject, message, email_from, recipient_list)
         return True
 
-    def forget_password(request):
-        try:
-            if request.method == 'POST':
-                tempEmail = request.POST.get('email')
-                test = list(map(str, UserClass.objects.filter(email=tempEmail)))
-
-                if test.length == 0:
-                    return redirect('')
-
-                token = str(uuid.uuid4())
-                tempUser = User.objects.get(email = tempEmail)
-                tempUser.forget_password_token = token
-                tempUser.save()
-                UserClass.send_forget_password_mail(tempUser.email, token)
-                return redirect('/password_reset_sent/')
-
-        except Exception as e:
-            print(e)
-
-        return render(request, '')
+    def forget_password(email):             
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length == 0:
+            return False
+        else:
+            token = str(uuid.uuid4())
+            tempUser = User.objects.get(email = email)
+            tempUser.forget_password_token = token
+            tempUser.save()
+            UserClass.send_forget_password_mail(tempUser.email, token)
+            return True
     
-    def change_password(request, token):
-        context = {}
-        try:
-            tempUser = User.objects.get(forget_password_token = token).first()
-
-            if request.method == 'POST':
-                tempPassword = request.POST.get('new_password')
-                confirmPassword = request.POST.get('confirm_password')
-                if(UserClass.updatePassword(tempUser, tempPassword)):
-                    if(tempPassword == confirmPassword):
-                        return redirect('/password_reset_done/')
-                    else:
-                else:
-                    
-            context = {'user_email' : tempUser.email}
-            
-
-        except Exception as e:
-            print(e)
-        return render(request, 'change-password.html')
+    def change_password(email, password, confirmPassword):
+        tempUser = User.objects.get(email = email)
+        if(UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
+            UserClass.updatePassword(tempUser, password)
+            tempUser.save()
+            return True
+        else:
+            return False
 

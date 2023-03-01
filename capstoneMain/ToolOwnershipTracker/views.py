@@ -53,7 +53,12 @@ class PasswordReset(View):
         return render(request, "ForgotPasswordTemplates/password_reset.html")
 
     def post(self, request):
-        return UserClass.forget_password(request)
+        tempEmail = request.POST.get('email')
+        destination = UserClass.forget_password(tempEmail)
+        if(destination):
+            return redirect("/password_reset_sent/")
+        else:
+            return redirect("")
 
 class PasswordResetSent(View):
     def get(self, request):
@@ -61,14 +66,23 @@ class PasswordResetSent(View):
 
 class PasswordResetForm(View):
     def get(self, request):
-        return render(request, "/ForgotPasswordTemplates/password_reset_form.html")
+        return render(request, "ForgotPasswordTemplates/password_reset_form.html")
     
     def post(self, request):
-        return redirect("/password_reset_done/")
+        email = request.Post.get('email')
+        password = request.POST.get('password')
+        confirmPassword = request.POST.get('confirm-password')
+
+        destination = UserClass.change_password(self, password, confirmPassword)
+        if(destination):
+            return redirect("/password_reset_done/")
+        else:
+            pass
+
 
 class PasswordResetDone(View):
     def get(self, request):
         return render(request, "/ForgotPasswordTemplates/password_reset_done.html")
     
     def post(self, request):
-        return render("")
+        return redirect("")
