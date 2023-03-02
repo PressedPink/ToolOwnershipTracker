@@ -171,12 +171,13 @@ class UserClass():
             return True
     
     def change_password(email, password, confirmPassword):
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length == 0:
+            raise Exception("Email is not valid")
         tempUser = User.objects.get(email = email)
         if(UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
             tempUser.save()
             return True
-        else:
-            return False
 
 

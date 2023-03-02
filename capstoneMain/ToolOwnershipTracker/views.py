@@ -3,14 +3,13 @@ from django.shortcuts import render, redirect
 from ToolOwnershipTracker.models import User, UserType
 import uuid
 
-from django.http import request
+from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
 from .models import User
 from django.views import View
 import logging
-
 # Create your views here.
 
 
@@ -57,7 +56,7 @@ class PasswordReset(View):
         if(destination):
             return redirect("/password_reset_sent/")
         else:
-            return redirect("")
+            return JsonResponse({"error": "This is an error"})
 
 class PasswordResetSent(View):
     def get(self, request):
@@ -71,12 +70,12 @@ class PasswordResetForm(View):
         email = request.Post.get('email')
         password = request.POST.get('password')
         confirmPassword = request.POST.get('confirm-password')
-
-        destination = UserClass.change_password(self, password, confirmPassword)
-        if(destination):
+        try:
+            UserClass.change_password(email, password, confirmPassword)
             return redirect("/password_reset_done/")
-        else:
-            return redirect("")
+        except Exception as e:
+            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message':str(e)})
+            
 
 
 class PasswordResetDone(View):
