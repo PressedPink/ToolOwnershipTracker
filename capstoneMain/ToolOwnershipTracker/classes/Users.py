@@ -18,10 +18,9 @@ class UserClass():
         self.checkPhone(self, phone)
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
-        forgotPasswordToken = ''
         # U = basic user, S = Supervisor A = Admin
         newUser = User(firstName, lastName, email,
-                       'U', hashPass, address, phone, forgotPasswordToken)
+                       'U', hashPass, address, phone)
         newUser.save()
 
     def checkAddress(self, address) -> object:
@@ -168,8 +167,6 @@ class UserClass():
         else:
             token = str(uuid.uuid4())
             tempUser = User.objects.get(email = email)
-            tempUser.forget_password_token = token
-            tempUser.save()
             UserClass.send_forget_password_mail(tempUser.email, token)
             return True
     
