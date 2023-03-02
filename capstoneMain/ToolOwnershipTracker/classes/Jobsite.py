@@ -14,7 +14,7 @@ def Jobsite():
         return True
 
     def checkOwner(self, owner):
-        if not isValid(self,owner):
+        if not isValid(self, owner):
             raise Exception("User does not exist")
         return True
 
@@ -24,12 +24,12 @@ def Jobsite():
             self.save()
 
     def addUser(self, user):
-        #check to see if user is valid
-        #add user to assigned users
+        if checkOwner(self, user):
+            self.users.add(user)
 
-    def changeTitle(self,title):
-        if checkTitle(self,title):
-            self.title=title
+    def changeTitle(self, title):
+        if checkTitle(self, title):
+            self.title = title
             self.save()
 
     def removeJobsite(self):
@@ -37,14 +37,14 @@ def Jobsite():
             raise Exception("Cannot remove jobsite until tools are returned")
         self.remove(self)
 
-    def removeUser(self,email):
+    def removeUser(self, email):
         if self.owner == email:
             raise Exception("Cannot remove the owner")
         if isValid:
             self.assigned(email).delete()
         raise Exception("That user is not on this jobsite")
 
-    def isValid(self,email):
+    def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
         if test.length == 0:
             return False
