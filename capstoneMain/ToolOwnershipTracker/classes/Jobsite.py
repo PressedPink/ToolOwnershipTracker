@@ -4,7 +4,7 @@ from capstoneMain.ToolOwnershipTracker.Users import User
 def Jobsite():
     def createJobsite(self, title, owner):
         checkTitle(self, title)
-        checkOwner(self, owner)
+        isValid(self, owner)
         jobsite = Jobsite(title, owner)
         jobsite.save()
 
@@ -13,18 +13,13 @@ def Jobsite():
             raise Exception("Name of Jobsite Cannot be left empty")
         return True
 
-    def checkOwner(self, owner):
-        if not isValid(self, owner):
-            raise Exception("User does not exist")
-        return True
-
     def assignOwner(self, owner):
-        if checkOwner(self, owner):
+        if isValid(self, owner):
             self.owner = owner
             self.save()
 
     def addUser(self, user):
-        if checkOwner(self, user):
+        if isValid(self, user):
             self.users.add(user)
 
     def changeTitle(self, title):
@@ -49,3 +44,8 @@ def Jobsite():
         if test.length == 0:
             return False
         return True
+
+    def addTool(self, tool):
+        if not toolbox.validTool(tool):
+            raise Exception("Tool does not exist")
+        self.toolbox.add(tool)
