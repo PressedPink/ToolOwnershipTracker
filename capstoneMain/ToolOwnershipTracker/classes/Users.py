@@ -158,10 +158,13 @@ class UserClass():
         send_mail(subject, message, email_from, recipient_list)
         return True
 
-    def forget_password(email):             
-        test = list(map(str, User.objects.filter(email=email)))
+    def forget_password(email): 
+        try:           
+            test = list(map(str, User.objects.filter(email=email)))
+        except:
+            raise Exception("Email is not valid")
         if test.length == 0:
-            return False
+            raise Exception("Email is not valid")
         else:
             token = str(uuid.uuid4())
             tempUser = User.objects.get(email = email)
@@ -171,7 +174,10 @@ class UserClass():
             return True
     
     def change_password(email, password, confirmPassword):
-        test = list(map(str, User.objects.filter(email=email)))
+        try:           
+            test = list(map(str, User.objects.filter(email=email)))
+        except:
+            raise Exception("Email is not valid")
         if test.length == 0:
             raise Exception("Email is not valid")
         tempUser = User.objects.get(email = email)

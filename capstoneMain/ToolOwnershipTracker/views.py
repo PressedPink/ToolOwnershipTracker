@@ -52,11 +52,12 @@ class PasswordReset(View):
 
     def post(self, request):
         tempEmail = request.POST.get('email')
-        destination = UserClass.forget_password(tempEmail)
-        if(destination):
+        try:
+            UserClass.forget_password(tempEmail)
             return redirect("/password_reset_sent/")
-        else:
-            return JsonResponse({"error": "This is an error"})
+        except Exception as e:
+            return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message':str(e)})
+            
 
 class PasswordResetSent(View):
     def get(self, request):
