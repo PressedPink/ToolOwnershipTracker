@@ -2,10 +2,10 @@ import hashlib
 import re
 
 
-#import capstoneMain.ToolOwnershipTracker.models
+from ToolOwnershipTracker.models import User
 
 
-class User():
+class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, active):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
@@ -53,12 +53,12 @@ class User():
             raise Exception("Please include your country and area codes")
         if phone.length is not 11:
             raise Exception("Please enter a valid phone number")
-            tempDigit = True
-            for number in phone:
-                if not number.isnumeric():
-                    tempDigit = False
-                if tempDigit:
-                    raise Exception("Phone Number Invalid")
+        tempDigit = True
+        for number in phone:
+            if not number.isnumeric():
+                tempDigit = False
+            if tempDigit:
+                raise Exception("Phone Number Invalid")
         return True
 
     def checkPassword(self, password):
@@ -92,7 +92,8 @@ class User():
             if not tempDigit:
                 raise Exception("Password must contain a number")
             if firstName in password:
-                raise Exception("Password may not contain any part of your name")
+                raise Exception(
+                    "Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
         return True
