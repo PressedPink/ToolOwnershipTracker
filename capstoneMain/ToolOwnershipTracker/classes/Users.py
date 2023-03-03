@@ -1,12 +1,16 @@
 import hashlib
 import re
+import uuid
+from re import search
+from django.shortcuts import render, redirect
+from django.views import View
+from django.forms import models
+
+import models
 
 
-from ToolOwnershipTracker.models import User
-
-
-class UserClass():
-    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, active):
+class User():
+    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
         self.checkLastName(self, lastName)
@@ -16,10 +20,10 @@ class UserClass():
         hashPass = self.hashPass(password)
         # U = basic user, S = Supervisor A = Admin
         newUser = User(firstName, lastName, email,
-                       'U', hashPass, address, phone, False)
+                       'U', hashPass, address, phone)
         newUser.save()
 
-    def checkAddress(self, address) -> object:
+    def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
         return True
@@ -34,31 +38,31 @@ class UserClass():
             raise Exception("Last Name may not be left blank")
         return True
 
-    def checkEmail(self, email):
-        if email is None:
-            raise Exception("Unique Email Required")
-        test = list(map(str, User.objects.filter(email=email)))
-        if test.length != 0:
-            raise Exception("User already exists")
-        if not '@' & '.' in email:
-            raise Exception("Email is Invalid")
-        return True
+        # Possibly device these checks into submethods todo
+        def checkEmail(self, email):
+            if email is None:
+                raise Exception("Unique Email Required")
+            test = list(map(str, User.objects.filter(email=email)))
+            if test.length != 0:
+                raise Exception("User already exists")
+            if not '@' & '.' in email:
+                raise Exception("Email is Invalid")
 
-    def checkPhone(self, phone):
-        if phone is None:
-            raise Exception("Phone Number may not be left blank")
-        if phone.length is 10:
-            raise Exception("Please include your country code")
-        if phone.length is 7:
-            raise Exception("Please include your country and area codes")
-        if phone.length is not 11:
-            raise Exception("Please enter a valid phone number")
-        tempDigit = True
-        for number in phone:
-            if not number.isnumeric():
-                tempDigit = False
-            if tempDigit:
-                raise Exception("Phone Number Invalid")
+        def checkPhone(self, phone):
+            if phone is None:
+                raise Exception("Phone Number may not be left blank")
+            if phone.length is 10:
+                raise Exception("Please include your country code")
+            if phone.length is 7:
+                raise Exception("Please include your country and area codes")
+            if phone.length is not 11:
+                raise Exception("Please enter a valid phone number")
+            tempDigit = True
+            for number in phone:
+                if not number.isnumeric():
+                    tempDigit = False
+                if tempDigit:
+                    raise Exception("Phone Number Invalid")
         return True
 
     def checkPassword(self, password):
@@ -92,55 +96,32 @@ class UserClass():
             if not tempDigit:
                 raise Exception("Password must contain a number")
             if firstName in password:
-                raise Exception(
-                    "Password may not contain any part of your name")
+                raise Exception("Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
-        return True
 
-    def clearSessions(self):
-        # todo clear all active sessions, set active to false
-        return True
+        def clearSessions(self):
+            # todo clear all active sessions, set active to false
+            return
 
-    def login(self, email, password):
-        if self.email.upper() is not email.upper():
-            raise Exception("Email is not valid")
-        if self.password is not hashlib.md5(password):
-            raise Exception("Password is not correct")
-        self.clearSessions(self)
-        self.active = True
-        return True
+        def login(self, email, password):
+            if self.email.upper() is not email.upper():
+                raise Exception("Email is not valid")
+            if self.password is not hashlib.md5(password):
+                raise Exception("Password is not correct")
+            clearSessions(self)
+            self.active = True
 
-    def logout(self, request):
-        request.clear.Sessions(self)
-        self.active = False
-        return True
+        def logout(self, request):
+            # do not use
+            request.clear.Sessions(self)
+            self.active = False
+            redirectLogin()
 
-    def editFirstName(self, firstName):
-        if self.checkFirstName(self, firstName):
-            self.firstName = firstName
-            self.save()
+        def redirectProfile(self, request):
+            # do not use
+            return redirect('profile-page', email=request.user.email, name=request.user.firstName)
 
-    def editLastName(self, lastName):
-        if self.checkLastName(self, lastName):
-            self.lastName = lastName
-            self.save()
-
-    def editAddress(self, address):
-        if self.checkAddress(self, address):
-            self.address = address
-            self.save()
-
-    def editEmail(self, email):
-        if self.checkEmail(self, email):
-            self.email = email
-            self.save()
-
-    def editPhone(self, phone):
-        if self.checkPhone(self, phone):
-            self.phone = phone
-            self.save()
-
-    def updatePassword(self, password):
-        if self.verifyPasswordRequirements(self, password):
-            self.password = self.hashPass(password)
+        def redirectLogin(self, resquest):
+            # do not use
+            return redirect('login-page')
