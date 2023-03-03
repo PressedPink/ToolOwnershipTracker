@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from ToolOwnershipTracker.base.models import User
+from capstoneMain.ToolOwnershipTracker.models import User
 
 
 class TestLoginSuccess(TestCase):

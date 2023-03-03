@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from ToolOwnershipTracker.base.models import User
+from capstoneMain.ToolOwnershipTracker.models import User
 
 
 class TestEditUserSuccess(TestCase):
@@ -35,7 +35,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"InputfirstName": "John"}, follow=True)
-        checkuser = User.objects.get(email="email1@gmail.com")
+        checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
 
     def test_edit_user_last_name(self):
@@ -46,7 +46,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"InputlastName": "Cena"}, follow=True)
-        checkuser = User.objects.get(email="email1@gmail.com")
+        checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
 
     def test_edit_user_email(self):
@@ -57,7 +57,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"Inputemail": "newemail@gmail.com"}, follow=True)
-        checkuser = User.objects.get(email="newemail@gmail.com")
+        checkuser = User.get(email="newemail@gmail.com")
         self.assertEqual(checkuser.email, "newemail@gmail.com")
 
     def test_edit_user_role(self):
@@ -68,7 +68,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"Inputrole": "S"}, follow=True)
-        checkuser = User.objects.get(email="email1@gmail.com")
+        checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.role, "S", msg="Role not changed")
 
     def test_edit_user_password(self):
@@ -79,7 +79,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"Inputpassword": "newpassword"}, follow=True)
-        checkuser = User.objects.get(email="email1@gmail.com")
+        checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.password, "newpassword", msg="Password not changed")
 
     def test_edit_user_address(self):
@@ -90,7 +90,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"Inputaddress": "321 N Cramer St"}, follow=True)
-        checkUser = User.objects.get(email="email1@gmail.com")
+        checkUser = User.get(email="email1@gmail.com")
         self.assertEqual(checkUser.address, "321 N Cramer St", msg="Address not changed")
 
     def test_edit_user_phone(self):
@@ -101,7 +101,7 @@ class TestEditUserSuccess(TestCase):
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
         self.testClient.post("/email1@gmail.comInfo/edit", {"Inputphone": "14140000000"}, follow=True)
-        checkUser = User.objects.get(email="email1@gmail.com")
+        checkUser = User.get(email="email1@gmail.com")
         self.assertEqual(checkUser.phoneNumber, "14140000000", msg="Phone not changed")
 
     def test_edit_user_all(self):
@@ -116,7 +116,7 @@ class TestEditUserSuccess(TestCase):
                                      "Inputemail": "newEmail@gmail.com", "Inputrole": "S",
                                      "Inputpassword": "newpass", "Inputaddress": "321 N Cramer St",
                                      "Inputphone": "14140000000"})
-        checkuser = User.objects.get(email="newEmail@gmail.com")
+        checkuser = User.get(email="newEmail@gmail.com")
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
         self.assertEqual(checkuser.email, "newEmail@gmail.com", msg="Email not changed")
@@ -147,7 +147,7 @@ class TestEditUserFailure(TestCase):
                                      "Inputemail": "", "Inputrole": "",
                                      "Inputpassword": "", "Inputaddress": "",
                                      "Inputphone": ""})
-        checkuser = User.objects.get(email="email1@gmail.com")
+        checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.firstName, "userfirst", msg="Name changed when shouldn't have")
         self.assertEqual(checkuser.lastName, "userlast", msg="Name changed when shouldn't have")
         self.assertEqual(checkuser.email, "email1@gmail.com", msg="Email changed when shouldn't have")
@@ -174,7 +174,7 @@ class TestEditSuperSuccess(TestCase):
 
     def test_edit_super_first_name(self):
         resp = self.testClient.post("/superinfo/", {"InputfirstName": "John"}, follow=True)
-        checkUser = User.objects.get(email="email1@gmail.com")
+        checkUser = User.get(email="email1@gmail.com")
         self.assertEqual(checkUser.firstName, "John", "Name not changed")
 
     def test_edit_super_last_name(self):
