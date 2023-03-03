@@ -50,13 +50,13 @@ def Jobsite():
             raise Exception("Tool does not exist")
         self.toolbox.add(tool)
 
-    def removeTool(self,tool):
-        if containsTool(self,tool):
+    def removeTool(self, tool):
+        if containsTool(self, tool):
             self.toolbox.remove(tool)
 
-    def containsTool(self,tool):
+    def containsTool(self, tool):
         test = list(map(str, Jobsite.objects.filter(tool=tool)))
-        if test.length ==0:
+        if test.length == 0:
             raise Exception("Tool does not exist")
             return False
         return True
