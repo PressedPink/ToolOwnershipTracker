@@ -1,7 +1,9 @@
 from django.db import models
 from django.forms import ModelForm, forms
+from django.contrib import admin
 
 # defining three user roles for our app
+
 
 
 class UserType(models.TextChoices):
@@ -22,3 +24,5 @@ class User(models.Model):
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
     phone = models.CharField(max_length=14, default="")
+
+admin.site.register(User)

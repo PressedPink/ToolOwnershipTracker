@@ -1,7 +1,6 @@
 import uuid
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import render, redirect
 import hashlib
 import re
 
@@ -149,11 +148,12 @@ class UserClass():
         self.password = self.hashPass(password)
         return True
 
-    def send_forget_password_mail(email, token):
+    def send_forget_password_mail(email):
+        token = str(uuid.uuid4())
         subject = 'Your password reset link'
         message = f'Hello, click the following link to be redirected to form to reset your password: http://127.0.0.1:8000/password_reset_form/{token}'
         email_from = settings.EMAIL_HOST_USER
-        recipient_list = [email]
+        recipient_list = [email, ]
         send_mail(subject, message, email_from, recipient_list)
         return True
 
@@ -162,12 +162,8 @@ class UserClass():
             test = list(map(str, User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
-        if test.length == 0:
-            raise Exception("Email is not valid")
         else:
-            token = str(uuid.uuid4())
-            tempUser = User.objects.get(email = email)
-            UserClass.send_forget_password_mail(tempUser.email, token)
+            UserClass.send_forget_password_mail(email)
             return True
     
     def change_password(email, password, confirmPassword):
@@ -175,8 +171,7 @@ class UserClass():
             test = list(map(str, User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
-        if test.length == 0:
-            raise Exception("Email is not valid")
+
         tempUser = User.objects.get(email = email)
         if(UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)

@@ -61,11 +61,11 @@ class PasswordReset(View):
 
 class PasswordResetSent(View):
     def get(self, request):
-        return render(request, "/ForgotPasswordTemplates/password_reset_sent.html")
+        return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 class PasswordResetForm(View):
     def get(self, request):
-        return render(request, "ForgotPasswordTemplates/password_reset_form.html")
+        return render(request, 'ForgotPasswordTemplates/password_reset_form.html')
     
     def post(self, request):
         email = request.Post.get('email')
