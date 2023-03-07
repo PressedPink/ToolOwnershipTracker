@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
 # from classes.profile import Profile
 from ToolOwnershipTracker.models import User, UserType
-import uuid
-
+from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
@@ -64,24 +63,33 @@ class PasswordResetSent(View):
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 class PasswordResetForm(View):
-    def get(self, request):
-        return render(request, 'ForgotPasswordTemplates/password_reset_form.html')
-    
-    def post(self, request):
-        email = request.Post.get('email')
-        password = request.POST.get('password')
-        confirmPassword = request.POST.get('confirm-password')
+    def get(self, request, token):
         try:
-            UserClass.change_password(email, password, confirmPassword)
-            return redirect("/password_reset_done/")
+            user = User.objects.get(forget_password_token = token)
+            email = user.email
+            if UserClass.check_reset_password_token(email, token):
+                return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'token': token})
+        except User.DoesNotExist:
+            pass
+        return HttpResponseBadRequest()
+    
+    def post(self, request, token):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm-password')
+        token = request.POST.get('token')
+        
+        try:
+            if UserClass.change_password(email, password, confirm_password):
+                return redirect("/password_reset_done/")
         except Exception as e:
-            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message':str(e)})
-            
-
+            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': str(e), 'token': token})
+        
+        return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
 
 class PasswordResetDone(View):
     def get(self, request):
-        return render(request, "/ForgotPasswordTemplates/password_reset_done.html")
+        return render(request, 'ForgotPasswordTemplates/password_reset_done.html')
     
     def post(self, request):
         return redirect("")
