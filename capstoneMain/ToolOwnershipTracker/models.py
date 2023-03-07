@@ -29,7 +29,8 @@ class User(models.Model):
 
 
 class Jobsite(models.Model):
-    id = models.ForeignKey(unique=True, primary_key=True)
-    owner = models.CharField(User, on_delete=models.CASCADE, null=False)
+    # changed id as fk is not set up properly
+    id = models.CharField(unique=True, primary_key=True)
+    owner = models.CharField(User, null=False)
     title = models.CharField(max_length=40)
-    assigned = models.CharField(User, on_delete=models.CASCADE, null=True)
+    assigned = models.CharField(User, null=True)
