@@ -34,19 +34,19 @@ class TestLogoutSuccess(TestCase):
         myadmin.save()
 
     def test_user_logout(self):
-        resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "userpass"}, follow=True)
+        self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "userpass"}, follow=True)
         resp = self.testClient.post("userhome/", {"Submit": "Logout"}, follow=True)
-        self.assertEqual("login/", resp.request.get("PATH"))
+        self.assertRedirects(resp, "login/")
         self.assertEqual(resp.session["email"], None, msg="Session key not equal to User's email")
 
     def test_super_logout(self):
-        resp = self.testClient.post("login/", {"Inputemail": "email2@gmail.com", "Inputpassword": "superpass"}, follow=True)
+        self.testClient.post("login/", {"Inputemail": "email2@gmail.com", "Inputpassword": "superpass"}, follow=True)
         resp = self.testClient.post("superhome/", {"Submit": "Logout"}, follow=True)
-        self.assertEqual("login/", resp.request.get("PATH"))
+        self.assertRedirects(resp, "login/")
         self.assertEqual(resp.session["email"], None, msg="Session key not equal to User's email")
 
     def test_admin_logout(self):
-        resp = self.testClient.post("login/", {"Inputemail": "email3@gmail.com", "Inputpassword": "adminpass"}, follow=True)
+        self.testClient.post("login/", {"Inputemail": "email3@gmail.com", "Inputpassword": "adminpass"}, follow=True)
         resp = self.testClient.post("adminhome/", {"Submit": "Logout"}, follow=True)
-        self.assertEqual("login/", resp.request.get("PATH"))
+        self.assertRedirects(resp, "login/")
         self.assertEqual(resp.session["email"], None, msg="Session key not equal to User's email")
