@@ -17,7 +17,7 @@ class UserClass():
         self.checkPhone(self, phone)
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
-        forget_password_token = None
+        forget_password_token = ""
         # U = basic user, S = Supervisor A = Admin
         newUser = User(firstName, lastName, email,
                        'U', hashPass, address, phone, forget_password_token)
@@ -189,6 +189,7 @@ class UserClass():
         tempUser = User.objects.get(email = email)
         if(UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
+            tempUser.forget_password_token = ""
             tempUser.save()
             return True
 
