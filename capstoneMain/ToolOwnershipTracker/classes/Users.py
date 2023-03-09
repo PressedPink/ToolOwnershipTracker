@@ -90,17 +90,17 @@ class UserClass():
                 tempLower = True
             if letter.isdigit():
                 tempDigit = True
-            if not tempUpper:
-                raise Exception("Password must contain an uppercase letter")
-            if not tempLower:
-                raise Exception("Password must contain a lowercase letter")
-            if not tempDigit:
-                raise Exception("Password must contain a number")
-            if firstName in password:
-                raise Exception(
-                    "Password may not contain any part of your name")
-            if password is not confirmPassword:
-                raise Exception("Passwords do not Match")
+        if not tempUpper:
+            raise Exception("Password must contain an uppercase letter")
+        if not tempLower:
+            raise Exception("Password must contain a lowercase letter")
+        if not tempDigit:
+            raise Exception("Password must contain a number")
+        if firstName in password:
+            raise Exception(
+                "Password may not contain any part of your name")
+        if password != confirmPassword:
+            raise Exception("Passwords do not Match")
         return True
 
     def clearSessions(self):
