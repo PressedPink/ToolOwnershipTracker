@@ -1,11 +1,15 @@
 import hashlib
 import re
+import uuid
+from re import search
+from django.shortcuts import render, redirect
+from django.views import View
+from django.forms import models
+
+import models
 
 
-#import capstoneMain.ToolOwnershipTracker.models
-
-
-class UserClass():
+class User():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
@@ -19,7 +23,7 @@ class UserClass():
                        'U', hashPass, address, phone)
         newUser.save()
 
-    def checkAddress(self, address) -> object:
+    def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
         return True
@@ -116,30 +120,7 @@ class UserClass():
         return True
 
     def editFirstName(self, firstName):
-        if self.checkFirstName(self, firstName):
+        if checkFirstName(self,firstName):
             self.firstName = firstName
             self.save()
 
-    def editLastName(self, lastName):
-        if self.checkLastName(self, lastName):
-            self.lastName = lastName
-            self.save()
-
-    def editAddress(self, address):
-        if self.checkAddress(self, address):
-            self.address = address
-            self.save()
-
-    def editEmail(self, email):
-        if self.checkEmail(self, email):
-            self.email = email
-            self.save()
-
-    def editPhone(self, phone):
-        if self.checkPhone(self, phone):
-            self.phone = phone
-            self.save()
-
-    def updatePassword(self, password):
-        if self.verifyPasswordRequirements(self, password):
-            self.password = self.hashPass(password)
