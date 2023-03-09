@@ -43,7 +43,31 @@ class Login(View):
         return render(request, "LoginHTML.html")
 
     def post(self, request):
-        return redirect("/profile/")
+
+        if 'forgot_password' in request.POST:
+            return redirect("/password_reset/")
+
+        noSuchUser = False
+        blankName = False
+        badPassword = False
+
+        try:
+            email = request.POST['InputUsername']
+            user = User.objects.get(email=email)
+            badPassword = UserClass.checkPassword(user, request.POST['InputPassword'])
+        except Exception as e:
+            noSuchUser = True
+
+        if noSuchUser:
+            return render(request, "LoginHTML.html", {"message": "no user"})
+
+        elif badPassword:
+            return render(request, "LoginHTML.html", {"message": "bad password"})
+        else:
+            request.session["username"] = user.email
+            # request.session["name"] = user.name
+            return redirect("/profile/")
+
         
 class PasswordReset(View):
     def get(self, request):
@@ -93,23 +117,3 @@ class PasswordResetDone(View):
     
     def post(self, request):
         return redirect("")
-        noSuchUser = False
-        blankName = False
-        badPassword = False
-
-        try:
-            email = request.POST['InputUsername']
-            user = User.objects.get(email=email)
-            badPassword = (user.password != request.POST['InputPassword'])
-        except Exception as e:
-            noSuchUser = True
-
-        if noSuchUser:
-            return render(request, "LoginHTML.html", {"message": "no user"})
-
-        elif badPassword:
-            return render(request, "LoginHTML.html", {"message": "bad password"})
-        else:
-            request.session["username"] = user.email
-            # request.session["name"] = user.name
-            return redirect("/profile/")

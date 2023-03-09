@@ -24,8 +24,6 @@ class User(models.Model):
     phone = models.CharField(max_length=14, default="")
     forget_password_token = models.CharField(max_length=100, default="")
 
-admin.site.register(User)
-
 
 class Jobsite(models.Model):
     owner = models.CharField(max_length=40)
