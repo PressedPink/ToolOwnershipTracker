@@ -6,10 +6,10 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.forms import models
 
-import models
+from ToolOwnershipTracker import models
 
 
-class User():
+class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
@@ -39,30 +39,30 @@ class User():
         return True
 
         # Possibly device these checks into submethods todo
-        def checkEmail(self, email):
-            if email is None:
-                raise Exception("Unique Email Required")
-            test = list(map(str, User.objects.filter(email=email)))
-            if test.length != 0:
-                raise Exception("User already exists")
-            if not '@' & '.' in email:
-                raise Exception("Email is Invalid")
+    def checkEmail(self, email):
+        if email is None:
+            raise Exception("Unique Email Required")
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length != 0:
+            raise Exception("User already exists")
+        if not '@' & '.' in email:
+            raise Exception("Email is Invalid")
 
-        def checkPhone(self, phone):
-            if phone is None:
-                raise Exception("Phone Number may not be left blank")
-            if phone.length is 10:
-                raise Exception("Please include your country code")
-            if phone.length is 7:
-                raise Exception("Please include your country and area codes")
-            if phone.length is not 11:
-                raise Exception("Please enter a valid phone number")
-            tempDigit = True
-            for number in phone:
-                if not number.isnumeric():
-                    tempDigit = False
-                if tempDigit:
-                    raise Exception("Phone Number Invalid")
+    def checkPhone(self, phone):
+        if phone is None:
+            raise Exception("Phone Number may not be left blank")
+        if phone.length is 10:
+            raise Exception("Please include your country code")
+        if phone.length is 7:
+            raise Exception("Please include your country and area codes")
+        if phone.length is not 11:
+            raise Exception("Please enter a valid phone number")
+        tempDigit = True
+        for number in phone:
+            if not number.isnumeric():
+                tempDigit = False
+            if tempDigit:
+                raise Exception("Phone Number Invalid")
         return True
 
     def checkPassword(self, password):
@@ -96,7 +96,8 @@ class User():
             if not tempDigit:
                 raise Exception("Password must contain a number")
             if firstName in password:
-                raise Exception("Password may not contain any part of your name")
+                raise Exception(
+                    "Password may not contain any part of your name")
             if password is not confirmPassword:
                 raise Exception("Passwords do not Match")
 

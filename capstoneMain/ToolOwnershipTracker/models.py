@@ -30,7 +30,9 @@ class User(models.Model):
 
 class Jobsite(models.Model):
     # changed id as fk is not set up properly
-    id = models.CharField(unique=True, primary_key=True)
-    owner = models.CharField(User, null=False)
+    id = models.CharField(unique=True, primary_key=True, max_length=20)
+    owner = models.ForeignKey(
+        User, null=True, on_delete=models.CASCADE, related_name="owner")
     title = models.CharField(max_length=40)
-    assigned = models.CharField(User, null=True)
+    assigned = models.ForeignKey(
+        User, null=True, on_delete=models.CASCADE, related_name="assigned")
