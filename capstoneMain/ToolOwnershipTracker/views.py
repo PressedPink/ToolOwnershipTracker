@@ -15,6 +15,12 @@ import logging
 # class Login(View):
 #    email = str(request.POST['Email Address']).strip()
 #    password = str(request.POST['Password'])
+class helpers():
+    def redirectIfNotLoggedIn(request):
+        if request.session["username"] is None:
+            return False
+        else:
+            return True
 
 
 class SignUp(View):
@@ -43,6 +49,10 @@ class SignUp(View):
 
 class Profile(View):
     def get(self, request):
+
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
         a = request.session["username"]
         b = User.objects.get(email=a)
 
@@ -86,6 +96,7 @@ class Login(View):
 
 class PasswordReset(View):
     def get(self, request):
+
         return render(request, "ForgotPasswordTemplates/password_reset.html")
 
     def post(self, request):
@@ -99,6 +110,7 @@ class PasswordReset(View):
 
 class PasswordResetSent(View):
     def get(self, request):
+
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 
@@ -138,5 +150,7 @@ class PasswordResetDone(View):
 
 class Jobsites(View):
     def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
