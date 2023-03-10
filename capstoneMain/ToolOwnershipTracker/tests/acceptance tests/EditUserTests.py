@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+# from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.models import User
 
 

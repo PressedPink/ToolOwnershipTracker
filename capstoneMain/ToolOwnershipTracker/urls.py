@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,5 +17,6 @@ urlpatterns = [
     path('password_reset_done/', PasswordResetDone.as_view(),
          name='password_reset_done'),
     path('signup/', SignUp.as_view(), name='signup'),
+    path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('', Login.as_view(), name='LoginHTML'),
 ]

@@ -6,7 +6,7 @@ from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
-from .models import User
+from .models import User, Jobsite
 from django.views import View
 import logging
 # Create your views here.
@@ -134,3 +134,9 @@ class PasswordResetDone(View):
 
     def post(self, request):
         return redirect("")
+
+
+class Jobsites(View):
+    def get(self, request):
+        allJobsites = Jobsite.objects.all()
+        return render(request, "jobsites.html", {'jobsites': allJobsites})
