@@ -9,23 +9,23 @@
       {%  csrf_token %}
       <div>
           <label for="email">Email:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+              <input required pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" title="only numbers and alphabetical characters"
                      id="email" type="text" name="email"><br>
 
           <label for="password1">Enter Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+              <input  title="only numbers and alphabetical characters"
                      id="password1" type="text" name="password1"><br>
              
           <label for="password2">Confirm Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+              <input  title="only numbers and alphabetical characters"
                      id="password2" type="text" name="password2"><br>
 
           <label for="firstName">First Name:</label><br>
-              <input required pattern="[a-zA-Z]" title="only alphabetical characters"
+              <input required pattern="[a-zA-Z]+" title="only alphabetical characters"
                      id="firstName" type="firstName" name="firstName"><br>
 
           <label for="lastName">Last Name:</label><br>
-              <input required pattern="[a-zA-Z]" title="only alphabetical characters"
+              <input required pattern="[a-zA-Z]+" title="only alphabetical characters"
                      id="lastName" type="lastName" name="lastName"><br>
 
           <label for="phone">Phone Number:</label><br>

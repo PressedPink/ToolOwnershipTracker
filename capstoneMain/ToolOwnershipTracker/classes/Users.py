@@ -14,18 +14,17 @@ from ToolOwnershipTracker import models
 
 class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        self.checkEmail(self, email)
-        self.checkFirstName(self, firstName)
-        self.checkLastName(self, lastName)
-        self.checkAddress(self, address)
-        self.checkPhone(self, phone)
+        # self.checkEmail(self, email)
+        # self.checkLastName(self, lastName)
+        # self.checkAddress(self, address)
+        # self.checkPhone(self, phone)
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
         forget_password_token = ""
         # U = basic user, S = Supervisor A = Admin
-        newUser = User(firstName, lastName, email,
+        newUser = models.User(firstName, lastName, email,
 
-                       'U', hashPass, address, phone, forget_password_token)
+                              'U', hashPass, address, phone, forget_password_token)
         newUser.save()
 
     def checkAddress(self, address):
@@ -47,7 +46,7 @@ class UserClass():
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
-        test = list(map(str, User.objects.filter(email=email)))
+        test = list(map(str, models.User.objects.filter(email=email)))
         if test.length != 0:
             raise Exception("User already exists")
         if not '@' & '.' in email:
@@ -80,7 +79,7 @@ class UserClass():
         return hashlib.md5(password.encode('utf-8')).hexdigest()
 
     def verifyPasswordRequirements(self, password, confirmPassword):
-        firstName = self.firstName
+        # firstName = self.firstName
         if len(password) < 12:
             raise Exception("Password must be at least 12 characters")
         if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
@@ -101,9 +100,9 @@ class UserClass():
             raise Exception("Password must contain a lowercase letter")
         if not tempDigit:
             raise Exception("Password must contain a number")
-        if firstName in password:
-            raise Exception(
-                "Password may not contain any part of your name")
+        # if firstName in password:
+            # raise Exception(
+            # "Password may not contain any part of your name")
         if password != confirmPassword:
             raise Exception("Passwords do not Match")
         return True
@@ -157,9 +156,9 @@ class UserClass():
 
     def check_reset_password_token(email, token):
         try:
-            user = User.objects.get(email=email)
+            user = models.User.objects.get(email=email)
             return user.forget_password_token == token
-        except User.DoesNotExist:
+        except models.User.DoesNotExist:
             return False
 
     def send_forget_password_mail(email, token):
@@ -173,12 +172,12 @@ class UserClass():
 
     def forget_password(email):
         try:
-            test = list(map(str, User.objects.filter(email=email)))
+            test = list(map(str, models.User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
 
         token = str(uuid.uuid4())
-        tempUser = User.objects.get(email=email)
+        tempUser = models.User.objects.get(email=email)
         tempUser.forget_password_token = token
         tempUser.save()
         UserClass.send_forget_password_mail(email, token)
@@ -187,11 +186,11 @@ class UserClass():
     def change_password(email, password, confirmPassword):
 
         try:
-            test = list(map(str, User.objects.filter(email=email)))
+            test = list(map(str, models.User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
 
-        tempUser = User.objects.get(email=email)
+        tempUser = models.User.objects.get(email=email)
         if (UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
             tempUser.forget_password_token = ""
