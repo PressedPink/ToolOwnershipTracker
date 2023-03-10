@@ -14,10 +14,10 @@ from ToolOwnershipTracker import models
 
 class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        # self.checkEmail(self, email)
-        # self.checkLastName(self, lastName)
-        # self.checkAddress(self, address)
-        # self.checkPhone(self, phone)
+        self.checkEmail(self, email)
+        self.checkLastName(self, lastName)
+        self.checkAddress(self, address)
+        self.checkPhone(self, phone)
         self.verifyPasswordRequirements(self, password, confirmPassword)
         hashPass = self.hashPass(password)
         forget_password_token = ""
@@ -47,25 +47,27 @@ class UserClass():
         if email is None:
             raise Exception("Unique Email Required")
         test = list(map(str, models.User.objects.filter(email=email)))
-        if test.length != 0:
+        if len(test) != 0:
             raise Exception("User already exists")
-        if not '@' & '.' in email:
-            raise Exception("Email is Invalid")
+        # removed as regex is handled in input fields
+        # if not '@' & '.' in email:
+            # raise Exception("Email is Invalid")
 
     def checkPhone(self, phone):
+        num = len(phone)
         if phone is None:
             raise Exception("Phone Number may not be left blank")
-        if phone.length == 10:
+        if len(phone) == 10:
             raise Exception("Please include your country code")
-        if phone.length == 7:
+        if len(phone) == 7:
             raise Exception("Please include your country and area codes")
-        if phone.length != 11:
+        if len(phone) > 12:
             raise Exception("Please enter a valid phone number")
         tempDigit = True
         for number in phone:
-            if not number.isnumeric():
+            if not number.isnumeric() or not "-":
                 tempDigit = False
-            if tempDigit:
+            if not tempDigit:
                 raise Exception("Phone Number Invalid")
         return True
 
