@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ModelForm, forms
+from django.contrib import admin
 
 
 # defining three user roles for our app
@@ -26,6 +27,7 @@ class User(models.Model):
     address = models.CharField(max_length=300, default="")
     phone = models.CharField(max_length=14, default="")
     active = models.BooleanField
+    forget_password_token = models.CharField(max_length=100, default="")
 
 
 class Jobsite(models.Model):
