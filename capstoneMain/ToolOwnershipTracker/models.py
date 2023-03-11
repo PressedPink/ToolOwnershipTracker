@@ -1,7 +1,6 @@
 from django.db import models
 from django.forms import ModelForm, forms
 
-
 # defining three user roles for our app
 from capstoneMain.ToolOwnershipTracker.classes.Toolbox import Toolbox
 
@@ -34,10 +33,16 @@ class Jobsite(models.Model):
     owner = models.CharField(User, on_delete=models.CASCADE, null=False)
     title = models.CharField(max_length=40)
     assigned = models.CharField(User, on_delete=models.CASCADE, null=True)
-    toolbox = models.CharField(Toolbox,on_delete=models.CASCADE,null=False)
+    toolbox = models.CharField(Toolbox, on_delete=models.CASCADE, null=False)
 
 
 class Toolbox(models.Model):
     id = models.ForeignKey(unique=True, primary_key=True)
     tools = models.CharField(User, on_delete=models.CASCADE, null=True)
     owner = models.CharField(User, on_delete=models.CASCADE, null=False)
+
+
+class Tool(models.Model):
+    id = models.ForeignKey(unique=True, primary_key=True)
+    jobsite = models.CharField(Jobsite, on_delete=models.CASCADE, null=True)
+    user = models.CharField(User, on_delete=models.CASCADE, null=True)
