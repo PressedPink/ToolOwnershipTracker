@@ -1,5 +1,5 @@
 from capstoneMain.ToolOwnershipTracker.Users import User
-from capstoneMain.ToolOwnershipTracker.classes import Jobsite
+from capstoneMain.ToolOwnershipTracker.classes import Jobsite, Toolbox
 
 
 def Tool():
@@ -40,5 +40,6 @@ def Tool():
     def changeLocation(self, owner, jobsite):
         unassignToolJobsite(self)
         isUnassigned(self, owner, jobsite)
+        Toolbox.isValidJobsite()
         self.jobsite = jobsite
         self.save()
