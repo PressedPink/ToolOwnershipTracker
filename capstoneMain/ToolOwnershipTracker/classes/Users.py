@@ -5,7 +5,7 @@ import re
 #import capstoneMain.ToolOwnershipTracker.models
 
 
-class User():
+class UserClass():
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
         self.checkFirstName(self, firstName)
