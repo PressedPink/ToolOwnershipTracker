@@ -3,6 +3,7 @@ from django.forms import ModelForm, forms
 
 
 # defining three user roles for our app
+from capstoneMain.ToolOwnershipTracker.classes.Toolbox import Toolbox
 
 
 class UserType(models.TextChoices):
@@ -33,6 +34,7 @@ class Jobsite(models.Model):
     owner = models.CharField(User, on_delete=models.CASCADE, null=False)
     title = models.CharField(max_length=40)
     assigned = models.CharField(User, on_delete=models.CASCADE, null=True)
+    toolbox = models.CharField(Toolbox,on_delete=models.CASCADE,null=False)
 
 
 class Toolbox(models.Model):
