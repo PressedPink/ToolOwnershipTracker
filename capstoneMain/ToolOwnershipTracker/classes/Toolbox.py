@@ -1,5 +1,4 @@
 from capstoneMain.ToolOwnershipTracker.Jobsite import Jobsite
-
 from capstoneMain.ToolOwnershipTracker.classes import Tool
 
 
@@ -19,6 +18,7 @@ def Toolbox():
 
     def addTool(self, tool):
         Tool.isUnassigned(self, tool)
+        self.tools.add(tool)
 
     def removeTool(self, tool):
         Tool.isUnassigned(self, tool)
