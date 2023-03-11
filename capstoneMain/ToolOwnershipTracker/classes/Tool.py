@@ -20,11 +20,11 @@ def Tool():
 
     def changeUser(self, owner):
         unassignToolUser(self)
-        checkValidAssignment(self,owner)
+        checkValidAssignment(self, owner)
         self.owner = owner
         self.save()
 
-    def checkValidAssignment(self,owner):
+    def checkValidAssignment(self, owner):
         test = list(map(str, Jobsite.objects.filter(assigned=owner)))
         if not test.contains(owner):
             raise Exception("This user does not have access to this Jobsite and Tools")
