@@ -15,6 +15,22 @@ def Tool():
             raise Exception("This tool is already in another jobsite's toolbox")
         return True
 
-    def changeUser():
+    def changeUser(self, owner):
+        unassignToolUser(self)
+        self.owner=owner
+        self.save()
 
-    def changeLocation():
+
+    def unassignToolUser(self):
+        self.remove.owner()
+        self.save()
+
+    def unassignToolJobsite(self):
+        self.remove.jobsite()
+        self.save()
+
+    def changeLocation(self,owner, jobsite):
+        unassignToolJobsite(self)
+        isUnassigned(self,owner,jobsite)
+        self.jobsite=jobsite
+        self.save()
