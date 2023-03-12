@@ -1,0 +1,25 @@
+{% block content %}
+    <div class="content">
+        <div class="table">
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jobsite</th>
+                        <th>Address</th>
+                        <th>Supervisor</th>
+                        <th>Worker Number</th>
+                    </tr>
+                </thead>
+                {% for i in worksite %}
+                    <tr>
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.address }}</td>
+                        <td>{{ i.supervisor }}</td>
+                        <td>{{ i.workerNumber }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
