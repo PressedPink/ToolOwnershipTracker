@@ -11,12 +11,11 @@
                         <th>Worker Number</th>
                     </tr>
                 </thead>
-                {% for i in worksite %}
+                {% for i in jobsites %}
                     <tr>
-                        <td>{{ i.name }}</td>
-                        <td>{{ i.address }}</td>
-                        <td>{{ i.supervisor }}</td>
-                        <td>{{ i.workerNumber }}</td>
+                        <td>{{ i.owner }}</td>
+                        <td>{{ i.title }}</td>
+                        <td>{{ i.assigned }}</td>
                     </tr>
                 {% endfor %}
             </table>
