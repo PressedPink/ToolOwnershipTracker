@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Change Password</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+  </head>
+<body>
+  <div class="container">
+    <section class="mx-auto my-5" style="max-width: 23rem;">
+      <div class="pages card-body rounded-top">
+        {% if error_message %}
+          <div class="alert alert-danger">{{ error_message }}</div>
+        {% endif %}
+        <form action="{% url 'create_jobsite'%}" method="post" class="text-center">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="Title" required>
+          </div>
+          <div class="form-group">
+            <label for="owner">Owner</label>
+            <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="Owner" required>
+          </div>
+          <br>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
