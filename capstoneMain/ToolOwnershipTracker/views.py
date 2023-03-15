@@ -21,6 +21,10 @@ class helpers():
             return False
         else:
             return True
+    def logout(self, request):
+        request.clear.Sessions(self)
+        self.active = False
+        return True
 
 
 class SignUp(View):

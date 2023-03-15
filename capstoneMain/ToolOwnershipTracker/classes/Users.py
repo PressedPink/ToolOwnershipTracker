@@ -122,11 +122,6 @@ class UserClass():
         self.active = True
         return True
 
-    def logout(self, request):
-        request.clear.Sessions(self)
-        self.active = False
-        return True
-
     def editFirstName(self, firstName):
         if self.checkFirstName(self, firstName):
             self.firstName = firstName
