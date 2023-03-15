@@ -21,9 +21,8 @@ class helpers():
             return False
         else:
             return True
-    def logout(self, request):
-        request.clear.Sessions(self)
-        self.active = False
+    def logout(request):
+        request.session.flush()
         return True
 
 
@@ -54,8 +53,8 @@ class SignUp(View):
 class Profile(View):
     def get(self, request):
 
-        if helpers.redirectIfNotLoggedIn(request):
-            return redirect("/")
+       # if helpers.redirectIfNotLoggedIn(request):
+       #     return redirect("/")
 
         a = request.session["username"]
         b = User.objects.get(email=a)

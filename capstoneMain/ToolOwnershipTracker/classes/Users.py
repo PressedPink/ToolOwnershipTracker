@@ -109,19 +109,6 @@ class UserClass():
             raise Exception("Passwords do not Match")
         return True
 
-    def clearSessions(self):
-        # todo clear all active sessions, set active to false
-        return True
-
-    def login(self, email, password):
-        if self.email.upper() is not email.upper():
-            raise Exception("Email is not valid")
-        if self.password is not hashlib.md5(password):
-            raise Exception("Password is not correct")
-        self.clearSessions(self)
-        self.active = True
-        return True
-
     def editFirstName(self, firstName):
         if self.checkFirstName(self, firstName):
             self.firstName = firstName
