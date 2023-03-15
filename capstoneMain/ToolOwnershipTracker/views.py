@@ -57,8 +57,6 @@ class Login(View):
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
             badPassword = (user.password != password)
-            #badPassword = UserClass.checkPassword(user, request.POST['InputPassword'])
-            print(badPassword)
         except Exception as e:
             noSuchUser = True
 
