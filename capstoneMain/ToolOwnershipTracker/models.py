@@ -1,6 +1,6 @@
 from django.db import models
 from django.forms import ModelForm, forms
-
+from django.contrib import admin
 
 # defining three user roles for our app
 
@@ -10,10 +10,7 @@ class UserType(models.TextChoices):
     Admin = "A"
     User = "U"
 
-
-# defines the user model, which contains the following fields: username, password, accountType, email, address,
-# phone number and active status
-
+# defines the user model, which contains the following fields: username, password, accountType, email, address and phone number
 
 class User(models.Model):
     firstName = models.CharField(max_length=20)
@@ -25,11 +22,9 @@ class User(models.Model):
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
     phone = models.CharField(max_length=14, default="")
-    active = models.BooleanField
+    forget_password_token = models.CharField(max_length=100, default="")
 
 
 class Jobsite(models.Model):
-    id = models.ForeignKey(unique=True, primary_key=True)
-    owner = models.CharField(User, on_delete=models.CASCADE, null=False)
+    owner = models.CharField(max_length=40)
     title = models.CharField(max_length=40)
-    assigned = models.CharField(User, on_delete=models.CASCADE, null=True)
