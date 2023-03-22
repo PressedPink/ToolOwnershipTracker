@@ -15,7 +15,7 @@ class UserTestForgotPassword(TestCase):
                       phoneNumber="14141234567")
         myuser.save()
 
-    def testForgotPassword(self):
+    def test_ForgotPassword(self):
         oldToken = User.get(email="email1@gmail.com").forgot_password_token
         resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
         self.assertRedirects(resp, "password_reset/")
@@ -50,7 +50,7 @@ class SuperForgotPassword(TestCase):
                             phoneNumber="12621234567")
         mysupervisor.save()
 
-    def testForgotPassword(self):
+    def test_ForgotPassword(self):
         oldToken = User.get(email="email2@gmail.com").forgot_password_token
         resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
         self.assertRedirects(resp, "password_reset/")
@@ -85,7 +85,7 @@ class AdminForgotPassword(TestCase):
                        phoneNumber="14147654321")
         myadmin.save()
 
-    def testForgotPassword(self):
+    def test_ForgotPassword(self):
         oldToken = User.get(email="email3@gmail.com").forgot_password_token
         resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
         self.assertRedirects(resp, "password_reset/")

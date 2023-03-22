@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="First Edit">
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Third Edit. ForgotPasswordTests.py completed, just need to be looked over">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/ForgotPasswordTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/ForgotPasswordTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testEditUser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/ForgotPasswordTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogout.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,21 +34,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Python tests.Python tests for EditUserTests.TestEditUserSuccess">
-    <configuration name="Python tests for EditUserTests.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+}]]></component>
+  <component name="RunManager" selected="Python tests.Python tests in testLogin.py">
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -57,11 +60,11 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;EditUserTests.TestEditUserSuccess&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -72,14 +75,62 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;EditUserTests.TestEditUserSuccess.test_edit_user_phone&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in AcceptanceTests" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in testLogin.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogin.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess" />
-        <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" />
+        <item itemvalue="Python tests.Python tests in testLogin.py" />
+        <item itemvalue="Python tests.Python tests in AcceptanceTests" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone" />
       </list>
     </recent_temporary>
   </component>
@@ -100,7 +151,7 @@
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2145000" />
       <workItem from="1678844097536" duration="1852000" />
-      <workItem from="1679514902585" duration="2192000" />
+      <workItem from="1679514902585" duration="4483000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -165,7 +216,21 @@
       <option name="project" value="LOCAL" />
       <updated>1679515039895</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Second Edit">
+      <created>1679517387927</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1679517387927</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Third Edit. ForgotPasswordTests.py completed, just need to be looked over">
+      <created>1679518217442</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1679518217442</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,9 +256,11 @@
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
     <MESSAGE value="Minor changes to Login/Logout tests. Finished EditUserTests.py" />
     <MESSAGE value="First Edit" />
-    <option name="LAST_COMMIT_MESSAGE" value="First Edit" />
+    <MESSAGE value="Second Edit" />
+    <MESSAGE value="Third Edit. ForgotPasswordTests.py completed, just need to be looked over" />
+    <option name="LAST_COMMIT_MESSAGE" value="Third Edit. ForgotPasswordTests.py completed, just need to be looked over" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1678065930586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+    <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679519284692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
   </component>
 </project>
