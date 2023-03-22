@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Progress on EditUserTests.py, almost finished.">
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Minor changes to Login/Logout tests. Finished EditUserTests.py">
+      <change afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/ForgotPasswordTests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +97,8 @@
       <workItem from="1677805376906" duration="2296000" />
       <workItem from="1678065429638" duration="2324000" />
       <workItem from="1678136717254" duration="3133000" />
-      <workItem from="1678249386419" duration="2097000" />
+      <workItem from="1678249386419" duration="2145000" />
+      <workItem from="1678844097536" duration="1852000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -150,7 +149,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678139790703</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Minor changes to Login/Logout tests. Finished EditUserTests.py">
+      <created>1678251511146</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1678251511146</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -163,7 +169,8 @@
     <MESSAGE value="Minor fixes to Login and Logout tests. Progress towards finishing EditUserTests for admins" />
     <MESSAGE value="Need some feedback on how my tests look so far" />
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
-    <option name="LAST_COMMIT_MESSAGE" value="Progress on EditUserTests.py, almost finished." />
+    <MESSAGE value="Minor changes to Login/Logout tests. Finished EditUserTests.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor changes to Login/Logout tests. Finished EditUserTests.py" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1678065930586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
