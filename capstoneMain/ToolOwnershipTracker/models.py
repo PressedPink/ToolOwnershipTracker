@@ -21,7 +21,7 @@ class User(models.Model):
     # set to 32 for size of MD5 Hash
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
-    phone = models.CharField(max_length=14, default="")
+    phoneNumber = models.CharField(max_length=14, default="")
     forget_password_token = models.CharField(max_length=100, default="")
 
 
