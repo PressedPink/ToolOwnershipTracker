@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from capstoneMain.ToolOwnershipTracker.models import User
 
 
-class UserTestForgotPassword(TestCase):
+class TestUserForgotPassword(TestCase):
 
     def setup(self):
         self.testClient = Client()
@@ -37,7 +37,7 @@ class UserTestForgotPassword(TestCase):
         self.assertEqual(updatedUserPassword, "newpass", msg="New password did not update correctly")
 
 
-class SuperForgotPassword(TestCase):
+class TestSuperForgotPassword(TestCase):
 
     def setup(self):
         self.testClient = Client()
@@ -72,7 +72,7 @@ class SuperForgotPassword(TestCase):
         self.assertEqual(updatedSuperPassword, "newpass", msg="New password did not update correctly")
 
 
-class AdminForgotPassword(TestCase):
+class TestAdminForgotPassword(TestCase):
 
     def setup(self):
         self.testClient = Client()
@@ -105,3 +105,68 @@ class AdminForgotPassword(TestCase):
 
         updatedUserPassword = User.get(email="email3@gmail.com").password
         self.assertEqual(updatedUserPassword, "newpass", msg="New password did not update correctly")
+
+
+class TestForgotPasswordFailure(TestCase):
+
+    def setup(self):
+        self.testClient = Client()
+        myuser = User(firstName="userfirst",
+                      lastName="userlast",
+                      email="email1@gmail.com",
+                      role="U",
+                      password="userpass",
+                      address="123 N Road St",
+                      phoneNumber="14141234567")
+        myuser.save()
+
+    def test_forgot_password_empty(self):
+        oldToken = User.get(email="email1@gmail.com").forgot_password_token
+        resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
+        self.assertRedirects(resp, "password_reset/")
+        resp = self.testClient.post("password_reset/", {"Email": "email1@gmail.com"}, follow=True)
+        self.assertRedirects(resp, "password_reset_sent/")
+
+        newToken = User.get(email="email1@gmail.com").forgot_password_token
+        self.assertNotEqual(oldToken, newToken)
+        passResetForm = "password_reset_form/" + newToken + "/"
+        resp = self.testClient.post(passResetForm, {"Email": "email1@gmail.com", "Password": "",
+                                                    "Confirm Password": ""}, follow=True)
+        self.assertRedirects(resp, passResetForm)
+        # Make sure password did not change
+        self.assertEqual("userpass", User.get(email="email1@gmail.com").password,
+                         msg="Password changed when it shouldn't have")
+
+    def test_password_not_matching(self):
+        oldToken = User.get(email="email1@gmail.com").forgot_password_token
+        resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
+        self.assertRedirects(resp, "password_reset/")
+        resp = self.testClient.post("password_reset/", {"Email": "email1@gmail.com"}, follow=True)
+        self.assertRedirects(resp, "password_reset_sent/")
+
+        newToken = User.get(email="email1@gmail.com").forgot_password_token
+        self.assertNotEqual(oldToken, newToken)
+        passResetForm = "password_reset_form/" + newToken + "/"
+        resp = self.testClient.post(passResetForm, {"Email": "email1@gmail.com", "Password": "newpass",
+                                                    "Confirm Password": "passnew"}, follow=True)
+        self.assertRedirects(resp, passResetForm)
+        # Make sure password did not change
+        self.assertEqual("userpass", User.get(email="email1@gmail.com").password,
+                         msg="Password changed when it shouldn't have")
+
+    def test_email_not_matching(self):
+        oldToken = User.get(email="email1@gmail.com").forgot_password_token
+        resp = self.testClient.post("login/", {"Submit": "Forgot Password"}, follow=True)
+        self.assertRedirects(resp, "password_reset/")
+        resp = self.testClient.post("password_reset/", {"Email": "email1@gmail.com"}, follow=True)
+        self.assertRedirects(resp, "password_reset_sent/")
+
+        newToken = User.get(email="email1@gmail.com").forgot_password_token
+        self.assertNotEqual(oldToken, newToken)
+        passResetForm = "password_reset_form/" + newToken + "/"
+        resp = self.testClient.post(passResetForm, {"Email": "otheremail@gmail.com", "Password": "newpass",
+                                                    "Confirm Password": "newpass"}, follow=True)
+        self.assertRedirects(resp, passResetForm)
+        # Make sure password did not change
+        self.assertEqual("userpass", User.get(email="email1@gmail.com").password,
+                         msg="Password changed when it shouldn't have")

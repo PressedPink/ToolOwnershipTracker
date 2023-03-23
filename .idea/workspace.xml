@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Third Edit. ForgotPasswordTests.py completed, just need to be looked over">
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Renamed test files. Trying to get tests to run">
+      <change afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testUserSignUp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testEditUser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/ForgotPasswordTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,20 +32,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\conno\PycharmProjects\ToolOwnershipTracker\ToolOwnershipTracker" />
+      <recent name="C:\Users\conno\PycharmProjects\ToolOwnershipTracker\capstoneMain\ToolOwnershipTracker" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python tests.Python tests in testLogin.py">
     <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
@@ -151,7 +155,8 @@
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2145000" />
       <workItem from="1678844097536" duration="1852000" />
-      <workItem from="1679514902585" duration="4483000" />
+      <workItem from="1679514902585" duration="5923000" />
+      <workItem from="1679528043048" duration="4512000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -230,7 +235,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679518217442</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Renamed test files. Trying to get tests to run">
+      <created>1679519646843</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1679519646843</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,9 +270,10 @@
     <MESSAGE value="First Edit" />
     <MESSAGE value="Second Edit" />
     <MESSAGE value="Third Edit. ForgotPasswordTests.py completed, just need to be looked over" />
-    <option name="LAST_COMMIT_MESSAGE" value="Third Edit. ForgotPasswordTests.py completed, just need to be looked over" />
+    <MESSAGE value="Renamed test files. Trying to get tests to run" />
+    <option name="LAST_COMMIT_MESSAGE" value="Renamed test files. Trying to get tests to run" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679519284692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+    <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679520752009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/AcceptanceTests" />
   </component>
 </project>
