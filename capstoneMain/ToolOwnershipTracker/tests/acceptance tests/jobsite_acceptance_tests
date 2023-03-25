@@ -1,3 +1,13 @@
 from django.test import TestCase, Client
 import capstoneMain.ToolOwnershipTracker.models
 
+class checkTitleTests(TestCase):
+    def setup(self):
+        tempTitle="test"
+
+    def testPositiveWithTitle(self):
+        assertIsTrue(checkTitle(self,tempTitle))
+
+    def testNegativeWithoutTitle(self):
+        self.assertRaises(Exception):
+            checkTitle(self, "")
