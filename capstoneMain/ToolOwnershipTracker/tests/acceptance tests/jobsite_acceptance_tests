@@ -103,4 +103,16 @@ class removeUserTests(TestCase):
         assertRaises(Exception):
             removeUser(tempJobsiteWithoutUsers,tempUser)
 
+class isValidTests(TestCase):
+    def setup(self):
+        tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
+        tempUser.save()
 
+    def testPositive(self):
+        assertIsTrue(self,tempUser.email)
+
+    def testNegativeWithNothing(self)
+        assertIsFalse(self,"")
+
+    def testNegativeWithFalseEmail(self):
+        assertIsFalse(self,"fakeEmail")
