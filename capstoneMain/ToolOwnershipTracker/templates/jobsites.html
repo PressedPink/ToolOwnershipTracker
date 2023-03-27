@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="UTF-8">
+      <title>Jobsites</title>
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
+  </head>
+  <body>
+    <div class="text-center align-middle">
+        <h1>Jobsites</h1>
+    </div>
+    
+    <div class="row justify-content-center" >
+        
+    <div class="col-auto">
+        <table class = "table table-responsive">
+            <thead class="thead-light">
+                <tr class="text-left">
+                    <th>ID</th>
+                    <th>Owner</th>
+                    <th>Title</th>
+                    <th>Assigned To</th>
+
+                </tr>
+            </thead>
+
+
+            <tbody>
+                {% for row in jobsites %}
+                    <tr class="text-left">
+                        <td>{{ row.id }}</td>
+
+                        <td>{{ row.owner.firstName }}</td>
+                        <td>{{ row.title }}</td>
+                        <td>{{ row.assigned.firstName }}</td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+
+
+        </table>
+        </div>
+    </div>
+      
+  </body>
+</html>
