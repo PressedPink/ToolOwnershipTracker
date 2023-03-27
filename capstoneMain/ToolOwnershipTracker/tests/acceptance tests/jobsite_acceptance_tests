@@ -3,6 +3,8 @@ import capstoneMain.ToolOwnershipTracker.models
 
 class checkTitleTests(TestCase):
     def setup(self):
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite.save()
         tempTitle="test"
 
     def testPositiveWithTitle(self):
@@ -15,6 +17,8 @@ class checkTitleTests(TestCase):
 
 class assignOwnerTests(TestCase):
     def setup(self):
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite.save()
         tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
         tempUser.save()
 
@@ -28,6 +32,8 @@ class assignOwnerTests(TestCase):
 
 class addUserTests(TestCase):
      def setup(self):
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite.save()
         tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
         tempUser.save()
 
@@ -43,7 +49,7 @@ class addUserTests(TestCase):
 
 class changeTitleTests(TestCase):
       def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = tempUser, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
         tempJobsite.save()
 
       def TestPositive(self):
@@ -55,3 +61,19 @@ class changeTitleTests(TestCase):
         assertEquals(tempJobsite.title,"test")
         assertRaises(Exception):
             changeTitle(tempJobsite,"")
+
+class removeJobsiteTest(TestCase):
+     def setup(self):
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite.save()
+        tempJobsiteWithUser = Jobsite(id = "1", owner = tempUser, title = "test", assigned = tempUser, toolbox = tempToolbox)
+        tempJobsiteWithUser.save()
+
+    def testPositiveWithNoUsers(self):
+        assertIsTrue(removeJobsite(tempJobsite))
+
+    def testNegativeWithUsers(self):
+        assertIsFalse(removeJobsite(tempJobsiteWithUser))
+        assertRaises(Exception):
+            removeJobsite(tempJobsiteWithUser)
+        assertEquals(tempJobsiteWithUser.id, 1)
