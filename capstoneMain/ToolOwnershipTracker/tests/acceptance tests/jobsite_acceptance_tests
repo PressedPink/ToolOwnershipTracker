@@ -3,7 +3,7 @@ import capstoneMain.ToolOwnershipTracker.models
 
 class checkTitleTests(TestCase):
     def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsite.save()
         tempTitle="test"
 
@@ -17,7 +17,7 @@ class checkTitleTests(TestCase):
 
 class assignOwnerTests(TestCase):
     def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsite.save()
         tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
         tempUser.save()
@@ -32,7 +32,7 @@ class assignOwnerTests(TestCase):
 
 class addUserTests(TestCase):
      def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsite.save()
         tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
         tempUser.save()
@@ -49,7 +49,7 @@ class addUserTests(TestCase):
 
 class changeTitleTests(TestCase):
       def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsite.save()
 
       def TestPositive(self):
@@ -64,7 +64,7 @@ class changeTitleTests(TestCase):
 
 class removeJobsiteTest(TestCase):
      def setup(self):
-        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsite.save()
         tempJobsiteWithUser = Jobsite(id = "1", owner = tempUser, title = "test", assigned = [tempUser], toolbox = tempToolbox)
         tempJobsiteWithUser.save()
@@ -86,7 +86,7 @@ class removeUserTests(TestCase):
         tempUser.save()
         tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = [tempUser], toolbox = tempToolbox)
         tempJobsite.save()
-        tempJobsiteWithoutUsers = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsiteWithoutUsers = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
         tempJobsiteWithoutUsers.save()
 
     def testPositive(self):
@@ -116,3 +116,19 @@ class isValidTests(TestCase):
 
     def testNegativeWithFalseEmail(self):
         assertIsFalse(self,"fakeEmail")
+
+class addToolTests(TestCase):
+    def setup(self):
+        tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
+        tempUser.save()
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
+        tempJobsite.save()
+        tempToolbox = Toolbox(id="1",tools = null, owner = tempUser, jobsite = tempJobsite)
+        tempTool = Tool(id="1",toolbox = tempToolbox)
+
+    def testPositive(self):
+        assertIsIn(tempTool, tempToolbox.tools):
+            addTool(tempJobsite, tempTool)
+    def testNegative(self)
+        assertIsNotIn(tempTool, tempToolbox.tools):
+            addTool(tempJobsite, "faketool")

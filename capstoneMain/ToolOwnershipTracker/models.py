@@ -40,9 +40,11 @@ class Toolbox(models.Model):
     id = models.ForeignKey(unique=True, primary_key=True)
     tools = models.CharField(User, on_delete=models.CASCADE, null=True)
     owner = models.CharField(User, on_delete=models.CASCADE, null=False)
+    jobsite = models.CharField(Jobsite, on_delete=models.CASCADE, null=True)
+
 
 
 class Tool(models.Model):
     id = models.ForeignKey(unique=True, primary_key=True)
-    jobsite = models.CharField(Jobsite, on_delete=models.CASCADE, null=True)
+    toolbox = models.CharField(Toolbox, on_delete=models.CASCADE, null=True)
     user = models.CharField(User, on_delete=models.CASCADE, null=True)
