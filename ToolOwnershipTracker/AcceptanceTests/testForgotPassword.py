@@ -12,7 +12,8 @@ class TestUserForgotPassword(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
     def test_ForgotPassword(self):
@@ -47,7 +48,8 @@ class TestSuperForgotPassword(TestCase):
                             role="S",
                             password="superpass",
                             address="456 N Road St",
-                            phoneNumber="12621234567")
+                            phone="12621234567",
+                            active=False)
         mysupervisor.save()
 
     def test_ForgotPassword(self):
@@ -82,7 +84,8 @@ class TestAdminForgotPassword(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
     def test_ForgotPassword(self):
@@ -117,7 +120,8 @@ class TestForgotPasswordFailure(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
     def test_forgot_password_empty(self):

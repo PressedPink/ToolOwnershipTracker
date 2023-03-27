@@ -12,7 +12,8 @@ class TestLoginSuccess(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
         mysupervisor = User(firstName="superfirst",
@@ -21,7 +22,8 @@ class TestLoginSuccess(TestCase):
                             role="S",
                             password="superpass",
                             address="456 N Road St",
-                            phoneNumber="12621234567")
+                            phone="12621234567",
+                            active=False)
         mysupervisor.save()
 
         myadmin = User(firstName="adminfirst",
@@ -30,23 +32,27 @@ class TestLoginSuccess(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
     def test_user_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "userpass"}, follow=True)
         self.assertRedirects(resp, "/userhome/")
         self.assertEqual(resp.session["email"], "email1@gmail.com", msg="Session key not equal to User's email")
+        self.assertTrue(User.objects.get(email="email1@gmail.com").active)
 
     def test_supervisor_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email2@gmail.com", "Inputpassword": "superpass"}, follow=True)
         self.assertRedirects(resp, "/superhome/")
         self.assertEqual(resp.session["email"], "email2@gmail.com", msg="Session key not equal to User's email")
+        self.assertTrue(User.objects.get(email="email2@gmail.com").active)
 
     def test_admin_login(self):
         resp = self.testClient.post("login/", {"Inputemail": "email3@gmail.com", "Inputpassword": "adminpass"}, follow=True)
         self.assertRedirects(resp, "/adminhome/")
         self.assertEqual(resp.session["email"], "email3@gmail.com", msg="Session key not equal to User's email")
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
 
 
 class TestLoginFailure(TestCase):
@@ -59,7 +65,8 @@ class TestLoginFailure(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
     def test_invalid_username(self):
@@ -71,3 +78,4 @@ class TestLoginFailure(TestCase):
         resp = self.testClient.post("login/", {"Inputemail": "email1@gmail.com", "Inputpassword": "notpass"}, follow=True)
         self.assertRedirects(resp, "login/")
         self.assertEqual(resp.context["message"], "username or password is incorrect")
+        self.assertFalse(User.objects.get(email="email1@gmail.com").active)

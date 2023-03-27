@@ -12,7 +12,8 @@ class TestEditUserSuccess(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
         myadmin = User(firstName="adminfirst",
@@ -21,13 +22,15 @@ class TestEditUserSuccess(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         # admin logs in to edit user info and supervisor info
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "adminpass"}, follow=True)
 
     def test_edit_user_first_name(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -39,6 +42,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
 
     def test_edit_user_last_name(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -50,6 +54,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
 
     def test_edit_user_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -61,6 +66,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.email, "newEmail@gmail.com")
 
     def test_edit_user_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -72,6 +78,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.role, "S", msg="Role not changed")
 
     def test_edit_user_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -83,6 +90,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.password, "newpassword", msg="Password not changed")
 
     def test_edit_user_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -94,17 +102,19 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkUser.address, "321 N Cramer St", msg="Address not changed")
 
     def test_edit_user_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/")
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
-        self.testClient.post("/email1@gmail.comInfo/edit", {"InputphoneNumber": "14140000000"}, follow=True)
+        self.testClient.post("/email1@gmail.comInfo/edit", {"Inputphone": "14140000000"}, follow=True)
         checkUser = User.get(email="email1@gmail.com")
-        self.assertEqual(checkUser.phoneNumber, "14140000000", msg="Phone not changed")
+        self.assertEqual(checkUser.phone, "14140000000", msg="Phone not changed")
 
     def test_edit_user_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -115,7 +125,7 @@ class TestEditUserSuccess(TestCase):
                                     {"InputfirstName": "John", "InputlastName": "Cena",
                                      "Inputemail": "newEmail@gmail.com", "Inputrole": "S",
                                      "Inputpassword": "newpass", "Inputaddress": "321 N Cramer St",
-                                     "InputphoneNumber": "14140000000"})
+                                     "Inputphone": "14140000000"})
         checkuser = User.get(email="newEmail@gmail.com")
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
@@ -123,7 +133,7 @@ class TestEditUserSuccess(TestCase):
         self.assertEqual(checkuser.role, "S", msg="Role not changed")
         self.assertEqual(checkuser.password, "newpass", msg="Password not changed")
         self.assertEqual(checkuser.address, "321 N Cramer St", msg="Address not changed")
-        self.assertEqual(checkuser.phoneNumber, "14140000000", msg="Phone not changed")
+        self.assertEqual(checkuser.phone, "14140000000", msg="Phone not changed")
 
 
 class TestEditUserFailure(TestCase):
@@ -136,7 +146,8 @@ class TestEditUserFailure(TestCase):
                       role="U",
                       password="userpass",
                       address="123 N Road St",
-                      phoneNumber="14141234567")
+                      phone="14141234567",
+                      active=False)
         myuser.save()
 
         myadmin = User(firstName="adminfirst",
@@ -145,12 +156,14 @@ class TestEditUserFailure(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "userpass"}, follow=True)
 
     def test_edit_user_missing_first(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -162,6 +175,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.firstName, "userfirst", "Name changed when shouldn't have")
 
     def test_edit_user_missing_last(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -173,6 +187,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.lastName, "userlast", "Name changed when shouldn't have")
 
     def test_edit_user_missing_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -184,6 +199,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.email, "email1@gmail.com", "Email changed when shouldn't have")
 
     def test_edit_user_missing_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -195,6 +211,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.role, "U", "Role changed when shouldn't have")
 
     def test_edit_user_missing_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -206,6 +223,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.password, "userpass", "Password changed when shouldn't have")
 
     def test_edit_user_missing_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -217,17 +235,19 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.address, "123 N Road St", "Address changed when shouldn't have")
 
     def test_edit_user_missing_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/")
         resp = self.testClient.post("/email1@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email1@gmail.comInfo/edit/")
-        self.testClient.post("/email1@gmail.comInfo/edit/", {"InputphoneNumber": ""})
+        self.testClient.post("/email1@gmail.comInfo/edit/", {"Inputphone": ""})
         checkuser = User.get(email="email1@gmail.com")
-        self.assertEqual(checkuser.phoneNumber, "14141234567", "Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "14141234567", "Phone changed when shouldn't have")
 
     def test_edit_user_missing_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email1@gmail.com"}, follow=True)
@@ -238,7 +258,7 @@ class TestEditUserFailure(TestCase):
                                     {"InputfirstName": "", "InputlastName": "",
                                      "Inputemail": "", "Inputrole": "",
                                      "Inputpassword": "", "Inputaddress": "",
-                                     "InputphoneNumber": ""})
+                                     "Inputphone": ""})
         checkuser = User.get(email="email1@gmail.com")
         self.assertEqual(checkuser.firstName, "userfirst", msg="Name changed when shouldn't have")
         self.assertEqual(checkuser.lastName, "userlast", msg="Name changed when shouldn't have")
@@ -246,7 +266,7 @@ class TestEditUserFailure(TestCase):
         self.assertEqual(checkuser.role, "U", msg="Role changed when shouldn't have")
         self.assertEqual(checkuser.password, "userpass", msg="Password changed when shouldn't have")
         self.assertEqual(checkuser.address, "123 N Road St", msg="Address changed when shouldn't have")
-        self.assertEqual(checkuser.phoneNumber, "14141234567", msg="Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "14141234567", msg="Phone changed when shouldn't have")
 
 
 class TestEditSuperSuccess(TestCase):
@@ -259,7 +279,8 @@ class TestEditSuperSuccess(TestCase):
                             role="S",
                             password="superpass",
                             address="456 N Road St",
-                            phoneNumber="12621234567")
+                            phone="12621234567",
+                            active=False)
         mysupervisor.save()
 
         myadmin = User(firstName="adminfirst",
@@ -268,12 +289,14 @@ class TestEditSuperSuccess(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "userpass"}, follow=True)
 
     def test_edit_super_first_name(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -285,6 +308,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
 
     def test_edit_super_last_name(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -296,6 +320,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
 
     def test_edit_super_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -307,6 +332,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.email, "newEmail@gmail.com")
 
     def test_edit_super_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -318,6 +344,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.role, "U", msg="Role not changed")
 
     def test_edit_super_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -329,6 +356,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.password, "newpass", msg="Password not changed")
 
     def test_edit_super_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -340,17 +368,19 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.address, "123 S Road St", msg="Address not changed")
 
     def test_edit_super_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/email2@gmail.comInfo/")
         resp = self.testClient.post("/email2@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email2@gmail.comInfo/edit/")
-        self.testClient.post("/email2@gmail.comInfo/edit", {"InputphoneNumber": "14140000000"}, follow=True)
+        self.testClient.post("/email2@gmail.comInfo/edit", {"Inputphone": "14140000000"}, follow=True)
         checkuser = User.get(email="email2@gmail.com")
-        self.assertEqual(checkuser.phoneNumber, "14140000000", msg="Phone not changed")
+        self.assertEqual(checkuser.phone, "14140000000", msg="Phone not changed")
 
     def test_edit_super_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -361,7 +391,7 @@ class TestEditSuperSuccess(TestCase):
                              {"InputfirstName": "John", "InputlastName": "Cena",
                               "Inputemail": "newEmail@gmail.com", "Inputrole": "S",
                               "Inputpassword": "newpass", "Inputaddress": "321 N Cramer St",
-                              "InputphoneNumber": "14140000000"})
+                              "Inputphone": "14140000000"})
         checkuser = User.get(email="newEmail@gmail.com")
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
@@ -369,7 +399,7 @@ class TestEditSuperSuccess(TestCase):
         self.assertEqual(checkuser.role, "S", msg="Role not changed")
         self.assertEqual(checkuser.password, "newpass", msg="Password not changed")
         self.assertEqual(checkuser.address, "321 N Cramer St", msg="Address not changed")
-        self.assertEqual(checkuser.phoneNumber, "14140000000", msg="Phone not changed")
+        self.assertEqual(checkuser.phone, "14140000000", msg="Phone not changed")
 
 
 class TestEditSuperFailure(TestCase):
@@ -382,7 +412,8 @@ class TestEditSuperFailure(TestCase):
                             role="S",
                             password="superpass",
                             address="456 N Road St",
-                            phoneNumber="12621234567")
+                            phone="12621234567",
+                            active=False)
         mysupervisor.save()
 
         myadmin = User(firstName="adminfirst",
@@ -391,12 +422,14 @@ class TestEditSuperFailure(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "userpass"}, follow=True)
 
     def test_edit_super_missing_first(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -408,6 +441,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.firstName, "superfirst", "Name changed when shouldn't have")
 
     def test_edit_super_missing_last(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -419,6 +453,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.lastName, "superlast", "Name changed when shouldn't have")
 
     def test_edit_super_missing_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -430,6 +465,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.email, "email2@gmail.com", "Email changed when shouldn't have")
 
     def test_edit_super_missing_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -441,6 +477,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.role, "S", "Role changed when shouldn't have")
 
     def test_edit_super_missing_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -452,6 +489,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.password, "superpass", "Password changed when shouldn't have")
 
     def test_edit_super_missing_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -463,17 +501,19 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.address, "456 N Road St", "Address changed when shouldn't have")
 
     def test_edit_super_missing_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/email2@gmail.comInfo/")
         resp = self.testClient.post("/email2@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/email2@gmail.comInfo/edit/")
-        self.testClient.post("/email2@gmail.comInfo/edit/", {"InputphoneNumber": ""})
+        self.testClient.post("/email2@gmail.comInfo/edit/", {"Inputphone": ""})
         checkuser = User.get(email="email2@gmail.com")
-        self.assertEqual(checkuser.phoneNumber, "12621234567", "Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "12621234567", "Phone changed when shouldn't have")
 
     def test_edit_super_missing_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "email2@gmail.com"}, follow=True)
@@ -484,7 +524,7 @@ class TestEditSuperFailure(TestCase):
                              {"InputfirstName": "", "InputlastName": "",
                               "Inputemail": "", "Inputrole": "",
                               "Inputpassword": "", "Inputaddress": "",
-                              "InputphoneNumber": ""})
+                              "Inputphone": ""})
         checkuser = User.get(email="email2@gmail.com")
         self.assertEqual(checkuser.firstName, "superfirst", msg="Name changed when shouldn't have")
         self.assertEqual(checkuser.lastName, "superlast", msg="Name changed when shouldn't have")
@@ -492,7 +532,7 @@ class TestEditSuperFailure(TestCase):
         self.assertEqual(checkuser.role, "S", msg="Role changed when shouldn't have")
         self.assertEqual(checkuser.password, "superpass", msg="Password changed when shouldn't have")
         self.assertEqual(checkuser.address, "456 N Road St", msg="Address changed when shouldn't have")
-        self.assertEqual(checkuser.phoneNumber, "12621234567", msg="Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "12621234567", msg="Phone changed when shouldn't have")
 
 
 class TestEditAdminSuccess(TestCase):
@@ -505,7 +545,8 @@ class TestEditAdminSuccess(TestCase):
                           role="A",
                           password="otherpass",
                           address="123 E Main St",
-                          phoneNumber="14140000000")
+                          phone="14140000000",
+                          active=False)
         otheradmin.save()
 
         myadmin = User(firstName="adminfirst",
@@ -514,12 +555,14 @@ class TestEditAdminSuccess(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "adminpass"}, follow=True)
 
     def test_edit_admin_first(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -531,6 +574,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
 
     def test_edit_admin_last(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -542,6 +586,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
 
     def test_edit_admin_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -553,6 +598,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.email, "newEmail@gmail.com")
 
     def test_edit_admin_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -564,6 +610,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.role, "S", msg="Role not changed")
 
     def test_edit_admin_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -575,6 +622,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.password, "newpass", msg="Password not changed")
 
     def test_edit_admin_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -586,17 +634,19 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.address, "456 S Road St", msg="Address not changed")
 
     def test_edit_admin_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/otheradmin@gmail.comInfo/")
         resp = self.testClient.post("/otheradmin@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/otheradmin@gmail.comInfo/edit/")
-        self.testClient.post("/otheradmin@gmail.comInfo/edit", {"InputphoneNumber": "14149999999"}, follow=True)
+        self.testClient.post("/otheradmin@gmail.comInfo/edit", {"Inputphone": "14149999999"}, follow=True)
         checkuser = User.get(email="otheradmin@gmail.com")
-        self.assertEqual(checkuser.phoneNumber, "14149999999", msg="Phone not changed")
+        self.assertEqual(checkuser.phone, "14149999999", msg="Phone not changed")
 
     def test_edit_admin_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -607,7 +657,7 @@ class TestEditAdminSuccess(TestCase):
                              {"InputfirstName": "John", "InputlastName": "Cena",
                               "Inputemail": "newEmail@gmail.com", "Inputrole": "U",
                               "Inputpassword": "newpass", "Inputaddress": "321 N Cramer St",
-                              "InputphoneNumber": "14149999999"})
+                              "Inputphone": "14149999999"})
         checkuser = User.get(email="newEmail@gmail.com")
         self.assertEqual(checkuser.firstName, "John", msg="Name not changed")
         self.assertEqual(checkuser.lastName, "Cena", msg="Name not changed")
@@ -615,7 +665,7 @@ class TestEditAdminSuccess(TestCase):
         self.assertEqual(checkuser.role, "U", msg="Role not changed")
         self.assertEqual(checkuser.password, "newpass", msg="Password not changed")
         self.assertEqual(checkuser.address, "321 N Cramer St", msg="Address not changed")
-        self.assertEqual(checkuser.phoneNumber, "14149999999", msg="Phone not changed")
+        self.assertEqual(checkuser.phone, "14149999999", msg="Phone not changed")
 
 
 class TestEditAdminFailure(TestCase):
@@ -628,7 +678,8 @@ class TestEditAdminFailure(TestCase):
                           role="A",
                           password="otherpass",
                           address="123 E Main St",
-                          phoneNumber="14140000000")
+                          phone="14140000000",
+                          active=False)
         otheradmin.save()
 
         myadmin = User(firstName="adminfirst",
@@ -637,12 +688,14 @@ class TestEditAdminFailure(TestCase):
                        role="A",
                        password="adminpass",
                        address="789 N Road St",
-                       phoneNumber="14147654321")
+                       phone="14147654321",
+                       active=False)
         myadmin.save()
 
         self.testClient.post("login/", {"email": "email3@gmail.com", "password": "adminpass"}, follow=True)
 
     def test_edit_admin_missing_first(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -654,6 +707,7 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.firstName, "otherfirst", "Name changed when shouldn't have")
 
     def test_edit_admin_missing_last(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -665,6 +719,7 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.lastName, "otherlast", "Name changed when shouldn't have")
 
     def test_edit_admin_missing_email(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -676,6 +731,7 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.email, "otheradmin@gmail.com", "Email changed when shouldn't have")
 
     def test_edit_admin_missing_role(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -687,6 +743,7 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.role, "A", "Role changed when shouldn't have")
 
     def test_edit_admin_missing_password(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -698,6 +755,7 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.password, "otherpass", "Password changed when shouldn't have")
 
     def test_edit_admin_missing_address(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -709,17 +767,19 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.address, "123 E Main St", "Address changed when shouldn't have")
 
     def test_edit_admin_missing_phone(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
         self.assertRedirects(resp, "/otheradmin@gmail.comInfo/")
         resp = self.testClient.post("/otheradmin@gmail.comInfo/", {"Submit": "edit"}, follow=True)
         self.assertRedirects(resp, "/otheradmin@gmail.comInfo/edit/")
-        self.testClient.post("/otheradmin@gmail.comInfo/edit/", {"InputphoneNumber": ""})
+        self.testClient.post("/otheradmin@gmail.comInfo/edit/", {"Inputphone": ""})
         checkuser = User.get(email="otheradmin@gmail.com")
-        self.assertEqual(checkuser.phoneNumber, "14140000000", "Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "14140000000", "Phone changed when shouldn't have")
 
     def test_edit_admin_missing_all(self):
+        self.assertTrue(User.objects.get(email="email3@gmail.com").active)
         resp = self.testClient.post("/adminhome/", {"Submit": "/listofusers/"}, follow=True)
         self.assertRedirects(resp, "/listofusers/")
         resp = self.testClient.post("/listofusers/", {"Submit": "otheradmin@gmail.com"}, follow=True)
@@ -730,7 +790,7 @@ class TestEditAdminFailure(TestCase):
                              {"InputfirstName": "", "InputlastName": "",
                               "Inputemail": "", "Inputrole": "",
                               "Inputpassword": "", "Inputaddress": "",
-                              "InputphoneNumber": ""})
+                              "Inputphone": ""})
         checkuser = User.get(email="otheradmin@gmail.com")
         self.assertEqual(checkuser.firstName, "otherfirst", msg="Name changed when shouldn't have")
         self.assertEqual(checkuser.lastName, "otherlast", msg="Name changed when shouldn't have")
@@ -738,4 +798,4 @@ class TestEditAdminFailure(TestCase):
         self.assertEqual(checkuser.role, "A", msg="Role changed when shouldn't have")
         self.assertEqual(checkuser.password, "otherpass", msg="Password changed when shouldn't have")
         self.assertEqual(checkuser.address, "123 E Main St", msg="Address changed when shouldn't have")
-        self.assertEqual(checkuser.phoneNumber, "14140000000", msg="Phone changed when shouldn't have")
+        self.assertEqual(checkuser.phone, "14140000000", msg="Phone changed when shouldn't have")
