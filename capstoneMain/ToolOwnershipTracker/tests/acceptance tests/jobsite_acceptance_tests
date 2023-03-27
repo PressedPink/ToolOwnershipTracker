@@ -66,14 +66,41 @@ class removeJobsiteTest(TestCase):
      def setup(self):
         tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
         tempJobsite.save()
-        tempJobsiteWithUser = Jobsite(id = "1", owner = tempUser, title = "test", assigned = tempUser, toolbox = tempToolbox)
+        tempJobsiteWithUser = Jobsite(id = "1", owner = tempUser, title = "test", assigned = [tempUser], toolbox = tempToolbox)
         tempJobsiteWithUser.save()
 
     def testPositiveWithNoUsers(self):
         assertIsTrue(removeJobsite(tempJobsite))
+        assertRaises(RuntimeError):
+            tempJobsite.id = 0
 
     def testNegativeWithUsers(self):
         assertIsFalse(removeJobsite(tempJobsiteWithUser))
         assertRaises(Exception):
             removeJobsite(tempJobsiteWithUser)
         assertEquals(tempJobsiteWithUser.id, 1)
+
+class removeUserTests(TestCase):
+    def setup(self):
+        tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
+        tempUser.save()
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = [tempUser], toolbox = tempToolbox)
+        tempJobsite.save()
+        tempJobsiteWithoutUsers = Jobsite(id = "1", owner = tempUser, title = "test", assigned = NULL, toolbox = tempToolbox)
+        tempJobsiteWithoutUsers.save()
+
+    def testPositive(self):
+        assertIsTrue(removeUser(tempJobsite,tempUser)
+        assertNotIn(tempUser,tempJobsite.assigned)
+
+    def testNegativeWithFalseUser(self):
+        assertIsFalse(removeUser(tempJobsite, "fakeuser")
+        assertRaises(Exception):
+            removeUser(tempJobsite,"fakeuser")
+
+    def testNegativeWithNoUser(self):
+        assertIsFalse(removeUser(tempJobsiteWithoutUsers, tempUser)
+        assertRaises(Exception):
+            removeUser(tempJobsiteWithoutUsers,tempUser)
+
+
