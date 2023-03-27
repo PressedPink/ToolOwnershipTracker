@@ -132,3 +132,17 @@ class addToolTests(TestCase):
     def testNegative(self)
         assertIsNotIn(tempTool, tempToolbox.tools):
             addTool(tempJobsite, "faketool")
+
+class removeToolTests(TestCase):
+    def setup(self):
+        tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
+        tempUser.save()
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = null, toolbox = tempToolbox)
+        tempJobsite.save()
+        tempToolbox = Toolbox(id="1",tools = tempTool, owner = tempUser, jobsite = tempJobsite)
+        tempTool = Tool(id="1",toolbox = tempToolbox)
+
+    def testPositive(self):
+        assertIsNotIn(tempTool,tempJobsite.toolbox.tools)
+
+    #currently no negative to test as it doesnt throw exceptions
