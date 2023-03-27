@@ -9,5 +9,19 @@ class checkTitleTests(TestCase):
         assertIsTrue(checkTitle(self,tempTitle))
 
     def testNegativeWithoutTitle(self):
+        assertIsFalse(checkTitle(self,tempTitle))
         self.assertRaises(Exception):
             checkTitle(self, "")
+
+class assignOwnerTests(TestCase):
+    def setup(self):
+        tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
+        tempUser.save()
+
+    def testPositiveWithUser(self):
+        assertIsTrue(assignOwner(self,tempUser))
+
+    def testNegativeWithNoUser(self):
+        assertIsFalse(assignOwner(self, "fakeuser")
+        self.assertRaises(Exception):
+            assignOwner(self, "fakeuser")
