@@ -26,7 +26,7 @@ class assignOwnerTests(TestCase):
         self.assertRaises(Exception):
             assignOwner(self, "fakeuser")
 
-class addUserTest(TestCase):
+class addUserTests(TestCase):
      def setup(self):
         tempUser = User(firstName = "test", lastName = "test", email = "test", password = "test", address = "test", phone = "test")
         tempUser.save()
@@ -41,4 +41,17 @@ class addUserTest(TestCase):
 
      #TODO Jobsite does not currently check if the user already exists may cause duplicates
 
+class changeTitleTests(TestCase):
+      def setup(self):
+        tempJobsite = Jobsite(id = "1", owner = tempUser, title = "test", assigned = tempUser, toolbox = tempToolbox)
+        tempJobsite.save()
 
+      def TestPositive(self):
+        assertIsTrue(changeTitle(tempJobsite,"New Title")
+        assertEquals(tempJobsite.title,"New Title")
+
+      def TestNegative(self):
+        assertIsFalse(changeTitle(tempJobsite,"")
+        assertEquals(tempJobsite.title,"test")
+        assertRaises(Exception):
+            changeTitle(tempJobsite,"")
