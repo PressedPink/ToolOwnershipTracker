@@ -82,4 +82,22 @@ class addToolTests(TestCase):
 
 class removeToolTests(TestCase):
 
+    def setup(self):
+        tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+        tempUser.save()
+        tempToolbox = Toolbox(id="1", owner=tempUser)
+        tempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
+        tempJobsite.save()
+        tempTool = capstoneMain.Tool(id="1", toolbox=tempToolbox)
+
+    def testPositiveToolRemoval(self, tempTool, tempJobsite):
+        self.assertTrue(Jobsite.removeTool(tempJobsite,tempTool))
+
+    def testNegativeToolRemoval(self, tempTool, tempUser, tempJobsite):
+        tempTool.user = tempUser
+        tempTool.save(0)
+        self.assertRaises(Exception, Jobsite.removeTool(tempJobsite,tempTool))
+
+
 class editJobsiteTests(TestCase):

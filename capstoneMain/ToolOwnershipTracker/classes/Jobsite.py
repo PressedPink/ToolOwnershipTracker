@@ -55,8 +55,11 @@ def Jobsite():
         return True
 
     def removeTool(self, tool):
-        if containsTool(self, tool):
+        if containsTool(self, tool) and tool.user is None:
             self.toolbox.remove(tool)
+        if tool.user is not None:
+            raise Exception("This is assigned to a user")
+        return True
 
     def containsTool(self, tool):
         test = list(map(str, Jobsite.objects.filter(tool=tool)))
