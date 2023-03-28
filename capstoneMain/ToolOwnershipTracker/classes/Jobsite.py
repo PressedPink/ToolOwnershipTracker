@@ -52,6 +52,7 @@ def Jobsite():
         if not toolbox.validTool(tool):
             raise Exception("Tool does not exist")
         self.toolbox.add(tool)
+        return True
 
     def removeTool(self, tool):
         if containsTool(self, tool):
