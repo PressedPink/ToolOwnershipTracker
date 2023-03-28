@@ -18,9 +18,9 @@ import logging
 class helpers():
     def redirectIfNotLoggedIn(request):
         if request.session["username"] is None:
-            return False
-        else:
             return True
+        else:
+            return False
 
 
 class SignUp(View):

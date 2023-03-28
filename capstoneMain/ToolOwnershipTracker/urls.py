@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
-
+from django.urls import include
 
 import base
 from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites
 
 urlpatterns = [
+    path('', include('pwa.urls')),
     path('admin/', admin.site.urls),
     path('profile/', Profile.as_view()),
     path('password_reset/', PasswordReset.as_view(), name='password-reset'),
