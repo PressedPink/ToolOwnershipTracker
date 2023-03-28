@@ -60,3 +60,10 @@ def Jobsite():
             raise Exception("Tool does not exist")
             return False
         return True
+   
+    def containsUser(self, user):
+        test = list(map(str, Jobsite.objects.filter(user=user)))
+        if test.length == 0:
+            raise Exception("User does not exist")
+            return False
+        return True
