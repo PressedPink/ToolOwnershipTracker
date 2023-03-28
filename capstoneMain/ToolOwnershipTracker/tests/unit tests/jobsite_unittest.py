@@ -98,6 +98,3 @@ class removeToolTests(TestCase):
         tempTool.user = tempUser
         tempTool.save(0)
         self.assertRaises(Exception, Jobsite.removeTool(tempJobsite,tempTool))
-
-
-class editJobsiteTests(TestCase):
