@@ -33,6 +33,7 @@ def Jobsite():
         if self.toolbox.size > 0:
             raise Exception("Cannot remove jobsite until tools are returned")
         self.remove(self)
+        return True
 
     def removeUser(self, email):
         if self.owner == email:

@@ -43,6 +43,23 @@ class addJobsiteTests(TestCase):
 
 class removeJobsiteTests(TestCase):
 
+    def setup(self):
+        tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+        tempUser.save()
+        tempToolbox = Toolbox(id="1", owner=tempUser)
+        tempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
+        tempJobsite.save()
+
+
+    def testPositiveRemoval(self, tempUser, tempToolbox, tempJobsite):
+        self.assertTrue(Jobsite.removeJobsite(tempJobsite))
+
+    def testNegativeRemoval(self, tempUser, tempJobsite):
+        tempJobsite.assigned.add(tempUser)
+        self.assertRaises(Exception, Jobsite.removeJobsite(tempJobsite))
+
+
 class addToolTests(TestCase):
 
 class removeToolTests(TestCase):
