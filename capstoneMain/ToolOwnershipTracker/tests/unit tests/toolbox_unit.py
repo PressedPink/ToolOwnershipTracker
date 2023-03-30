@@ -35,7 +35,6 @@ class addToolTests(TestCase):
         tempJobsite.save()
         tempTool = Tool(id="1")
         tempTool.save()
-   c
 
     def addToolPositive(self):
         self.assertTrue(Toolbox.addTool(self.tempBox, self.tempTool))
@@ -53,6 +52,7 @@ class addToolTests(TestCase):
         self.tempTool.save()
         self.assertRaises(Exception, Toolbox.addTool(self.tempBox, self.tempTool))
 
+
 class removeAllTools(TestCase):
 
     def setup(self):
@@ -60,7 +60,7 @@ class removeAllTools(TestCase):
         tempUser.save()
         tempJobsite = Jobsite(id="1", owner=tempUser, title="test")
         tempJobsite.save()
-        tempTool = Tool(id="1", owner = tempJobsite.id)
+        tempTool = Tool(id="1", owner=tempJobsite.id)
         tempTool.save()
         tempBox = Toolbox(id="1", owner=self.admin)
         tempBox.save()
@@ -74,10 +74,10 @@ class removeAllTools(TestCase):
         self.assertTrue(Toolbox.removeAllTools(self.tempToolbox))
 
     def testNegativeToolIsAssigned(self):
-        self.tempTool.toolbox=self.tempUser.email
+        self.tempTool.toolbox = self.tempUser.email
         self.tempTool.save()
         self.tempToolbox.tools = None
         self.tempToolbox.save()
         self.tempToolbox.add(self.tempTool)
         self.tempToolbox.save()
-        self.assertRaises(Exception,Toolbox.removeAllTools(self.tempToolbox))
+        self.assertRaises(Exception, Toolbox.removeAllTools(self.tempToolbox))
