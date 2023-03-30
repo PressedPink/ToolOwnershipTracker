@@ -6,8 +6,8 @@ from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, Use
 def Jobsite():
     def createJobsite(self, title, owner):
         if checkTitle(self, title) and isValid(self, owner):
-            jobsite = Jobsite(owner = owner, titl = title)
-            tbox = Toolbox.createToolbox(jobsite = jobsite)
+            jobsite = Jobsite(owner=owner, title=title)
+            tbox = Toolbox.createToolbox(jobsite=jobsite)
             jobsite.save()
             tbox.save()
 
