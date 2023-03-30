@@ -53,7 +53,6 @@ def Jobsite():
             return True
         return False
 
-
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
         userType = list(map(str, User.objects.filter(email))).role
@@ -66,8 +65,10 @@ def Jobsite():
         return True
 
     def addTool(self, tool):
-        if not toolbox.validTool(tool):
+        test = list(map(str, Tool.objects.filter(id=tool)))
+        if test.length == 0:
             raise Exception("Tool does not exist")
+            return False
         self.toolbox.add(tool)
         return True
 
