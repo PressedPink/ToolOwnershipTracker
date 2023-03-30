@@ -41,12 +41,18 @@ def Jobsite():
     #removes all tools from jobsite's toolbox
     def removeAllTools(self):
 
+    def isInJobsite(self, email):
+        if not self.assigned.contains(email):
+            raise Exception("This user is not assigned to this jobsite")
+            return False
+        return True
+
     def removeUser(self, email):
-        if self.owner == email:
-            raise Exception("Cannot remove the owner")
-        if isValid:
-            self.assigned(email).delete()
-        raise Exception("That user is not on this jobsite")
+        if isInJobsite(self,email):
+            self.assigned.remove(email)
+            return True
+        return False
+
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
