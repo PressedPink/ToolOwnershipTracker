@@ -1,4 +1,4 @@
-from capstoneMain.ToolOwnershipTracker.Jobsite import Jobsite
+from capstoneMain.ToolOwnershipTracker.classes import Jobsite
 from capstoneMain.ToolOwnershipTracker.classes import Tool, Users
 from capstoneMain.ToolOwnershipTracker.models import User, Toolbox
 
@@ -45,14 +45,14 @@ def Toolbox():
     def removeTool(self, tool):
         if containsTool(self, tool) and tool.toolbox is None or tool.toolbox is self.id:
             self.toolbox.remove(tool)
-            tool.toolbox = None
+            Tool.unassignToolbox(tool)
         else:
             raise Exception("This is assigned to a user")
             return False
         return True
 
     def containsTool(self, tool):
-      if not self.tools.contains(tool):
+        if not self.tools.contains(tool):
             raise Exception("Tool does not exist")
             return False
         return True
