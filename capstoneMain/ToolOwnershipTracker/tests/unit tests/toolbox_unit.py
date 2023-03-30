@@ -6,15 +6,21 @@ from capstoneMain.ToolOwnershipTracker.models import Toolbox, Jobsite, User
 
 class addToolboxTests(TestCase):
     def setup(self):
-        self.admin = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
-        self.tempToolbox = Toolbox(id="1", tools=None, owner=admin)
-        self.tempTool = capstoneMain.Tool(id="1")
-        self.admin.save()
-        self.tempToolbox.save()
-        self.tempTool.save()
+        admin = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+        admin.save()
+        tempJobsite = Jobsite(id="1", owner=admin, title="test")
+        tempJobsite.save()
 
-    def addToolboxPositive(self):
-        self.assertTrue(Toolbox.createToolbox(self.tempToolbox, 1, self.admin))
+    def addToolboxPositiveWithUser(self):
+        self.assertTrue(Toolbox.createToolbox(self, self.admin.email))
 
-    def addToolboxNegative(self):
-        self.assertRaises(Exception,)
+    def addToolboxPositiveWithJobsite(self):
+        self.assertTrue(Toolbox.createToolbox(self, self.tempJobsite.id))
+
+    def addToolboxNegativeNoOwnerOrJobsite(self):
+        self.assertRaises(Exception, Toolbox.createToolbox(self, ""))
+
+    def addToolboxNegativeAlreadyExists(self):
+        tempBox = Toolbox(id="1", owner=self.admin)
+        tempBox.save()
+        self.assertRaises(Exception, Toolbox.createToolbox(self, self.admin.email))

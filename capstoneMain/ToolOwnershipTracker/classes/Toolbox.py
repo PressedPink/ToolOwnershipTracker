@@ -9,9 +9,11 @@ def Toolbox():
             ownerName = None
             jobsite = owner
         elif User.verifyEmailExists(owner):
-            ownerName = owner
-            jobsite = None
+            if not checkToolboxExists(self,owner):
+                ownerName = owner
+                jobsite = None
         else:
+            raise Exception("Toolbox MUST have a Owner or a Jobsite")
             return False
         newToolbox = Toolbox(owner=ownerName, jobsite=jobsite)
         newToolbox.save()
@@ -66,4 +68,10 @@ def Toolbox():
             if not removeTool(self, self.tool):
                 raise Exception("Unable to remove" + tools.id)
                 return False
+        return True
+
+    def checkToolboxExists(self,owner):
+        if self.owner.contains(owner):
+            raise Exception("That user already has a toolbox")
+            return False
         return True

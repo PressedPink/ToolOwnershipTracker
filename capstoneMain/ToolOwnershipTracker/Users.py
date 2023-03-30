@@ -5,8 +5,8 @@ from re import search
 from django.shortcuts import render, redirect
 from django.views import View
 from django.forms import models
+import capstoneMain.ToolOwnershipTracker.models
 
-import models
 
 
 class User():
@@ -120,7 +120,7 @@ class User():
         return True
 
     def editFirstName(self, firstName):
-        if checkFirstName(self,firstName):
+        if self.checkFirstName(self, firstName):
             self.firstName = firstName
             self.save()
 

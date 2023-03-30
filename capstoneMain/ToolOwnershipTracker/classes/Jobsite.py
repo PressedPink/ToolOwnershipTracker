@@ -1,4 +1,4 @@
-from capstoneMain.ToolOwnershipTracker.Users import User
+from capstoneMain.ToolOwnershipTracker.classes.Users import User
 from capstoneMain.ToolOwnershipTracker.classes import Toolbox
 from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, UserType, Tool
 
