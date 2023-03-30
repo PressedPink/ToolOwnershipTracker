@@ -71,15 +71,18 @@ def Jobsite():
         return True
 
     def removeUser(self, email):
-        if isInJobsite(self, email):
-            self.assigned.remove(email)
-            return True
-        raise Exception("User is not in Jobsite")
+        if isValid(self, email):
+            if isInJobsite(self, email):
+                self.assigned.remove(email)
+                return True
+            raise Exception("User is not in Jobsite")
+            return False
         return False
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
         if test.length == 0:
+            raise Exception("User does not exist")
             return False
         return True
 

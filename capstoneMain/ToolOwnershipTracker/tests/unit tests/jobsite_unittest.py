@@ -128,3 +128,27 @@ class testChangeTitle(TestCase):
 
     def testNegativeBlank(self):
         self.assertRaises(Jobsite.changeTitle(self.tempJobsite, ""))
+
+
+class testRemoveUser(TestCase):
+    def setup(self):
+        tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+        tempUser.save()
+        tempAdmin = User(firstName="test", lastName="test", email="test", password="test", address="test",
+                         phone="test",
+                         role="A")
+        tempAdmin.save()
+        tempToolbox = Toolbox(id="1")
+        tempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempAdmin, title="test", toolbox=tempToolbox)
+        tempJobsite.save()
+
+    def testPositive(self):
+        self.tempJobsite.assigned.add(self.tempUser)
+        self.assignTrue(Jobsite.removeUser(self.tempJobsite, self.tempUser))
+
+    def testNegativeFakeUser(self):
+        self.assertRaises(Exception, Jobsite.removeUser(self.tempJobsite, "test"))
+
+    def testNegativeNotJobsite(self):
+        self.assertRaises(Exception, Jobsite.removeUser(self.tempJobsite, self.tempUser))
