@@ -20,16 +20,24 @@ def Tool():
             return True
         return False
 
-    def changeUser(self, owner, jobsite):
-        if checkValidAssignment(self, owner, jobsite):
+    def changeUser(self, owner):
+        if User.checkEmail(owner):
+            if User.verifyEmailExists(owner):
+                self.toolbox = owner
+                self.save()
+                return True
+            else:
+                raise Exception("User does not exist")
+                return False
+        elif checkValidAssignment(self, owner):
             self.toolbox = owner
             self.save()
-            return True
-        raise Exception("Unable to Change Toolbox")
-        return False
+        else:
+            raise Exception("User does not exist")
+            return False
 
-    def checkValidAssignment(self, owner, jobsite):
-        if (jobsite.assigned.contains(owner) and jobsite.assigned.contains(
-                self.toolbox)) or jobsite.owner is owner or owner.role is 'A':
+    def checkValidAssignment(self, owner):
+        if Jobsite.id.contains(owner):
             return True
+        raise Exception("Invalid Jobsite")
         return False
