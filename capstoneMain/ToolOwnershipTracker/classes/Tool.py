@@ -33,8 +33,3 @@ def Tool():
                 self.toolbox)) or jobsite.owner is owner or owner.role is 'A':
             return True
         return False
-
-    def unassignToolbox(self):
-        self.toolbox = None
-        self.save()
-        return True
