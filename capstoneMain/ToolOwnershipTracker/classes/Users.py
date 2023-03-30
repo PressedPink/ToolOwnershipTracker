@@ -19,7 +19,7 @@ class UserClass:
                            role='U', password=hashPass, address=address, phone=phone)
             newUser.save()
 
-    def checkAddress(self, address) -> object:
+    def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
             return False
@@ -103,12 +103,10 @@ class UserClass:
             raise Exception("Email is not valid")
         if self.password is not hashlib.md5(password):
             raise Exception("Password is not correct")
-        self.clearSessions(self)
         active = True
         return True
 
     def logout(self, request):
-        request.clear.Sessions(self)
         active = False
         return True
 
