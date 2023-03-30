@@ -1,30 +1,20 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Edit User</title>
-  </head>
-  <body>
-    <h1>Edit User</h1>
-    <form action="/edituser/" method="post">
-      {%  csrf_token %}
-      <div>
-          <label for="password1">New Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
-                     id="password1" type="text" name="password1"><br>
-
-          <label for="password2">Confirm Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
-                     id="password2" type="text" name="password2"><br>
-
-          <label for="phone">Phone Number:</label><br>
-              <input required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Only valid phone numbers in the xxx-xxx-xxxx format will be accepted."
-                     id="phone" type="tel" name="phone"><br>
-
-          <label for="address">Address: </label><br>
-              <input required id="address" type="text" name="address"><br>
-              
-          <input type = "submit">
-      </div>
-  </form>
-  </body>
-</html>
+{% block content %}
+    <div class="content">
+        <h3>Edit User</h3>
+        <form action="/edituser/" method="post">
+            {%  csrf_token %}
+            <div>
+                <label for="password">Password:</label><br>
+                    <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
+                           id="password" type="text" name="password"><br>
+                <label for="phone">Phone Number:</label><br>
+                    <input required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Only valid phone numbers in the xxx-xxx-xxxx format will be accepted."
+                           id="phone" type="tel" name="phone"><br>
+                <label for="address">Address: </label><br>
+                    <input required id="address" type="text" name="address"><br>
+                <input type = "submit">
+            </div>
+            <div class="message">{{ message }}</div>
+        </form>
+    </div>
+{% endblock %} 

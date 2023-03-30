@@ -3,15 +3,18 @@ from django.core.mail import send_mail
 from django.conf import settings
 import hashlib
 import re
+import uuid
+from re import search
+from django.shortcuts import render, redirect
+from django.views import View
+from django.forms import models
 
-
-from ToolOwnershipTracker.models import User
+from ToolOwnershipTracker import models
 
 
 class UserClass():
-    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, active):
+    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
         self.checkEmail(self, email)
-        self.checkFirstName(self, firstName)
         self.checkLastName(self, lastName)
         self.checkAddress(self, address)
         self.checkPhone(self, phone)
@@ -19,11 +22,12 @@ class UserClass():
         hashPass = self.hashPass(password)
         forget_password_token = ""
         # U = basic user, S = Supervisor A = Admin
-        newUser = User(firstName, lastName, email,
-                       'U', hashPass, address, phone, forget_password_token)
+        newUser = models.User(firstName, lastName, email,
+
+                              'U', hashPass, address, phone, forget_password_token)
         newUser.save()
 
-    def checkAddress(self, address) -> object:
+    def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
         return True
@@ -38,31 +42,33 @@ class UserClass():
             raise Exception("Last Name may not be left blank")
         return True
 
+        # Possibly device these checks into submethods todo
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
-        test = list(map(str, User.objects.filter(email=email)))
-        if test.length != 0:
+        test = list(map(str, models.User.objects.filter(email=email)))
+        if len(test) != 0:
             raise Exception("User already exists")
-        if not '@' & '.' in email:
-            raise Exception("Email is Invalid")
-        return True
+        # removed as regex is handled in input fields
+        # if not '@' & '.' in email:
+            # raise Exception("Email is Invalid")
 
     def checkPhone(self, phone):
+        num = len(phone)
         if phone is None:
             raise Exception("Phone Number may not be left blank")
-        if phone.length == 10:
+        if len(phone) == 10:
             raise Exception("Please include your country code")
-        if phone.length == 7:
+        if len(phone) == 7:
             raise Exception("Please include your country and area codes")
-        if phone.length != 11:
+        if len(phone) > 12:
             raise Exception("Please enter a valid phone number")
-            tempDigit = True
-            for number in phone:
-                if not number.isnumeric():
-                    tempDigit = False
-                if tempDigit:
-                    raise Exception("Phone Number Invalid")
+        tempDigit = True
+        for number in phone:
+            if not number.isnumeric() or not "-":
+                tempDigit = False
+            if not tempDigit:
+                raise Exception("Phone Number Invalid")
         return True
 
     def checkPassword(self, password):
@@ -75,7 +81,7 @@ class UserClass():
         return hashlib.md5(password.encode('utf-8')).hexdigest()
 
     def verifyPasswordRequirements(self, password, confirmPassword):
-        firstName = self.firstName
+        # firstName = self.firstName
         if len(password) < 12:
             raise Exception("Password must be at least 12 characters")
         if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
@@ -96,9 +102,9 @@ class UserClass():
             raise Exception("Password must contain a lowercase letter")
         if not tempDigit:
             raise Exception("Password must contain a number")
-        if firstName in password:
-            raise Exception(
-                "Password may not contain any part of your name")
+        # if firstName in password:
+            # raise Exception(
+            # "Password may not contain any part of your name")
         if password != confirmPassword:
             raise Exception("Passwords do not Match")
         return True
@@ -149,16 +155,16 @@ class UserClass():
     def updatePassword(self, password):
         self.password = UserClass.hashPass(password)
         return True
-    
+
     def check_reset_password_token(email, token):
         try:
-            user = User.objects.get(email=email)
+            user = models.User.objects.get(email=email)
             return user.forget_password_token == token
-        except User.DoesNotExist:
+        except models.User.DoesNotExist:
             return False
 
     def send_forget_password_mail(email, token):
-        
+
         subject = 'Your password reset link'
         message = f'Hello, click the following link to be redirected to form to reset your password: http://127.0.0.1:8000/password_reset_form/{token}'
         email_from = settings.EMAIL_HOST_USER
@@ -166,32 +172,29 @@ class UserClass():
         send_mail(subject, message, email_from, recipient_list)
         return True
 
-    def forget_password(email): 
-        try:           
-            test = list(map(str, User.objects.filter(email=email)))
+    def forget_password(email):
+        try:
+            test = list(map(str, models.User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
-    
+
         token = str(uuid.uuid4())
-        tempUser = User.objects.get(email = email)
+        tempUser = models.User.objects.get(email=email)
         tempUser.forget_password_token = token
         tempUser.save()
         UserClass.send_forget_password_mail(email, token)
         return True
-    
 
     def change_password(email, password, confirmPassword):
 
-        try:           
-            test = list(map(str, User.objects.filter(email=email)))
+        try:
+            test = list(map(str, models.User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
 
-        tempUser = User.objects.get(email = email)
-        if(UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
+        tempUser = models.User.objects.get(email=email)
+        if (UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
             tempUser.forget_password_token = ""
             tempUser.save()
             return True
-
-
