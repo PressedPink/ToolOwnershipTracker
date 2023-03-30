@@ -1,12 +1,13 @@
 from capstoneMain.ToolOwnershipTracker.Users import User
 from capstoneMain.ToolOwnershipTracker.Toolbox import Toolbox
+from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, UserType
 
 
 def Jobsite():
     def createJobsite(self, title, owner):
-        checkTitle(self, title)
+        if checkTitle(self, title)
         isValid(self, owner)
-        tbox = Toolbox.createToolbox(self)
+        tbox = Toolbox.createToolbox(self.id)
         jobsite = Jobsite(title, owner, tbox)
         jobsite.save()
 
@@ -44,7 +45,12 @@ def Jobsite():
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
+        userType = list(map(str, User.objects.filter(email))).role
         if test.length == 0:
+            raise Exception("That user does not exist")
+            return False
+        if userType is not UserType.Admin or UserType.Supervisor:
+            raise Exception("This user does not have the correct permissions to own a jobsite")
             return False
         return True
 
