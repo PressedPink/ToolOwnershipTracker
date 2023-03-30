@@ -5,15 +5,16 @@ from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, Use
 
 def Jobsite():
     def createJobsite(self, title, owner):
-        if checkTitle(self, title)
-        isValid(self, owner)
-        tbox = Toolbox.createToolbox(self.id)
-        jobsite = Jobsite(title, owner, tbox)
-        jobsite.save()
+        if checkTitle(self, title) and isValid(self, owner):
+            jobsite = Jobsite(owner = owner, titl = title)
+            tbox = Toolbox.createToolbox(jobsite = jobsite)
+            jobsite.save()
+            tbox.save()
 
     def checkTitle(self, title):
         if title is None:
             raise Exception("Name of Jobsite Cannot be left empty")
+            return False
         return True
 
     def assignOwner(self, owner):
