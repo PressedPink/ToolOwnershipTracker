@@ -1,6 +1,6 @@
 from capstoneMain.ToolOwnershipTracker.Users import User
-from capstoneMain.ToolOwnershipTracker.Toolbox import Toolbox
-from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, UserType
+from capstoneMain.ToolOwnershipTracker.classes import Toolbox
+from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, UserType, Tool
 
 
 def Jobsite():
@@ -40,6 +40,11 @@ def Jobsite():
 
     #removes all tools from jobsite's toolbox
     def removeAllTools(self):
+        for tools in self.toolbox.tools:
+            if not removeTool(self, self.tool):
+                return False
+        return True
+
 
     def isInJobsite(self, email):
         if not self.assigned.contains(email):
