@@ -87,3 +87,26 @@ class addUserTests(TestCase):
     def testNegativeUserAlreadyInJobsite(self):
         self.tempJobsite.assigned.add(self.tempUser)
         self.assertRaises(Exception, Jobsite.adddUser(self.tempJobsite, self.tempUser))
+
+
+class testAssignOwner(TestCase):
+    def setup(self):
+        tempAdmin = User(firstName="test", lastName="test", email="test", password="test", address="test",
+                         phone="test",
+                         role="A")
+        tempAdmin.save()
+        tempToolbox = Toolbox(id="1")
+        tempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempAdmin, title="test", toolbox=tempToolbox)
+        tempJobsite.save()
+        tempToolbox.jobsite = tempJobsite
+        tempJobsite.save()
+
+    def testPositive(self):
+        self.assertTrue(Jobsite.assignOwner(self.tempJobsite, self.tempAdmin))
+
+    def testNegativeFakeUser(self):
+        self.assertRaises(Exception, Jobsite.assignOwner(self.tempJobsite, "test"))
+
+    def testNegativeNonAdmin(self):
+        self.assertRaises(Exception, Jobsite.assignOwner(self.tempJobsite, self.tempUser))
