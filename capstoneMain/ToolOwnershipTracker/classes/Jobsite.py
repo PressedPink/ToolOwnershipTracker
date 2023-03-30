@@ -23,7 +23,7 @@ def Jobsite():
             self.save()
 
     def addUser(self, user):
-        if isValid(self, user):
+        if User.verifyEmailExists(self, user):
             self.users.add(user)
 
     def changeTitle(self, title):
@@ -32,10 +32,14 @@ def Jobsite():
             self.save()
 
     def removeJobsite(self):
-        if self.toolbox.size > 0:
+        if self.toolbox.tools is not None:
             raise Exception("Cannot remove jobsite until tools are returned")
+            return False
         self.remove(self)
         return True
+
+    #removes all tools from jobsite's toolbox
+    def removeAllTools(self):
 
     def removeUser(self, email):
         if self.owner == email:

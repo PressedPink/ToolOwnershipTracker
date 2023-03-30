@@ -49,3 +49,4 @@ class Toolbox(models.Model):
 class Tool(models.Model):
     id = models.ForeignKey(unique=True, primary_key=True)
     toolbox = models.CharField(Toolbox, on_delete=models.CASCADE, null=True)
+
