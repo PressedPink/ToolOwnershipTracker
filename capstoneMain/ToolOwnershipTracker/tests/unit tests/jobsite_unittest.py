@@ -16,23 +16,23 @@ class addJobsiteTests(TestCase):
                               phone="test", role='S')
         tempSupervisor.save()
 
-    def testPositiveWithAdmin(self, tempAdmin):
-        tempJobsite = Jobsite.createJobsite(self, "test", tempAdmin)
-        self.assertEquals(tempJobsite.owner, tempAdmin)
+    def testPositiveWithAdmin(self):
+        tempJobsite = Jobsite.createJobsite(self, "test", self.tempAdmin)
+        self.assertEquals(tempJobsite.owner, self.tempAdmin)
         self.assertEquals(tempJobsite.title, "test")
-        self.assertEquals(list(map(str, Jobsite.objects.filter(owner=tempAdmin))).toolbox > 0)
+        self.assertEquals(list(map(str, Jobsite.objects.filter(owner=self.tempAdmin))).toolbox > 0)
 
-    def testPositiveWithSupervisor(self, tempSupervisor):
-        tempJobsite = Jobsite.createJobsite(self, "test", tempSupervisor)
-        self.assertEquals(tempJobsite.owner, tempSupervisor)
+    def testPositiveWithSupervisor(self):
+        tempJobsite = Jobsite.createJobsite(self, "test", self.tempSupervisor)
+        self.assertEquals(tempJobsite.owner, self.tempSupervisor)
         self.assertEquals(tempJobsite.title, "test")
-        self.assertEquals(list(map(str, Jobsite.objects.filter(owner=tempSupervisor))).toolbox > 0)
+        self.assertEquals(list(map(str, Jobsite.objects.filter(owner=self.tempSupervisor))).toolbox > 0)
 
     def testNegativeWithFakeUser(self):
         self.assertRaises(Exception, Jobsite.createJobsite(self, "test", "Test"))
 
-    def testNegativeWithFakeAdmin(self, tempUser):
-        self.assertRaises(Exception, Jobsite.createJobsite(self, "test", tempUser))
+    def testNegativeWithFakeAdmin(self):
+        self.assertRaises(Exception, Jobsite.createJobsite(self, "test", self.tempUser))
 
 
 class removeJobsiteTests(TestCase):
@@ -40,7 +40,8 @@ class removeJobsiteTests(TestCase):
     def setup(self):
         tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
         tempUser.save()
-        tempAdmin = User(firstName="test", lastName="test", email="test2", password="test", address="test", phone="test",
+        tempAdmin = User(firstName="test", lastName="test", email="test2", password="test", address="test",
+                         phone="test",
                          role="A")
         tempAdmin.save()
         tempToolbox = Toolbox(id="1")
@@ -56,48 +57,33 @@ class removeJobsiteTests(TestCase):
         tempTool = Tool(id="1", toolbox=newTempToolbox)
         tempTool.save()
 
-    def testPositiveRemoval(self, newTempJobsite):
-        self.assertTrue(Jobsite.removeJobsite(newTempJobsite))
+    def testPositiveRemoval(self):
+        self.assertTrue(Jobsite.removeJobsite(self.newTempJobsite))
 
-    def testNegativeRemoval(self, tempJobsite):
-        self.assertRaises(Exception, Jobsite.removeJobsite(tempJobsite))
+    def testNegativeRemoval(self):
+        self.assertRaises(Exception, Jobsite.removeJobsite(self.tempJobsite))
 
-class addToolTests(TestCase):
 
+class addUserTests(TestCase):
     def setup(self):
+        tempAdmin = User(firstName="test", lastName="test", email="test2", password="test", address="test",
+                         phone="test",
+                         role="A")
+        tempAdmin.save()
         tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
         tempUser.save()
-        tempToolbox = Toolbox(id="1", owner=tempUser)
+        tempToolbox = Toolbox(id="1")
         tempToolbox.save()
-        tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
+        tempJobsite = Jobsite(id="1", owner=tempAdmin, title="test", toolbox=tempToolbox)
         tempJobsite.save()
-        tempTool = Tool(id="1", toolbox=tempToolbox)
-        tempTool.save()
 
-    def testPositiveAddTool(self, tempJobsite, tempTool):
-        self.assertTrue(Jobsite.addTool(tempJobsite, tempTool))
+    def testPositive(self):
+        self.assertIsTrue(Jobsite.addUser(self.tempJobsite, self.tempUser))
+        self.assertIsTrue(self.tempJobsite.assigned.contains(self.tempUser))
 
-    def testNegativeAddTool(self, tempTool, tempJobsite):
-        tempTool.toolbox = None
-        tempTool.save()
-        self.assertRaises(Exception, Jobsite.addTool(tempJobsite, tempTool))
+    def testNegativeFakeUser(self):
+        self.assertRaises(Exception, Jobsite.addUser(self.tempJobsite, "test"))
 
-
-class removeToolTests(TestCase):
-
-    def setup(self):
-        tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
-        tempUser.save()
-        tempToolbox = Toolbox(id="1", owner=tempUser)
-        tempToolbox.save()
-        tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
-        tempJobsite.save()
-        tempTool = capstoneMain.Tool(id="1", toolbox=tempToolbox)
-
-    def testPositiveToolRemoval(self, tempTool, tempJobsite):
-        self.assertTrue(Jobsite.removeTool(tempJobsite, tempTool))
-
-    def testNegativeToolRemoval(self, tempTool, tempUser, tempJobsite):
-        tempTool.user = tempUser
-        tempTool.save(0)
-        self.assertRaises(Exception, Jobsite.removeTool(tempJobsite, tempTool))
+    def testNegativeUserAlreadyInJobsite(self):
+        self.tempJobsite.assigned.add(self.tempUser)
+        self.assertRaises(Exception, Jobsite.adddUser(self.tempJobsite, self.tempUser))
