@@ -1,18 +1,22 @@
 import hashlib
 import re
 
-
-#import capstoneMain.ToolOwnershipTracker.models
+# import capstoneMain.ToolOwnershipTracker.models
 from django.contrib.auth.models import User
 
 
 class UserClass:
+    # if role does not work, change 'U' to UserType.User
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        if self.checkEmail(self, email) and self.checkFirstName(self, firstName) and self.checkLastName(self, lastName) and self.checkAddress(self, address) and self.checkPhone(self, phone) and self.verifyPasswordRequirements(self, password, confirmPassword) and not self.verifyEmailExists(self,email):
+        if self.checkEmail(self, email) and self.checkFirstName(self, firstName) and self.checkLastName(self,
+                                                                                                        lastName) and self.checkAddress(
+                self, address) and self.checkPhone(self, phone) and self.verifyPasswordRequirements(self, password,
+                                                                                                    confirmPassword) and not self.verifyEmailExists(
+                self, email):
             hashPass = self.hashPass(password)
             # U = basic user, S = Supervisor A = Admin
-            newUser = User(firstName, lastName, email,
-                       'U', hashPass, address, phone)
+            newUser = User(firstname=firstName, lastname=lastName, email=email,
+                           role='U', password=hashPass, address=address, phone=phone)
             newUser.save()
 
     def checkAddress(self, address) -> object:
