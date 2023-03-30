@@ -3,25 +3,22 @@ import re
 
 
 #import capstoneMain.ToolOwnershipTracker.models
+from django.contrib.auth.models import User
 
 
-class UserClass():
+class UserClass:
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        self.checkEmail(self, email)
-        self.checkFirstName(self, firstName)
-        self.checkLastName(self, lastName)
-        self.checkAddress(self, address)
-        self.checkPhone(self, phone)
-        self.verifyPasswordRequirements(self, password, confirmPassword)
-        hashPass = self.hashPass(password)
-        # U = basic user, S = Supervisor A = Admin
-        newUser = User(firstName, lastName, email,
+        if self.checkEmail(self, email) and self.checkFirstName(self, firstName) and self.checkLastName(self, lastName) and self.checkAddress(self, address) and self.checkPhone(self, phone) and self.verifyPasswordRequirements(self, password, confirmPassword) and not self.verifyEmailExists(self,email):
+            hashPass = self.hashPass(password)
+            # U = basic user, S = Supervisor A = Admin
+            newUser = User(firstName, lastName, email,
                        'U', hashPass, address, phone)
-        newUser.save()
+            newUser.save()
 
     def checkAddress(self, address) -> object:
         if address is None:
             raise Exception("Address may not be left blank")
+            return False
         return True
 
     def checkFirstName(self, firstName):
@@ -97,10 +94,6 @@ class UserClass():
                 raise Exception("Passwords do not Match")
         return True
 
-    def clearSessions(self):
-        # todo clear all active sessions, set active to false
-        return True
-
     def login(self, email, password):
         if self.email.upper() is not email.upper():
             raise Exception("Email is not valid")
@@ -143,3 +136,9 @@ class UserClass():
     def updatePassword(self, password):
         if self.verifyPasswordRequirements(self, password):
             self.password = self.hashPass(password)
+
+    def verifyEmailExists(self, email):
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length == 0:
+            return False
+        return True
