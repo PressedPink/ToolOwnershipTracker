@@ -110,3 +110,21 @@ class testAssignOwner(TestCase):
 
     def testNegativeNonAdmin(self):
         self.assertRaises(Exception, Jobsite.assignOwner(self.tempJobsite, self.tempUser))
+
+
+class testChangeTitle(TestCase):
+    def setup(self):
+        tempAdmin = User(firstName="test", lastName="test", email="test", password="test", address="test",
+                         phone="test",
+                         role="A")
+        tempAdmin.save()
+        tempToolbox = Toolbox(id="1")
+        tempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempAdmin, title="test", toolbox=tempToolbox)
+        tempJobsite.save()
+
+    def testPositive(self):
+        self.assertTrue(Jobsite.changeTitle(self.tempJobsite, "new title"))
+
+    def testNegativeBlank(self):
+        self.assertRaises(Jobsite.changeTitle(self.tempJobsite, ""))
