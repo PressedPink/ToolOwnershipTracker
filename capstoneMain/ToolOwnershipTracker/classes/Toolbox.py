@@ -24,15 +24,15 @@ def Toolbox():
             return False
         return True
 
-
+    #adds tool to toolbox if it does not belong somewhere
     def addTool(self, tool):
         if Tool.isUnassigned(self, tool):
             self.tools.add(tool)
 
+    #adds removes tool from toolbox if it is in the toolbox and it is not assigned to a user
     def removeTool(self, tool):
-        Tool.isUnassigned(self, tool)
-        self.remove.tools(tool)
-        Tool.remove.toolbox()
+        if self.tools.contains(tool) and not User.verifyEmailExists(self, tool.toolbox):
+            self.remove.tools(tool)
 
     def addTool(self, tool):
         test = list(map(str, Tool.objects.filter(id=tool)))
