@@ -73,10 +73,11 @@ def Jobsite():
         return True
 
     def removeTool(self, tool):
-        if containsTool(self, tool) and tool.user is None:
+        if containsTool(self, tool) and tool.toolbox is None or tool.toolbox is self.id:
             self.toolbox.remove(tool)
-        if tool.user is not None:
+        else:
             raise Exception("This is assigned to a user")
+            return False
         return True
 
     def containsTool(self, tool):
