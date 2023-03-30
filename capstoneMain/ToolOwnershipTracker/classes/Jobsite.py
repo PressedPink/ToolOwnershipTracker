@@ -38,14 +38,6 @@ def Jobsite():
         self.remove(self)
         return True
 
-    #removes all tools from jobsite's toolbox
-    def removeAllTools(self):
-        for tools in self.toolbox.tools:
-            if not removeTool(self, self.tool):
-                return False
-        return True
-
-
     def isInJobsite(self, email):
         if not self.assigned.contains(email):
             raise Exception("This user is not assigned to this jobsite")
@@ -69,25 +61,3 @@ def Jobsite():
             return False
         return True
 
-    def addTool(self, tool):
-        test = list(map(str, Tool.objects.filter(id=tool)))
-        if test.length == 0:
-            raise Exception("Tool does not exist")
-            return False
-        self.toolbox.add(tool)
-        return True
-
-    def removeTool(self, tool):
-        if containsTool(self, tool) and tool.toolbox is None or tool.toolbox is self.id:
-            self.toolbox.remove(tool)
-        else:
-            raise Exception("This is assigned to a user")
-            return False
-        return True
-
-    def containsTool(self, tool):
-        test = list(map(str, Jobsite.objects.filter(tool=tool)))
-        if test.length == 0:
-            raise Exception("Tool does not exist")
-            return False
-        return True
