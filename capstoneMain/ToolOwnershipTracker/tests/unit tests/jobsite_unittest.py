@@ -1,7 +1,7 @@
 from django.test import TestCase
 import capstoneMain.ToolOwnershipTracker.classes.Jobsite
 import capstoneMain.ToolOwnershipTracker.models
-from capstoneMain.ToolOwnershipTracker.models import Toolbox, Jobsite, User
+from capstoneMain.ToolOwnershipTracker.models import Toolbox, Jobsite, User, Tool
 
 
 class addJobsiteTests(TestCase):
@@ -12,7 +12,7 @@ class addJobsiteTests(TestCase):
         tempAdmin = User(firstName="test", lastName="test", email="test2", password="test", address="test",
                          phone="test", role='A')
         tempAdmin.save()
-        tempSupervisor = User(firstName="test", lastName="test", email="test2", password="test", address="test",
+        tempSupervisor = User(firstName="test", lastName="test", email="test3", password="test", address="test",
                               phone="test", role='S')
         tempSupervisor.save()
 
@@ -40,18 +40,27 @@ class removeJobsiteTests(TestCase):
     def setup(self):
         tempUser = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
         tempUser.save()
-        tempToolbox = Toolbox(id="1", owner=tempUser)
+        tempAdmin = User(firstName="test", lastName="test", email="test2", password="test", address="test", phone="test",
+                         role="A")
+        tempAdmin.save()
+        tempToolbox = Toolbox(id="1")
         tempToolbox.save()
-        tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
+        newTempToolbox = Toolbox(id="2")
+        newTempToolbox.save()
+        tempJobsite = Jobsite(id="1", owner=tempAdmin, title="test", toolbox=tempToolbox)
         tempJobsite.save()
+        newTempJobsite = Jobsite(id="2", owner=tempAdmin, title="test", toolbox=newTempToolbox)
+        newTempJobsite.save()
+        tempToolbox.jobsite = tempJobsite.id
+        tempToolbox.save()
+        tempTool = Tool(id="1", toolbox=newTempToolbox)
+        tempTool.save()
 
-    def testPositiveRemoval(self, tempUser, tempToolbox, tempJobsite):
-        self.assertTrue(Jobsite.removeJobsite(tempJobsite))
+    def testPositiveRemoval(self, newTempJobsite):
+        self.assertTrue(Jobsite.removeJobsite(newTempJobsite))
 
-    def testNegativeRemoval(self, tempUser, tempJobsite):
-        tempJobsite.assigned.add(tempUser)
+    def testNegativeRemoval(self, tempJobsite):
         self.assertRaises(Exception, Jobsite.removeJobsite(tempJobsite))
-
 
 class addToolTests(TestCase):
 
@@ -62,7 +71,8 @@ class addToolTests(TestCase):
         tempToolbox.save()
         tempJobsite = Jobsite(id="1", owner=tempUser, title="test", toolbox=tempToolbox)
         tempJobsite.save()
-        tempTool = capstoneMain.Tool(id="1", toolbox=tempToolbox)
+        tempTool = Tool(id="1", toolbox=tempToolbox)
+        tempTool.save()
 
     def testPositiveAddTool(self, tempJobsite, tempTool):
         self.assertTrue(Jobsite.addTool(tempJobsite, tempTool))
