@@ -5,26 +5,53 @@ from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, Use
 
 def Jobsite():
     def createJobsite(self, title, owner):
-        if checkTitle(self, title) and isValid(self, owner):
-            jobsite = Jobsite(owner=owner, title=title)
-            tbox = Toolbox.createToolbox(jobsite=jobsite)
-            jobsite.save()
-            tbox.save()
+        if checkTitle(self, title):
+            if isValid(self, owner):
+                if isValidOwner(self, owner):
+                    jobsite = Jobsite(owner=owner, title=title)
+                    tbox = Toolbox.createToolbox(jobsite=jobsite)
+                    jobsite.save()
+                    tbox.save()
+                    return True
+                else:
+                    raise Exception("This user cannot be the owner of a jobsite")
+                    return False
+            else:
+                raise Exception("The owner is not a valid user")
+                return False
+        else:
+            raise Exception("Name of Jobsite Cannot be left empty")
+            return False
 
     def checkTitle(self, title):
         if title is None:
-            raise Exception("Name of Jobsite Cannot be left empty")
             return False
         return True
 
     def assignOwner(self, owner):
         if isValid(self, owner):
-            self.owner = owner
-            self.save()
+            if isValidOwner(self, owner):
+                self.owner = owner
+                self.save()
+                return True
+            else:
+                raise Exception("This person cannot own a jobsite")
+                return False
+        else:
+            raise Exception("This user does not exist")
+            return False
 
     def addUser(self, user):
         if User.verifyEmailExists(self, user):
-            self.users.add(user)
+            if not self.assigned.contains(user):
+                self.users.add(user)
+                return True
+            else:
+                raise Exception("This user is already assigned this Jobsite")
+                return False
+        else:
+            raise Exception("This user does not exist")
+            return False
 
     def changeTitle(self, title):
         if checkTitle(self, title):
@@ -40,24 +67,23 @@ def Jobsite():
 
     def isInJobsite(self, email):
         if not self.assigned.contains(email):
-            raise Exception("This user is not assigned to this jobsite")
             return False
         return True
 
     def removeUser(self, email):
-        if isInJobsite(self,email):
+        if isInJobsite(self, email):
             self.assigned.remove(email)
             return True
+        raise Exception("User is not in Jobsite")
         return False
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
-        userType = list(map(str, User.objects.filter(email))).role
         if test.length == 0:
-            raise Exception("That user does not exist")
-            return False
-        if userType is not UserType.Admin or UserType.Supervisor:
-            raise Exception("This user does not have the correct permissions to own a jobsite")
             return False
         return True
 
+    def isValidOwner(self, owner):
+        if owner.role is 'U':
+            return False
+        return True
