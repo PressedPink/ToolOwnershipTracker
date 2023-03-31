@@ -49,6 +49,7 @@ class SignUp(View):
     def get(self, request):
         return render(request, "signup.html")
 
+
 class EditUser(View):
     def get(self, request):
         return render(request, "edituser.html")
@@ -68,6 +69,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
+        print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -160,3 +162,11 @@ class Jobsites(View):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
+
+
+class editUsers(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        return render(request, "edituser.html")

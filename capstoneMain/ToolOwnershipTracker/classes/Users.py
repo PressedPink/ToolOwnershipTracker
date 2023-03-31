@@ -10,7 +10,7 @@ from django.views import View
 from django.forms import models
 
 # import capstoneMain.ToolOwnershipTracker.models
-from django.contrib.auth.models import User
+from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
 class UserClass:
@@ -47,7 +47,7 @@ class UserClass:
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
-        test = list(map(str, models.User.objects.filter(email=email)))
+        test = list(map(str, User.objects.filter(email=email)))
         if len(test) != 0:
             raise Exception("User already exists")
         # removed as regex is handled in input fields
@@ -148,14 +148,16 @@ class UserClass:
             self.save()
 
     def updatePassword(self, password):
+
         self.password = UserClass.hashPass(password)
+
         return True
 
     def check_reset_password_token(email, token):
         try:
-            user = models.User.objects.get(email=email)
+            user = User.objects.get(email=email)
             return user.forget_password_token == token
-        except models.User.DoesNotExist:
+        except User.DoesNotExist:
             return False
 
     def send_forget_password_mail(email, token):
@@ -169,8 +171,9 @@ class UserClass:
 
     def forget_password(email):
         try:
-            test = list(map(str, models.User.objects.filter(email=email)))
-        except:
+            test = list(map(str, User.objects.filter(email=email)))
+        except Exception as e:
+            print(e)
             raise Exception("Email is not valid")
 
         token = str(uuid.uuid4())
@@ -183,11 +186,11 @@ class UserClass:
     def change_password(email, password, confirmPassword):
 
         try:
-            test = list(map(str, models.User.objects.filter(email=email)))
+            test = list(map(str, User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
 
-        tempUser = models.User.objects.get(email=email)
+        tempUser = User.objects.get(email=email)
         if (UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
             tempUser.forget_password_token = ""
