@@ -1,9 +1,9 @@
-from capstoneMain.ToolOwnershipTracker.classes import Jobsite
-from capstoneMain.ToolOwnershipTracker.classes import Tool, Users
-from capstoneMain.ToolOwnershipTracker.models import User, Toolbox
+
+from ToolOwnershipTracker.classes import Tool
+from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
-def Toolbox():
+def ToolboxClass():
     def createToolbox(self, owner):
         if isValidJobsite(owner):
             ownerName = None

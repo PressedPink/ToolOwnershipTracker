@@ -1,9 +1,9 @@
-from capstoneMain.ToolOwnershipTracker.classes.Users import User
-from capstoneMain.ToolOwnershipTracker.classes import Toolbox
-from capstoneMain.ToolOwnershipTracker.models import User, Toolbox, Jobsite, UserType, Tool
+from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes import Toolbox
+from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
-def Jobsite():
+def JobsiteClass():
     def createJobsite(self, title, owner):
         if checkTitle(self, title):
             if isValid(self, owner):
@@ -43,7 +43,7 @@ def Jobsite():
             return False
 
     def addUser(self, user):
-        if User.verifyEmailExists(self, user):
+        if UserClass.verifyEmailExists(self, user):
             if not self.assigned.contains(user):
                 self.users.add(user)
                 return True

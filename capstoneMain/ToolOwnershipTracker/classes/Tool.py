@@ -1,5 +1,6 @@
-from capstoneMain.ToolOwnershipTracker.Users import User
-from capstoneMain.ToolOwnershipTracker.classes import Jobsite, Toolbox
+from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
+from ToolOwnershipTracker.models import Jobsite
 
 
 def Tool():
@@ -21,8 +22,8 @@ def Tool():
         return False
 
     def changeUser(self, owner):
-        if User.checkEmail(owner):
-            if User.verifyEmailExists(owner):
+        if UserClass.checkEmail(owner):
+            if UserClass.verifyEmailExists(owner):
                 self.toolbox = owner
                 self.save()
                 return True
@@ -53,6 +54,6 @@ def Tool():
     def changeLocation(self, owner, jobsite):
         unassignToolJobsite(self)
         isUnassigned(self, owner, jobsite)
-        Toolbox.isValidJobsite()
+        ToolboxClass.isValidJobsite()
         self.jobsite = jobsite
         self.save()
