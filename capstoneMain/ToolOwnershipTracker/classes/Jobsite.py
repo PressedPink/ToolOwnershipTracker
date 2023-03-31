@@ -14,7 +14,8 @@ def Jobsite():
                     tbox.save()
                     return True
                 else:
-                    raise Exception("This user cannot be the owner of a jobsite")
+                    raise Exception(
+                        "This user cannot be the owner of a jobsite")
                     return False
             else:
                 raise Exception("The owner is not a valid user")
@@ -88,5 +89,28 @@ def Jobsite():
 
     def isValidOwner(self, owner):
         if owner.role is 'U':
+            return False
+        return True
+
+    def addTool(self, tool):
+        if not Toolbox.validTool(tool):
+            raise Exception("Tool does not exist")
+        self.toolbox.add(tool)
+
+    def removeTool(self, tool):
+        if containsTool(self, tool):
+            self.toolbox.remove(tool)
+
+    def containsTool(self, tool):
+        test = list(map(str, Jobsite.objects.filter(tool=tool)))
+        if test.length == 0:
+            raise Exception("Tool does not exist")
+            return False
+        return True
+
+    def containsUser(self, user):
+        test = list(map(str, Jobsite.objects.filter(user=user)))
+        if test.length == 0:
+            raise Exception("User does not exist")
             return False
         return True

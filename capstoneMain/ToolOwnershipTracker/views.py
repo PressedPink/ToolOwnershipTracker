@@ -45,6 +45,13 @@ class SignUp(View):
 
 
 # For the signup.html page, which allows the user to be redirected to the signup page when successfully or unsuccesfully signing up.
+class SignUp(View):
+    def get(self, request):
+        return render(request, "signup.html")
+
+class EditUser(View):
+    def get(self, request):
+        return render(request, "edituser.html")
 
 
 class Profile(View):

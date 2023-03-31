@@ -9,7 +9,7 @@ def Toolbox():
             ownerName = None
             jobsite = owner
         elif User.verifyEmailExists(owner):
-            if not checkToolboxExists(self,owner):
+            if not checkToolboxExists(self, owner):
                 ownerName = owner
                 jobsite = None
         else:
@@ -70,7 +70,7 @@ def Toolbox():
                 return False
         return True
 
-    def checkToolboxExists(self,owner):
+    def checkToolboxExists(self, owner):
         if self.owner.contains(owner):
             raise Exception("That user already has a toolbox")
             return False

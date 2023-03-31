@@ -19,5 +19,6 @@ urlpatterns = [
          name='password_reset_done'),
     path('signup/', SignUp.as_view(), name='signup'),
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
+    # path('edituser/', EditUser.as_view()),
     path('', Login.as_view(), name='LoginHTML'),
 ]

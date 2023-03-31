@@ -41,3 +41,18 @@ def Tool():
             return True
         raise Exception("Invalid Jobsite")
         return False
+
+    def unassignToolUser(self):
+        self.remove.owner()
+        self.save()
+
+    def unassignToolJobsite(self):
+        self.remove.jobsite()
+        self.save()
+
+    def changeLocation(self, owner, jobsite):
+        unassignToolJobsite(self)
+        isUnassigned(self, owner, jobsite)
+        Toolbox.isValidJobsite()
+        self.jobsite = jobsite
+        self.save()
