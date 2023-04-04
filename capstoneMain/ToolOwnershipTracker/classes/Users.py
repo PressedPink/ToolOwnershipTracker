@@ -9,27 +9,28 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.forms import models
 
-from ToolOwnershipTracker import models
+# import capstoneMain.ToolOwnershipTracker.models
+from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
-class UserClass():
+class UserClass:
+    # if role does not work, change 'U' to UserType.User
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        self.checkEmail(self, email)
-        self.checkLastName(self, lastName)
-        self.checkAddress(self, address)
-        self.checkPhone(self, phone)
-        self.verifyPasswordRequirements(self, password, confirmPassword)
-        hashPass = self.hashPass(password)
-        forget_password_token = ""
-        # U = basic user, S = Supervisor A = Admin
-        newUser = models.User(firstName, lastName, email,
-
-                              'U', hashPass, address, phone, forget_password_token)
-        newUser.save()
+        if self.checkEmail(self, email) and self.checkFirstName(self, firstName) and self.checkLastName(self,
+                                                                                                        lastName) and self.checkAddress(
+                self, address) and self.checkPhone(self, phone) and self.verifyPasswordRequirements(self, password,
+                                                                                                    confirmPassword) and not self.verifyEmailExists(
+                self, email):
+            hashPass = self.hashPass(password)
+            # U = basic user, S = Supervisor A = Admin
+            newUser = User(firstname=firstName, lastname=lastName, email=email,
+                           role='U', password=hashPass, address=address, phone=phone)
+            newUser.save()
 
     def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
+            return False
         return True
 
     def checkFirstName(self, firstName):
@@ -46,7 +47,7 @@ class UserClass():
     def checkEmail(self, email):
         if email is None:
             raise Exception("Unique Email Required")
-        test = list(map(str, models.User.objects.filter(email=email)))
+        test = list(map(str, User.objects.filter(email=email)))
         if len(test) != 0:
             raise Exception("User already exists")
         # removed as regex is handled in input fields
@@ -109,22 +110,16 @@ class UserClass():
             raise Exception("Passwords do not Match")
         return True
 
-    def clearSessions(self):
-        # todo clear all active sessions, set active to false
-        return True
-
     def login(self, email, password):
         if self.email.upper() is not email.upper():
             raise Exception("Email is not valid")
         if self.password is not hashlib.md5(password):
             raise Exception("Password is not correct")
-        self.clearSessions(self)
-        self.active = True
+        active = True
         return True
 
     def logout(self, request):
-        request.clear.Sessions(self)
-        self.active = False
+        active = False
         return True
 
     def editFirstName(self, firstName):
@@ -153,14 +148,16 @@ class UserClass():
             self.save()
 
     def updatePassword(self, password):
+
         self.password = UserClass.hashPass(password)
+
         return True
 
     def check_reset_password_token(email, token):
         try:
-            user = models.User.objects.get(email=email)
+            user = User.objects.get(email=email)
             return user.forget_password_token == token
-        except models.User.DoesNotExist:
+        except User.DoesNotExist:
             return False
 
     def send_forget_password_mail(email, token):
@@ -174,8 +171,9 @@ class UserClass():
 
     def forget_password(email):
         try:
-            test = list(map(str, models.User.objects.filter(email=email)))
-        except:
+            test = list(map(str, User.objects.filter(email=email)))
+        except Exception as e:
+            print(e)
             raise Exception("Email is not valid")
 
         token = str(uuid.uuid4())
@@ -188,13 +186,19 @@ class UserClass():
     def change_password(email, password, confirmPassword):
 
         try:
-            test = list(map(str, models.User.objects.filter(email=email)))
+            test = list(map(str, User.objects.filter(email=email)))
         except:
             raise Exception("Email is not valid")
 
-        tempUser = models.User.objects.get(email=email)
+        tempUser = User.objects.get(email=email)
         if (UserClass.verifyPasswordRequirements(tempUser, password, confirmPassword)):
             UserClass.updatePassword(tempUser, password)
             tempUser.forget_password_token = ""
             tempUser.save()
             return True
+
+    def verifyEmailExists(self, email):
+        test = list(map(str, User.objects.filter(email=email)))
+        if test.length == 0:
+            return False
+        return True
