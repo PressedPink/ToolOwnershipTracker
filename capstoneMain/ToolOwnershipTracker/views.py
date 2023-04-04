@@ -5,6 +5,7 @@ from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from . import models
 from .models import User, Jobsite
 from django.views import View
@@ -169,3 +170,17 @@ class editUsers(View):
             return redirect("/")
 
         return render(request, "edituser.html")
+
+class createJobsite(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        return render(request, 'createJobsite.html')
+    def post(self, request):
+        title = request.POST.get('title')
+        owner = request.POST.get('owner')
+        try:
+            JobsiteClass.createJobsite(self, title, owner)
+            #Need direction on where to redirect user on successful jobsite creation
+        except Exception as e:
+            return render(request, 'createJobsite.html', {'error_message': str(e)})

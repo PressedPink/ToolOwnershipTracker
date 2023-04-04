@@ -3,11 +3,11 @@ from ToolOwnershipTracker.classes import Toolbox
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
-def JobsiteClass():
+class JobsiteClass:
     def createJobsite(self, title, owner):
-        if checkTitle(self, title):
-            if isValid(self, owner):
-                if isValidOwner(self, owner):
+        if JobsiteClass.checkTitle(self, title):
+            if JobsiteClass.isValid(self, owner):
+                if JobsiteClass.isValidOwner(self, owner):
                     jobsite = Jobsite(owner=owner, title=title)
                     tbox = Toolbox.createToolbox(jobsite=jobsite)
                     jobsite.save()
@@ -30,8 +30,8 @@ def JobsiteClass():
         return True
 
     def assignOwner(self, owner):
-        if isValid(self, owner):
-            if isValidOwner(self, owner):
+        if JobsiteClass.isValid(self, owner):
+            if JobsiteClass.isValidOwner(self, owner):
                 self.owner = owner
                 self.save()
                 return True
@@ -55,7 +55,7 @@ def JobsiteClass():
             return False
 
     def changeTitle(self, title):
-        if checkTitle(self, title):
+        if JobsiteClass.checkTitle(self, title):
             self.title = title
             self.save()
 
@@ -72,8 +72,8 @@ def JobsiteClass():
         return True
 
     def removeUser(self, email):
-        if isValid(self, email):
-            if isInJobsite(self, email):
+        if JobsiteClass.isValid(self, email):
+            if JobsiteClass.isInJobsite(self, email):
                 self.assigned.remove(email)
                 return True
             raise Exception("User is not in Jobsite")
@@ -98,7 +98,7 @@ def JobsiteClass():
         self.toolbox.add(tool)
 
     def removeTool(self, tool):
-        if containsTool(self, tool):
+        if JobsiteClass.containsTool(self, tool):
             self.toolbox.remove(tool)
 
     def containsTool(self, tool):
