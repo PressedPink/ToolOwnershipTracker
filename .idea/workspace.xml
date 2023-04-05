@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Progress on EditUserTests.py, almost finished.">
+      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +17,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -33,19 +32,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Python tests.Python tests for EditUserTests.TestEditUserSuccess">
     <configuration name="Python tests for EditUserTests.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
@@ -100,6 +100,7 @@
       <workItem from="1678065429638" duration="2324000" />
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2097000" />
+      <workItem from="1680646891043" duration="4181000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>

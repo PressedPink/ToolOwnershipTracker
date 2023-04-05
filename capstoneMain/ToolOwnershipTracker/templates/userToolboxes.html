@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <title>User's Inventories</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+    </head>
+    <body>
+        <div class="text-center align-middle">
+            <h1>Users</h1>
+        </div>
+
+        <div class="content" >
+            <div class="table" >
+                <br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Users</th>
+                        </tr>
+                    </thead>
+                    {% for i in User %}
+                        <tr>
+                            <td>{{ i.firstName i.lastName }}</td>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Tools</th>
+                                        </tr>
+                                    </thead>
+                                    {% for j in i.toolbox %}
+                                        <tr>
+                                            <td>{{ j.tools }}</td>
+                                        </tr>
+                                    {% endfor %}}
+                                </table>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+    </body>
+</html>
