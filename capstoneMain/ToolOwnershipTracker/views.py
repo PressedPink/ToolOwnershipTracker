@@ -9,6 +9,8 @@ from . import models
 from .models import User, Jobsite
 from django.views import View
 import logging
+
+
 # Create your views here.
 
 
@@ -28,7 +30,6 @@ class SignUp(View):
         return render(request, "signup.html")
 
     def post(self, request):
-
         # NEED TO MAKE SURE PASSWORD IS UTF-8
         firstName = str(request.POST['firstName'])
         lastName = str(request.POST['lastName'])
@@ -57,7 +58,6 @@ class EditUser(View):
 
 class Profile(View):
     def get(self, request):
-
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
 
@@ -86,6 +86,8 @@ class Login(View):
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
+
+            print(password)
             badPassword = (user.password != password)
 
         except Exception as e:
@@ -118,7 +120,6 @@ class PasswordReset(View):
 
 class PasswordResetSent(View):
     def get(self, request):
-
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 
@@ -143,9 +144,11 @@ class PasswordResetForm(View):
             if UserClass.change_password(email, password, confirm_password):
                 return redirect("/password_reset_done/")
         except Exception as e:
-            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': str(e), 'token': token})
+            return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                          {'error_message': str(e), 'token': token})
 
-        return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
+        return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                      {'error_message': 'Failed to reset password.', 'token': token})
 
 
 class PasswordResetDone(View):
@@ -170,3 +173,34 @@ class editUsers(View):
             return redirect("/")
 
         return render(request, "edituser.html")
+
+
+class UserToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == 'S':  # only show users at supervisor's jobsite
+            listOfSites = Jobsite.objects.filter(owner=user) # filter out the jobsites that are owned by the current user
+            all = User.objects.all()
+            list = []
+            for i in all:
+                # do that
+
+
+            allUsers = User.objects.filter(Jobsite.listOfSites) # users that are assigned to jobsite that supervisor owns
+
+        elif userRole == 'A':  # show all users
+            allUsers = User.objects.all()
+
+        userdict = {}
+        for i in allUsers:
+            tools = []
+            for tool in i.toolbox:
+                tools.append(tool)
+            userdict.update({i.email: tools})
+
+        return render(request, "userToolboxes.html", {'users': allUsers}, {'userTools': userdict})

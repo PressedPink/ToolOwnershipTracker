@@ -16,23 +16,23 @@
         <div class="col-auto" >
             <div class="table" >
                 <br>
-                <table>
+                <table class = "table table-responsive">
                     <thead>
                         <tr>
                             <th>Users</th>
                         </tr>
                     </thead>
-                    {% for row1 in User %}
+                    {% for key, value in userTools.items %}
                         <tr>
-                            <td>{{ row1.firstName row1.lastName }}</td>
-                                <table>
-                                        <tr>
-                                            <th>Tools</th>
-                                        </tr>
-                                    {% for row2 in row1.toolbox %}
-                                        <tr>
-                                            <td>{{ row2.tools }}</td>
-                                        </tr>
+                            <td>{{key.firstName}} {{key.lastName}}</td>
+                                <table class = "table table-responsive">
+                                    <tr>
+                                        <th>&ensp; Inventory</th>
+                                    </tr>
+                                    {% for it in value %}
+                                    <tr>
+                                        <td>{{ it }}</td>
+                                    </tr>
                                     {% endfor %}}
                                 </table>
                         </tr>

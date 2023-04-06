@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Started userToolboxes.html as seen from a supervisor/admin">
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="edit 1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +116,8 @@
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2097000" />
       <workItem from="1680646891043" duration="4484000" />
-      <workItem from="1680739267601" duration="2624000" />
+      <workItem from="1680739267601" duration="6235000" />
+      <workItem from="1680804156561" duration="10918000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -171,7 +175,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680659196533</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="edit 1">
+      <created>1680742158584</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1680742158584</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,7 +196,8 @@
     <MESSAGE value="Need some feedback on how my tests look so far" />
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
     <MESSAGE value="Started userToolboxes.html as seen from a supervisor/admin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Started userToolboxes.html as seen from a supervisor/admin" />
+    <MESSAGE value="edit 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit 1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1678065930586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
