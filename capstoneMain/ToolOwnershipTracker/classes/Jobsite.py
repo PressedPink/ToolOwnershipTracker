@@ -1,5 +1,5 @@
 from ToolOwnershipTracker.classes.Users import UserClass
-from ToolOwnershipTracker.classes import Toolbox
+from ToolOwnershipTracker.classes.Toolbox import Toolbox
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
