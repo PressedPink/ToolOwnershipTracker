@@ -3,8 +3,9 @@ from capstoneMain.ToolOwnershipTracker.classes import Jobsite, Toolbox
 
 
 def Tool():
-    def createTool(self):
+    def createTool(self, title):
         tool = Tool(self)
+        tool.title = title
         tool.save()
 
     def deleteTool(self):
