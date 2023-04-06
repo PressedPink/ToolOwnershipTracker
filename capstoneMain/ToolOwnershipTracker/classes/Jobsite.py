@@ -1,17 +1,19 @@
 from ToolOwnershipTracker.classes.Users import UserClass
-from ToolOwnershipTracker.classes import Toolbox
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
+import uuid
 
 
-def JobsiteClass():
+class JobsiteClass:
     def createJobsite(self, title, owner):
-        if checkTitle(self, title):
-            if isValid(self, owner):
-                if isValidOwner(self, owner):
-                    jobsite = Jobsite(owner=owner, title=title)
-                    tbox = Toolbox.createToolbox(jobsite=jobsite)
+        if JobsiteClass.checkTitle(self, title):
+            if JobsiteClass.isValid(self, owner):
+                if JobsiteClass.isValidOwner(self, owner):
+                    jobsiteOwner = User.objects.filter(email=owner)[0]
+                    jobsite = Jobsite(owner=jobsiteOwner, title=title)
+                    #tbox = ToolboxClass.createToolbox(jobsite=jobsite)
                     jobsite.save()
-                    tbox.save()
+                    #tbox.save()
                     return True
                 else:
                     raise Exception(
@@ -21,7 +23,7 @@ def JobsiteClass():
                 raise Exception("The owner is not a valid user")
                 return False
         else:
-            raise Exception("Name of Jobsite Cannot be left empty")
+            raise Exception("Name of Jobsite cannot be left empty")
             return False
 
     def checkTitle(self, title):
@@ -30,9 +32,10 @@ def JobsiteClass():
         return True
 
     def assignOwner(self, owner):
-        if isValid(self, owner):
-            if isValidOwner(self, owner):
-                self.owner = owner
+        if JobsiteClass.isValid(self, owner):
+            if JobsiteClass.isValidOwner(self, owner):
+                jobsiteOwner = User.objects.filter(email=owner)[0]
+                self.owner = jobsiteOwner
                 self.save()
                 return True
             else:
@@ -42,10 +45,13 @@ def JobsiteClass():
             raise Exception("This user does not exist")
             return False
 
-    def addUser(self, user):
-        if UserClass.verifyEmailExists(self, user):
-            if not self.assigned.contains(user):
-                self.users.add(user)
+    def addUser(self, email):
+        if UserClass.verifyEmailExists(self, email):
+            user = User.objects.filter(email=email)[0]
+            if not (self.containsUser(user)):
+                jobsite = Jobsite.objects.get(owner = self.owner)
+                jobsite.assigned.add(user)
+                jobsite.save()
                 return True
             else:
                 raise Exception("This user is already assigned this Jobsite")
@@ -55,7 +61,7 @@ def JobsiteClass():
             return False
 
     def changeTitle(self, title):
-        if checkTitle(self, title):
+        if JobsiteClass.checkTitle(self, title):
             self.title = title
             self.save()
 
@@ -72,8 +78,8 @@ def JobsiteClass():
         return True
 
     def removeUser(self, email):
-        if isValid(self, email):
-            if isInJobsite(self, email):
+        if JobsiteClass.isValid(self, email):
+            if JobsiteClass.isInJobsite(self, email):
                 self.assigned.remove(email)
                 return True
             raise Exception("User is not in Jobsite")
@@ -82,13 +88,14 @@ def JobsiteClass():
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
-        if test.length == 0:
+        if len(test) == 0:
             raise Exception("User does not exist")
             return False
         return True
 
     def isValidOwner(self, owner):
-        if owner.role is 'U':
+        tempUser = User.objects.filter(email=owner)[0]
+        if tempUser.role is 'U':
             return False
         return True
 
@@ -98,19 +105,19 @@ def JobsiteClass():
         self.toolbox.add(tool)
 
     def removeTool(self, tool):
-        if containsTool(self, tool):
+        if JobsiteClass.containsTool(self, tool):
             self.toolbox.remove(tool)
 
     def containsTool(self, tool):
         test = list(map(str, Jobsite.objects.filter(tool=tool)))
-        if test.length == 0:
+        if len(test) == 0:
             raise Exception("Tool does not exist")
             return False
         return True
 
     def containsUser(self, user):
-        test = list(map(str, Jobsite.objects.filter(user=user)))
-        if test.length == 0:
-            raise Exception("User does not exist")
+        jobsite = Jobsite.objects.get(owner = self.owner)
+        if jobsite.assigned.filter(pk=user.pk).exists():
             return False
-        return True
+        else:
+            return True

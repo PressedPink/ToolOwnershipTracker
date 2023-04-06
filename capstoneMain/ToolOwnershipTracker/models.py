@@ -33,12 +33,12 @@ class User(models.Model):
 
 
 class Jobsite(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
+    id = models.AutoField(primary_key=True)
     # dictates supervisor that can view
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     title = models.CharField(max_length=40)
     # dictates users that can view
-    assigned = models.CharField(User, null=True, max_length=50)
+    assigned = models.ManyToManyField(User, related_name='jobsites', blank=True)
 
 # defines a toolbox for a Jobsite OR a User -- should NOT have both
 # noteownerANDjobsite should not BOTH be null, will verify and address in logic

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Change Password</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  </head>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Tool Ownership Tracker DEMO BAR</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            User
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/profile/">Profile</a>
+            <a class="dropdown-item" href="/signup/">Signup</a>
+            <a class="dropdown-item" href="/edituser/">edituser</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Tool
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">n/a</a>
+            <a class="dropdown-item" href="#">n/a</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">n/a</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Jobsite
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/jobsites/">Jobsites</a>
+            <a class="dropdown-item" href="/createJobsite/">Create Jobsite</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">n/a</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+      
+    </div>
+  </nav>
+  </nav>
+  <body>
+    <div class="container">
+      <section class="mx-auto my-5" style="max-width: 23rem;">
+        <div class="pages card-body rounded-top">
+          {% if error_message %}
+            <div class="alert alert-danger">{{ error_message }}</div>
+          {% endif %}
+          <form action="{% url 'createJobsite'%}" method="post" class="text-center">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="Title" required>
+            </div>
+            <div class="form-group">
+              <label for="owner">Owner</label>
+              <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="Owner" required>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </section>
+    </div>
+    <div class="container">
+          <div class="row justify-content-center" >
+            <div class="col-auto">
+                <table class = "table table-responsive">
+                    <thead class="thead-light">
+                        <tr class="text-left">
+                            <th>ID</th>
+                            <th>Owner</th>
+                            <th>Title</th>
+                            <th>Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in jobsites %}
+
+                            <tr class="text-left">
+                              <td><a href="{% url 'editJobsite'%}">{{ row.id }}</a></td>
+                                <td>{{ row.owner.firstName }}</td>
+                                <td>{{ row.title }}</td>
+                                <td>{{ row.assigned.firstName }}</td>
+                            </tr>
+        
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+      </section>
+    </div>
+  </body>
+  </html>
