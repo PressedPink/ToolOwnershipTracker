@@ -194,7 +194,7 @@ class UserToolboxes(View):
             listOfSites = Jobsite.objects.filter(owner=user) # filter out the jobsites that are owned by the current user
             all = User.objects.all()
             list = []
-            for i in all:
+            #for i in all:
                 # do that
 
 
