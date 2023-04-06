@@ -1,5 +1,5 @@
 from ToolOwnershipTracker.classes.Users import UserClass
-from ToolOwnershipTracker.classes.Toolbox import Toolbox
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
@@ -10,7 +10,7 @@ class JobsiteClass:
                 if JobsiteClass.isValidOwner(self, owner):
                     jobsiteOwner = User.objects.filter(email=owner)[0]
                     jobsite = Jobsite(owner=jobsiteOwner, title=title)
-                    #tbox = Toolbox.createToolbox(jobsite=jobsite)
+                    #tbox = ToolboxClass.createToolbox(jobsite=jobsite)
                     jobsite.save()
                     #tbox.save()
                     return True
