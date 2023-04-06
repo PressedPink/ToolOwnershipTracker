@@ -3,13 +3,13 @@ from ToolOwnershipTracker.classes import Tool
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
 
 
-def ToolboxClass():
+class ToolboxClass:
     def createToolbox(self, owner):
-        if isValidJobsite(owner):
+        if ToolboxClass.isValidJobsite(owner):
             ownerName = None
             jobsite = owner
         elif User.verifyEmailExists(owner):
-            if not checkToolboxExists(self, owner):
+            if not ToolboxClass.checkToolboxExists(self, owner):
                 ownerName = owner
                 jobsite = None
         else:
@@ -45,7 +45,7 @@ def ToolboxClass():
         return True
 
     def removeTool(self, tool):
-        if containsTool(self, tool):
+        if ToolboxClass.containsTool(self, tool):
             if tool.toolbox is None or tool.toolbox is self.id:
                 self.toolbox.remove(tool)
                 Tool.unassignToolbox(tool)
@@ -65,7 +65,7 @@ def ToolboxClass():
     # removes all tools from jobsite's toolbox
     def removeAllTools(self):
         for tools in self.toolbox.tools:
-            if not removeTool(self, self.tool):
+            if not ToolboxClass.removeTool(self, self.tool):
                 raise Exception("Unable to remove" + tools.id)
                 return False
         return True

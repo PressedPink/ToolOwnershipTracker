@@ -21,7 +21,7 @@ class JobsiteClass:
                 raise Exception("The owner is not a valid user")
                 return False
         else:
-            raise Exception("Name of Jobsite Cannot be left empty")
+            raise Exception("Name of Jobsite cannot be left empty")
             return False
 
     def checkTitle(self, title):
@@ -82,14 +82,15 @@ class JobsiteClass:
 
     def isValid(self, email):
         test = list(map(str, User.objects.filter(email=email)))
-        if test.length == 0:
+        if len(test) == 0:
             raise Exception("User does not exist")
             return False
         return True
 
     def isValidOwner(self, owner):
-        if owner.role is 'U':
-            return False
+        tempUser = User.objects.filter(email=owner)
+        #if owner.role is 'U':
+        #    return False
         return True
 
     def addTool(self, tool):
@@ -103,14 +104,14 @@ class JobsiteClass:
 
     def containsTool(self, tool):
         test = list(map(str, Jobsite.objects.filter(tool=tool)))
-        if test.length == 0:
+        if len(test) == 0:
             raise Exception("Tool does not exist")
             return False
         return True
 
     def containsUser(self, user):
         test = list(map(str, Jobsite.objects.filter(user=user)))
-        if test.length == 0:
+        if len(test) == 0:
             raise Exception("User does not exist")
             return False
         return True

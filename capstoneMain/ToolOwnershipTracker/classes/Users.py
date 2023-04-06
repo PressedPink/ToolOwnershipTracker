@@ -177,7 +177,7 @@ class UserClass:
             raise Exception("Email is not valid")
 
         token = str(uuid.uuid4())
-        tempUser = models.User.objects.get(email=email)
+        tempUser = User.objects.get(email=email)
         tempUser.forget_password_token = token
         tempUser.save()
         UserClass.send_forget_password_mail(email, token)

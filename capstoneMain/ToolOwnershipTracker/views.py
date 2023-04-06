@@ -70,7 +70,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
-        print(UserClass.hashPass("alexf"))
+        #print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -83,12 +83,16 @@ class Login(View):
         badPassword = False
 
         try:
+            
             email = request.POST['InputUsername']
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
+            
+            print(password)
             badPassword = (user.password != password)
         except Exception as e:
+            print(e)
             noSuchUser = True
 
         if noSuchUser:
@@ -175,12 +179,14 @@ class createJobsite(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
-        return render(request, 'createJobsite.html')
+        allJobsites = Jobsite.objects.all()
+        return render(request, 'createJobsites.html', {'jobsites': allJobsites})
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
         try:
             JobsiteClass.createJobsite(self, title, owner)
-            #Need direction on where to redirect user on successful jobsite creation
+            allJobsites = Jobsite.objects.all()
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
-            return render(request, 'createJobsite.html', {'error_message': str(e)})
+            return render(request, 'createJobsites.html', {'error_message': str(e)})
