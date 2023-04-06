@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Start of ToolReport">
-      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/tests/unit tests/ToolReport_UnitTests.py" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Correction for tools">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/tests/unit tests/userTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/tests/unit tests/userTests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

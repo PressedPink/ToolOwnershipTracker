@@ -76,7 +76,7 @@ class Tool(models.Model):
 class ToolReport(models.Model):
     id = models.CharField(unique=True, primary_key=True, max_length=50)
     reporter = models.CharField(user, null=False, max_length=50)
-    created = models.DateTimeField(editable=False)
+    created = models.DateTimeField(editable=False, auto_now_add=True)
     # used if injury occurred
     impactedUsers = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     tool = models.CharField(Tool, null=True)
