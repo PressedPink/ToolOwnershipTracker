@@ -4,7 +4,7 @@ from ToolOwnershipTracker.models import User, UserType
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render
-from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Users import UserClass 
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from . import models
 from .models import User, Jobsite
@@ -190,3 +190,13 @@ class createJobsite(View):
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
+        
+class editJobsite(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        return render(request, 'editJobsite.html')
+    def post(self, request):
+        title = request.POST.get('title')
+        owner = request.POST.get('owner')
+

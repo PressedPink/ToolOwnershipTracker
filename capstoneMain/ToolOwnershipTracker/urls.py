@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, createJobsite
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, createJobsite, editJobsite
 
 urlpatterns = [
     path('', include('pwa.urls')),
@@ -20,6 +20,7 @@ urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('createJobsite/', createJobsite.as_view(), name='createJobsite'),
+    path('editJobsite/', editJobsite.as_view(), name='editJobsite'),
     path('edituser/', editUsers.as_view(), name="edituser"),
     path('', Login.as_view(), name='LoginHTML'),
 ]

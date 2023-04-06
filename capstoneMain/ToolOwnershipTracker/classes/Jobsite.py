@@ -1,6 +1,7 @@
 from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
+import uuid
 
 
 class JobsiteClass:
@@ -33,7 +34,8 @@ class JobsiteClass:
     def assignOwner(self, owner):
         if JobsiteClass.isValid(self, owner):
             if JobsiteClass.isValidOwner(self, owner):
-                self.owner = owner
+                jobsiteOwner = User.objects.filter(email=owner)[0]
+                self.owner = jobsiteOwner
                 self.save()
                 return True
             else:
@@ -43,10 +45,13 @@ class JobsiteClass:
             raise Exception("This user does not exist")
             return False
 
-    def addUser(self, user):
-        if UserClass.verifyEmailExists(self, user):
-            if not self.assigned.contains(user):
-                self.users.add(user)
+    def addUser(self, email):
+        if UserClass.verifyEmailExists(self, email):
+            user = User.objects.filter(email=email)[0]
+            if not (self.containsUser(user)):
+                jobsite = Jobsite.objects.get(owner = self.owner)
+                jobsite.assigned.add(user)
+                jobsite.save()
                 return True
             else:
                 raise Exception("This user is already assigned this Jobsite")
@@ -89,9 +94,9 @@ class JobsiteClass:
         return True
 
     def isValidOwner(self, owner):
-        #tempUser = User.objects.filter(email=owner)
-        #if tempUser.role is 'U':
-        #    return False
+        tempUser = User.objects.filter(email=owner)[0]
+        if tempUser.role is 'U':
+            return False
         return True
 
     def addTool(self, tool):
@@ -111,8 +116,8 @@ class JobsiteClass:
         return True
 
     def containsUser(self, user):
-        test = list(map(str, Jobsite.objects.filter(user=user)))
-        if len(test) == 0:
-            raise Exception("User does not exist")
+        jobsite = Jobsite.objects.get(owner = self.owner)
+        if jobsite.assigned.filter(pk=user.pk).exists():
             return False
-        return True
+        else:
+            return True
