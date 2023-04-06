@@ -18,9 +18,9 @@ import logging
 class helpers():
     def redirectIfNotLoggedIn(request):
         if request.session["username"] is None:
-            return False
-        else:
             return True
+        else:
+            return False
 
 
 class SignUp(View):
@@ -45,6 +45,14 @@ class SignUp(View):
 
 
 # For the signup.html page, which allows the user to be redirected to the signup page when successfully or unsuccesfully signing up.
+class SignUp(View):
+    def get(self, request):
+        return render(request, "signup.html")
+
+
+class EditUser(View):
+    def get(self, request):
+        return render(request, "edituser.html")
 
 
 class Profile(View):
@@ -61,6 +69,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
+        print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -78,8 +87,7 @@ class Login(View):
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
             badPassword = (user.password != password)
-            # badPassword = UserClass.checkPassword(user, request.POST['InputPassword'])
-            # print(badPassword)
+
         except Exception as e:
             noSuchUser = True
 
@@ -154,3 +162,11 @@ class Jobsites(View):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
+
+
+class editUsers(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        return render(request, "edituser.html")

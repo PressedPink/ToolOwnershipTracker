@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 
 <html lang="en">
+  {% load pwa %}
+
 <head>
+      {% progressive_web_app_meta %}
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta charset="UTF-8">
       <title>Tool Login</title>
-      <link rel="stylesheet" href="static/css/bootstrap.css">
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
   </head>
   <div class="container">
   <!--input id="signin" type="radio" name="tab" checked="checked"/>
