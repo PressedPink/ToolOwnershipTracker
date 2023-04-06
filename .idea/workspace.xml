@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Progress on EditUserTests.py, almost finished.">
-      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Started userToolboxes.html as seen from a supervisor/admin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,21 +32,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Python tests.Python tests for EditUserTests.TestEditUserSuccess">
+}</component>
+  <component name="RunManager" selected="JavaScript Debug.userToolboxes.html">
+    <configuration name="LoginHTML.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/LoginHTML.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="jobsites.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="userToolboxes.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for EditUserTests.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -79,6 +88,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.userToolboxes.html" />
+        <item itemvalue="JavaScript Debug.jobsites.html" />
+        <item itemvalue="JavaScript Debug.LoginHTML.html" />
         <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess" />
         <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" />
       </list>
@@ -100,7 +112,8 @@
       <workItem from="1678065429638" duration="2324000" />
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2097000" />
-      <workItem from="1680646891043" duration="4181000" />
+      <workItem from="1680646891043" duration="4484000" />
+      <workItem from="1680739267601" duration="2624000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -151,7 +164,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678139790703</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Started userToolboxes.html as seen from a supervisor/admin">
+      <created>1680659196533</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1680659196533</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,7 +184,8 @@
     <MESSAGE value="Minor fixes to Login and Logout tests. Progress towards finishing EditUserTests for admins" />
     <MESSAGE value="Need some feedback on how my tests look so far" />
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
-    <option name="LAST_COMMIT_MESSAGE" value="Progress on EditUserTests.py, almost finished." />
+    <MESSAGE value="Started userToolboxes.html as seen from a supervisor/admin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started userToolboxes.html as seen from a supervisor/admin" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1678065930586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />

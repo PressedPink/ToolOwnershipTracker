@@ -11,7 +11,9 @@
             <h1>Users</h1>
         </div>
 
-        <div class="content" >
+        <div class="row justify-content-center" >
+
+        <div class="col-auto" >
             <div class="table" >
                 <br>
                 <table>
@@ -20,18 +22,16 @@
                             <th>Users</th>
                         </tr>
                     </thead>
-                    {% for i in User %}
+                    {% for row1 in User %}
                         <tr>
-                            <td>{{ i.firstName i.lastName }}</td>
+                            <td>{{ row1.firstName row1.lastName }}</td>
                                 <table>
-                                    <thead>
                                         <tr>
                                             <th>Tools</th>
                                         </tr>
-                                    </thead>
-                                    {% for j in i.toolbox %}
+                                    {% for row2 in row1.toolbox %}
                                         <tr>
-                                            <td>{{ j.tools }}</td>
+                                            <td>{{ row2.tools }}</td>
                                         </tr>
                                     {% endfor %}}
                                 </table>
