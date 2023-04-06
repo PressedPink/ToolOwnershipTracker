@@ -8,10 +8,11 @@ class JobsiteClass:
         if JobsiteClass.checkTitle(self, title):
             if JobsiteClass.isValid(self, owner):
                 if JobsiteClass.isValidOwner(self, owner):
-                    jobsite = Jobsite(owner=owner, title=title)
-                    tbox = Toolbox.createToolbox(jobsite=jobsite)
+                    jobsiteOwner = User.objects.filter(email=owner)[0]
+                    jobsite = Jobsite(owner=jobsiteOwner, title=title)
+                    #tbox = Toolbox.createToolbox(jobsite=jobsite)
                     jobsite.save()
-                    tbox.save()
+                    #tbox.save()
                     return True
                 else:
                     raise Exception(
@@ -88,8 +89,8 @@ class JobsiteClass:
         return True
 
     def isValidOwner(self, owner):
-        tempUser = User.objects.filter(email=owner)
-        #if owner.role is 'U':
+        #tempUser = User.objects.filter(email=owner)
+        #if tempUser.role is 'U':
         #    return False
         return True
 
