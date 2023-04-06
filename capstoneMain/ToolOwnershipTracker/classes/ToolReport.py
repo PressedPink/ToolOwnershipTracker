@@ -21,6 +21,7 @@ class ToolReport():
 
 
     def deleteReport(self):
+        self.remove(self)
 
     def addImpactedUser(self):
 
