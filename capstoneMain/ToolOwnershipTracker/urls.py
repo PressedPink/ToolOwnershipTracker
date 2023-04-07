@@ -20,7 +20,7 @@ urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('createJobsite/', createJobsite.as_view(), name='createJobsite'),
-    path('editJobsite/', editJobsite.as_view(), name='editJobsite'),
+    path('editJobsite/<int:jobsite_id>/', editJobsite.as_view(), name='editJobsite'),
     path('edituser/', editUsers.as_view(), name="edituser"),
     path('', Login.as_view(), name='LoginHTML'),
 ]
