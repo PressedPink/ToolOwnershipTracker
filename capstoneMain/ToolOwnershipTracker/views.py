@@ -1,3 +1,9 @@
+from pyzbar.pyzbar import decode
+from PIL import Image
+import io
+import base64
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 # from classes.profile import Profile
 from ToolOwnershipTracker.models import User, UserType
@@ -171,3 +177,33 @@ class editUsers(View):
             return redirect("/")
 
         return render(request, "edituser.html")
+
+
+@csrf_exempt
+def process_image(request):
+    if request.method == 'POST':
+        # Decode the base64 image data
+        image_data = base64.b64decode(request.POST.get('image'))
+
+        # Convert the image data to a PIL Image
+        image = Image.open(io.BytesIO(image_data))
+
+        # Process the image using Pyzbar
+        decoded_objects = decode(image)
+        results = []
+        for obj in decoded_objects:
+            results.append({
+                'type': obj.type,
+                'data': obj.data.decode("utf-8")
+            })
+
+        # Return the results as a JSON response
+        response_data = {'results': results}
+        return JsonResponse(response_data)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+class barCodeTest(View):
+    def get(self, request):
+        return render(request, "barcodeTest.html")
