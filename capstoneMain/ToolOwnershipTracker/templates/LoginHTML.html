@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 
 <html lang="en">
+  {% load pwa %}
+
 <head>
+      {% progressive_web_app_meta %}
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta charset="UTF-8">
       <title>Tool Login</title>
-      <link rel="stylesheet" href="static/css/bootstrap.css">
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
   </head>
   <div class="container">
   <!--input id="signin" type="radio" name="tab" checked="checked"/>
@@ -21,7 +24,7 @@
       <div class="page">
         {% csrf_token %}
         
-        <form>
+        
           <div class="form-group">
             <label for="InputUsername">Email Address</label>
             <input type="email" class="form-control" name="InputUsername" id="InputUsername" aria-describedby="emailHelp" placeholder="Enter email">
@@ -32,10 +35,13 @@
             <input type="password" class="form-control" name="InputPassword" id="InputPassword" placeholder="Password">
           </div>
           <br>
-          <button type="submit" class="btn btn-primary">Submit</button>
+
+          <button type="submit" name="login" class="btn btn-primary">Submit</button>
+          
           <button type="submit" class="btn btn-secondary" name = "forgot_password">Forgot Password?</button>
         </form>
-      </form>
+      
+
     </div>
     </section>
 </div>
