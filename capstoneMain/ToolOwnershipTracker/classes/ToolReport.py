@@ -1,4 +1,5 @@
 
+from ToolOwnershipTracker.models import User, ToolReport
 
 
 class ToolReport():
@@ -30,7 +31,7 @@ class ToolReport():
     def deleteReport(self):
         self.remove(self)
 
-    def addImpactedUser(impacted):
+    def addImpactedUser(self, impacted):
         if not User.verifyEmailExists(impacted):
             raise Exception("User is not valid")
         else:
@@ -43,11 +44,21 @@ class ToolReport():
 
     def updateDescription(self):
 
-    def changeReportType(self):
+    def changeReportType(self, reportType):
+        if reportType = "R"
+            self.reportType = reportType.Report
+        else if reportType = "D":
+            self.reportType = reportType.Damaged
+        else if reportType = "I":
+            self.reportType = reportType.Injury
+        else if reportType = "L":
+            self.reportType = reportType.Lost
+        else:
+            raise Exception("This is not a valid reportType")
+        self.save()
 
-    def checkTime(self):
-
-        return isInstance(self, datetime.date)
+    def checkTime(time):
+        return isInstance(time, datetime.date)
 
     def checkToolorUser(tool, impacted):
         if Tool.id.contains(tool):
