@@ -36,7 +36,7 @@
             <tbody>
                 {% for row in jobsites %}
                     <tr class="text-left">
-                        <td>{{ row.id }}</td>
+                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
 
                         <td>{{ row.owner.firstName }}</td>
                         <td>{{ row.title }}</td>
