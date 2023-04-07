@@ -170,6 +170,7 @@ class UserClass:
         return True
 
     def forget_password(email):
+
         try:
             test = list(map(str, User.objects.filter(email=email)))
         except Exception as e:
@@ -177,9 +178,10 @@ class UserClass:
             raise Exception("Email is not valid")
 
         token = str(uuid.uuid4())
-        tempUser = models.User.objects.get(email=email)
+        tempUser = User.objects.get(email=email)
         tempUser.forget_password_token = token
         tempUser.save()
+
         UserClass.send_forget_password_mail(email, token)
         return True
 
