@@ -9,8 +9,9 @@ from django.shortcuts import render, redirect
 from ToolOwnershipTracker.models import User, UserType
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from . import models
 from .models import User, Jobsite
 from django.views import View
@@ -64,8 +65,8 @@ class EditUser(View):
 class Profile(View):
     def get(self, request):
 
-        if helpers.redirectIfNotLoggedIn(request):
-            return redirect("/")
+       # if helpers.redirectIfNotLoggedIn(request):
+       #     return redirect("/")
 
         a = request.session["username"]
         b = User.objects.get(email=a)
@@ -75,7 +76,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
-        print(UserClass.hashPass("alexf"))
+        # print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -88,13 +89,16 @@ class Login(View):
         badPassword = False
 
         try:
+
             email = request.POST['InputUsername']
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
-            badPassword = (user.password != password)
 
+            print(password)
+            badPassword = (user.password != password)
         except Exception as e:
+            print(e)
             noSuchUser = True
 
         if noSuchUser:
@@ -207,3 +211,50 @@ def process_image(request):
 class barCodeTest(View):
     def get(self, request):
         return render(request, "barcodeTest.html")
+
+
+class createJobsite(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        allJobsites = Jobsite.objects.all()
+        return render(request, 'createJobsites.html', {'jobsites': allJobsites})
+
+    def post(self, request):
+        title = request.POST.get('title')
+        owner = request.POST.get('owner')
+        try:
+            JobsiteClass.createJobsite(self, title, owner)
+            allJobsites = Jobsite.objects.all()
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites})
+        except Exception as e:
+            return render(request, 'createJobsites.html', {'error_message': str(e)})
+
+
+class editJobsite(View):
+    def get(self, request, jobsite_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        try:
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            allUsers = User.objects.all()
+            allUserEmails = [user.email for user in allUsers]
+        except Exception as e:
+            return render(request, 'createJobsites.html', {'error_message': str(e)})
+
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
+
+    def post(self, request, jobsite_id):
+        title = request.POST.get('title')
+        owner = request.POST.get('owner')
+        email_list = request.POST.getlist('email_list[]')
+        jobsite = Jobsite.objects.get(id=jobsite_id)
+        try:
+            JobsiteClass.changeTitle(jobsite, title)
+            JobsiteClass.assignOwner(jobsite, owner)
+            allJobsites = Jobsite.objects.all()
+            return render(request, "jobsites.html", {'jobsites': allJobsites})
+        except Exception as e:
+            allUsers = User.objects.all()
+            allUserEmails = [user.email for user in allUsers]
+            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
