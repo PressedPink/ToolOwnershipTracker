@@ -170,3 +170,35 @@ class editUsers(View):
             return redirect("/")
 
         return render(request, "edituser.html")
+
+class UserToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == 'S':  # only show users at supervisor's jobsite
+            listOfSites = Jobsite.objects.filter(owner=user) # filter out the jobsites that are owned by the current user
+            all = User.objects.all()
+            allUsers = []
+            for site in listOfSites:
+                for i in all:
+                    if site.containsUser(i):
+                        allUsers.append(i)
+
+        elif userRole == 'A':  # show all users
+            allUsers = User.objects.all()
+
+
+        #allUsers = User.objects.all()
+
+        return render(request, "userToolboxes.html", {'users': allUsers})
+
+
+class viewToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        return render(request, 'userToolsAsUser.html')
