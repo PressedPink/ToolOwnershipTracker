@@ -15,15 +15,17 @@ class ToolReport():
                     else:
                         raise Exception("Must have a valid Jobsite attached")
                 else:
-                    raise Exception("Incident occurance must be a date")
+                    raise Exception("Incident occurrence must be a date")
             else:
                 raise Exception("Report must have a tool or impacted user")
-
+            newReport = ToolReport(reporter = user, created = datetime.now(), impactedUsers = impacted, reportType=reportType, tool=tool, jobSite=jobsite, description = description)
+            newReport.save()
 
     def deleteReport(self):
         self.remove(self)
 
     def addImpactedUser(self):
+        if User
 
     def removeImpactedUser(self):
 
