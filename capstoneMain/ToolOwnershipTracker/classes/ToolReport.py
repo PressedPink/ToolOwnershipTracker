@@ -18,14 +18,24 @@ class ToolReport():
                     raise Exception("Incident occurrence must be a date")
             else:
                 raise Exception("Report must have a tool or impacted user")
-            newReport = ToolReport(reporter = user, created = datetime.now(), impactedUsers = impacted, reportType=reportType, tool=tool, jobSite=jobsite, description = description)
+
+            newReport = ToolReport(reporter = user, created = datetime.now(), reportType=reportType, tool=tool, jobSite=jobsite, description = description)
             newReport.save()
+            for users in impacted:
+               if not User.verifyEmailExists(users):
+                   raise Exception("Impacted Users listed contains invalid user")
+               else:
+                   addImpactedUser(users)
 
     def deleteReport(self):
         self.remove(self)
 
-    def addImpactedUser(self):
-        if User
+    def addImpactedUser(impacted):
+        if not User.verifyEmailExists(impacted):
+            raise Exception("User is not valid")
+        else:
+            self.impacted.add(impacted)
+            self.save()
 
     def removeImpactedUser(self):
 
