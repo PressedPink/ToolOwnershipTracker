@@ -38,11 +38,17 @@ class ToolReport():
             self.impacted.add(impacted)
             self.save()
 
-    def removeImpactedUser(self):
+    def removeImpactedUser(self,user):
+        self.impacted.remove(user)
 
     def assignTool(self):
 
-    def updateDescription(self):
+    def updateDescription(self, description):
+        if description is None:
+            raise Exception("Description cannot be empty")
+        else:
+            self.description=description
+        self.save()
 
     def changeReportType(self, reportType):
         if reportType = "R"

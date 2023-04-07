@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="fixed create report">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="added changeReportType">
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -167,7 +166,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680826008303</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="add impacted user">
+      <created>1680826408634</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1680826408634</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,6 +202,8 @@
     <MESSAGE value="add createToolReport function" />
     <MESSAGE value="added delete report" />
     <MESSAGE value="fixed create report" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed create report" />
+    <MESSAGE value="add impacted user" />
+    <MESSAGE value="added changeReportType" />
+    <option name="LAST_COMMIT_MESSAGE" value="added changeReportType" />
   </component>
 </project>
