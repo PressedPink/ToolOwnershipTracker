@@ -41,7 +41,12 @@ class ToolReport():
     def removeImpactedUser(self,user):
         self.impacted.remove(user)
 
-    def assignTool(self):
+    def assignTool(self, tool):
+        if not Tool.id.contains(tool):
+            raise Exception("Tool is not valid")
+        else:
+            self.tool=tool
+        self.save()
 
     def updateDescription(self, description):
         if description is None:
