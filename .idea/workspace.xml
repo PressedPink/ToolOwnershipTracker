@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Progress on EditUserTests.py, almost finished.">
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="edit 6. Almost ready">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/EditUserTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LoginTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/LogoutTests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +20,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -35,6 +37,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
@@ -46,7 +49,16 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python tests.Python tests for EditUserTests.TestEditUserSuccess">
+  <component name="RunManager" selected="JavaScript Debug.userToolboxes.html">
+    <configuration name="LoginHTML.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/LoginHTML.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="jobsites.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="userToolboxes.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/userToolboxes.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for EditUserTests.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -79,6 +91,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.userToolboxes.html" />
+        <item itemvalue="JavaScript Debug.jobsites.html" />
+        <item itemvalue="JavaScript Debug.LoginHTML.html" />
         <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess" />
         <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" />
       </list>
@@ -100,6 +115,9 @@
       <workItem from="1678065429638" duration="2324000" />
       <workItem from="1678136717254" duration="3133000" />
       <workItem from="1678249386419" duration="2097000" />
+      <workItem from="1680646891043" duration="4484000" />
+      <workItem from="1680739267601" duration="6235000" />
+      <workItem from="1680804156561" duration="16429000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -150,7 +168,56 @@
       <option name="project" value="LOCAL" />
       <updated>1678139790703</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Started userToolboxes.html as seen from a supervisor/admin">
+      <created>1680659196533</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1680659196533</updated>
+    </task>
+    <task id="LOCAL-00009" summary="edit 1">
+      <created>1680742158584</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1680742158584</updated>
+    </task>
+    <task id="LOCAL-00010" summary="edit 2">
+      <created>1680822499862</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1680822499862</updated>
+    </task>
+    <task id="LOCAL-00011" summary="edit 3">
+      <created>1680823292421</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1680823292421</updated>
+    </task>
+    <task id="LOCAL-00012" summary="edit 4. Ready for demo??">
+      <created>1680826024364</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1680826024364</updated>
+    </task>
+    <task id="LOCAL-00013" summary="edit 5. Ready for demo! I hope">
+      <created>1680826857558</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1680826857558</updated>
+    </task>
+    <task id="LOCAL-00014" summary="edit 6. Almost ready">
+      <created>1680827231067</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1680827231067</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -163,7 +230,14 @@
     <MESSAGE value="Minor fixes to Login and Logout tests. Progress towards finishing EditUserTests for admins" />
     <MESSAGE value="Need some feedback on how my tests look so far" />
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
-    <option name="LAST_COMMIT_MESSAGE" value="Progress on EditUserTests.py, almost finished." />
+    <MESSAGE value="Started userToolboxes.html as seen from a supervisor/admin" />
+    <MESSAGE value="edit 1" />
+    <MESSAGE value="edit 2" />
+    <MESSAGE value="edit 3" />
+    <MESSAGE value="edit 4. Ready for demo??" />
+    <MESSAGE value="edit 5. Ready for demo! I hope" />
+    <MESSAGE value="edit 6. Almost ready" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit 6. Almost ready" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1678065930586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
