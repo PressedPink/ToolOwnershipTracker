@@ -56,13 +56,13 @@ class ToolReport():
         self.save()
 
     def changeReportType(self, reportType):
-        if reportType = "R"
+        if reportType is "R":
             self.reportType = reportType.Report
-        else if reportType = "D":
+        elif reportType is "D":
             self.reportType = reportType.Damaged
-        else if reportType = "I":
+        elif reportType is "I":
             self.reportType = reportType.Injury
-        else if reportType = "L":
+        elif reportType is "L":
             self.reportType = reportType.Lost
         else:
             raise Exception("This is not a valid reportType")
