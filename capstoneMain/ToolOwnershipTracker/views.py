@@ -173,6 +173,13 @@ class Jobsites(View):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
+    
+class UserToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        #allTools = 
+        return render(request, "userToolsAsUser.html", {'tools': allTools})
 
 
 class editUsers(View):
