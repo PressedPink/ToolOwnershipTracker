@@ -117,6 +117,7 @@ class PasswordReset(View):
             UserClass.forget_password(tempEmail)
             return redirect("/password_reset_sent/")
         except Exception as e:
+            print(e)
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
 
