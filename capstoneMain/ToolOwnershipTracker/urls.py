@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, barCodeTest, process_image,  createJobsite, editJobsite, UserToolboxes, viewToolbox,
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, barCodeTest, process_image,  createJobsite, editJobsite, UserToolboxes, viewToolbox
 
 
 urlpatterns = [
