@@ -125,6 +125,7 @@ class PasswordReset(View):
             return redirect("/password_reset_sent/")
         except Exception as e:
             print(e)
+
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
 
@@ -137,6 +138,7 @@ class PasswordResetForm(View):
     def get(self, request, token):
         try:
             user = User.objects.get(forget_password_token=token)
+
             email = user.email
             if UserClass.check_reset_password_token(email, token):
                 return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'token': token})
