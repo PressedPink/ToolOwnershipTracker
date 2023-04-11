@@ -39,9 +39,11 @@ class ToolReport():
         else:
             self.impacted.add(impacted)
             self.save()
+            return True
 
     def removeImpactedUser(self,user):
         self.impacted.remove(user)
+        return True
 
     def assignTool(self, tool):
         if not Tool.id.contains(tool):

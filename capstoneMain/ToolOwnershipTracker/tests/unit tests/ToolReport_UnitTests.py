@@ -34,7 +34,7 @@ class addReportTest(TestCase):
         def wrongTime():
             self.assertRaises(Exception, ToolReport.createToolReport(self, admin, admin, None, "spaghetti", tempJobsite, R, "This is a test"))
 
-class removeReportTests():
+class removeReportTests(TestCase):
     admin = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
     admin.save()
     tempTool = Tool(id="1", toolType="P")
@@ -45,11 +45,35 @@ class removeReportTests():
     testReport.save()
     assertTrue(ToolReport.deleteReport(testReport))
 
-class editReportTest():
+class editReportTest(TestCase):
 
-    class addUserTest():
+    def setup(self):
+        admin = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+        admin.save()
+        tempTool = Tool(id="1", toolType="P")
+        tempTool.save()
+        tempJobsite = Jobsite(id="1", owner=admin, title="test")
+        tempJobsite.save()
+        testReport = ToolReport(reporter=admin, created=datetime.now(), reportType="R", tool=None, jobSite=tempJobsite,
+                                description="This is a test")
+        testReport.save()
 
-    class removeUserTest():
+    def addUserTest(self):
+        def positiveAdd():
+            assertTrue(ToolReport.addImpactedUser(testReport,admin))
 
-    class UpdateTypeTest():
+        def negativeAdd():
+            assertRaises(Exception, ToolReport.addImpactedUser(testReport, "test"))
+
+    def removeUserTest(self):
+        def positiveRemove():
+            assertTrue(ToolReport.removeImpactedUser(testReport, admin))
+            #this currently does not tell you if nothing was removed
+
+    def UpdateTypeTest(self):
+        def positiveChange():
+            assertTrue(ToolReport.changeReportType(testReport, "I"))
+
+        def negativeChange():
+            assertRaises(Exception, ToolReport.changeReportType(testReport,"Spaghetti"))
 
