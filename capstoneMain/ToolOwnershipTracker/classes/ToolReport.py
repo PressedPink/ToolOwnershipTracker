@@ -27,6 +27,7 @@ class ToolReport():
                    raise Exception("Impacted Users listed contains invalid user")
                else:
                    addImpactedUser(users)
+            return True
 
     def deleteReport(self):
         self.remove(self)
