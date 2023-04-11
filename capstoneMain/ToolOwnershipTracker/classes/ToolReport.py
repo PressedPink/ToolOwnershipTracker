@@ -31,6 +31,7 @@ class ToolReport():
 
     def deleteReport(self):
         self.remove(self)
+        return True
 
     def addImpactedUser(self, impacted):
         if not User.verifyEmailExists(impacted):

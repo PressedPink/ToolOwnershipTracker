@@ -34,15 +34,16 @@ class addReportTest(TestCase):
         def wrongTime():
             self.assertRaises(Exception, ToolReport.createToolReport(self, admin, admin, None, "spaghetti", tempJobsite, R, "This is a test"))
 
-
-
-
-
-
-
-
-
 class removeReportTests():
+    admin = User(firstName="test", lastName="test", email="test", password="test", address="test", phone="test")
+    admin.save()
+    tempTool = Tool(id="1", toolType="P")
+    tempTool.save()
+    tempJobsite = Jobsite(id="1", owner=admin, title="test")
+    tempJobsite.save()
+    testReport = ToolReport(reporter=admin,created=datetime.now(), reportType="R", tool=None, jobSite=tempJobsite, description = "This is a test")
+    testReport.save()
+    assertTrue(ToolReport.deleteReport(testReport))
 
 class editReportTest():
 
