@@ -180,3 +180,10 @@ class editUsers(View):
 
         return render(request, "edituser.html")
 
+class viewJobsitesSuperAdmin(View):
+    def get(self, request):
+        jobsites = Jobsite.objects.all()
+        user = request.session["email"]
+        accType = request.session["role"]
+        return render(request, "jobsiteToolboxSA.html", {'jobsites': jobsites, 'user' : user, 'accType' : accType})
+

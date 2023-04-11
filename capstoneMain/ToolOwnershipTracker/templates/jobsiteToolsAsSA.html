@@ -1,0 +1,36 @@
+{% block content %}
+    <div class="content">
+        <div class="table">
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jobsite</th>
+                        <th>Tools</th>
+                    </tr>
+                </thead>
+                {% if accType == 'S' %}
+                    {% for i in jobsite %}
+                        {% if i.owner == user %}
+                            <tr> <td>{{ i }}</td>
+                            {% for z in i.toolbox %}
+                                <td>{{ z.tools }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if accType == 'A' %}
+                    {% for i in jobsite %}
+                        {% for z in toolbox %}
+                        <tr>
+                            <td>{{ z.tools }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
