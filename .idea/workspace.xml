@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="added changeReportType">
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Renamed test files. Trying to get tests to run">
+      <change afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testUserSignUp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" beforeDir="false" afterPath="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testForgotPassword.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,20 +24,36 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/Users.py" root0="SKIP_INSPECTION" />
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2MA3EoMKt82RLS7nmJKikDX1Pwi" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for EditUserTests.TestEditUserSuccess">
-    <configuration name="Python tests for EditUserTests.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\conno\PycharmProjects\ToolOwnershipTracker\ToolOwnershipTracker" />
+      <recent name="C:\Users\conno\PycharmProjects\ToolOwnershipTracker\capstoneMain\ToolOwnershipTracker" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Python tests in testLogin.py">
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -46,11 +64,11 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;EditUserTests.TestEditUserSuccess&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ToolOwnershipTracker" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -61,14 +79,62 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;EditUserTests.TestEditUserSuccess.test_edit_user_phone&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in AcceptanceTests" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in testLogin.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ToolOwnershipTracker" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogin.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess" />
-        <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" />
+        <item itemvalue="Python tests.Python tests in testLogin.py" />
+        <item itemvalue="Python tests.Python tests in AcceptanceTests" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess" />
+        <item itemvalue="Python tests.Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone" />
       </list>
     </recent_temporary>
   </component>
@@ -87,7 +153,10 @@
       <workItem from="1677805376906" duration="2296000" />
       <workItem from="1678065429638" duration="2324000" />
       <workItem from="1678136717254" duration="3133000" />
-      <workItem from="1678249386419" duration="2097000" />
+      <workItem from="1678249386419" duration="2145000" />
+      <workItem from="1678844097536" duration="1852000" />
+      <workItem from="1679514902585" duration="5923000" />
+      <workItem from="1679528043048" duration="4512000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -138,40 +207,40 @@
       <option name="project" value="LOCAL" />
       <updated>1678139790703</updated>
     </task>
-    <task id="LOCAL-00008" summary="Start of ToolReport">
-      <created>1680657255635</created>
+    <task id="LOCAL-00008" summary="Minor changes to Login/Logout tests. Finished EditUserTests.py">
+      <created>1678251511146</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1680657255635</updated>
+      <updated>1678251511146</updated>
     </task>
-    <task id="LOCAL-00009" summary="add createToolReport function">
-      <created>1680825085532</created>
+    <task id="LOCAL-00009" summary="First Edit">
+      <created>1679515039895</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1680825085532</updated>
+      <updated>1679515039895</updated>
     </task>
-    <task id="LOCAL-00010" summary="added delete report">
-      <created>1680825159629</created>
+    <task id="LOCAL-00010" summary="Second Edit">
+      <created>1679517387927</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1680825159629</updated>
+      <updated>1679517387927</updated>
     </task>
-    <task id="LOCAL-00011" summary="fixed create report">
-      <created>1680826008303</created>
+    <task id="LOCAL-00011" summary="Third Edit. ForgotPasswordTests.py completed, just need to be looked over">
+      <created>1679518217442</created>
       <option name="number" value="00011" />
       <option name="presentableId" value="LOCAL-00011" />
       <option name="project" value="LOCAL" />
-      <updated>1680826008303</updated>
+      <updated>1679518217442</updated>
     </task>
-    <task id="LOCAL-00012" summary="add impacted user">
-      <created>1680826408634</created>
+    <task id="LOCAL-00012" summary="Renamed test files. Trying to get tests to run">
+      <created>1679519646843</created>
       <option name="number" value="00012" />
       <option name="presentableId" value="LOCAL-00012" />
       <option name="project" value="LOCAL" />
-      <updated>1680826408634</updated>
+      <updated>1679519646843</updated>
     </task>
     <option name="localTasksCounter" value="13" />
     <servers />
@@ -189,7 +258,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Created EditUserTests and almost done with LogoutTests" />
@@ -198,12 +266,14 @@
     <MESSAGE value="Minor fixes to Login and Logout tests. Progress towards finishing EditUserTests for admins" />
     <MESSAGE value="Need some feedback on how my tests look so far" />
     <MESSAGE value="Progress on EditUserTests.py, almost finished." />
-    <MESSAGE value="Start of ToolReport" />
-    <MESSAGE value="add createToolReport function" />
-    <MESSAGE value="added delete report" />
-    <MESSAGE value="fixed create report" />
-    <MESSAGE value="add impacted user" />
-    <MESSAGE value="added changeReportType" />
-    <option name="LAST_COMMIT_MESSAGE" value="added changeReportType" />
+    <MESSAGE value="Minor changes to Login/Logout tests. Finished EditUserTests.py" />
+    <MESSAGE value="First Edit" />
+    <MESSAGE value="Second Edit" />
+    <MESSAGE value="Third Edit. ForgotPasswordTests.py completed, just need to be looked over" />
+    <MESSAGE value="Renamed test files. Trying to get tests to run" />
+    <option name="LAST_COMMIT_MESSAGE" value="Renamed test files. Trying to get tests to run" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679520752009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/AcceptanceTests" />
   </component>
 </project>

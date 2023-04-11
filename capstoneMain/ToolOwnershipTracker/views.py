@@ -66,7 +66,6 @@ class Profile(View):
 
         return render(request, "profile.html", {"currentUser": b})
 
-
 class Login(View):
     def get(self, request):
         print(UserClass.hashPass("alexf"))
@@ -88,6 +87,8 @@ class Login(View):
             password = UserClass.hashPass(password)
             badPassword = (user.password != password)
 
+
+
         except Exception as e:
             noSuchUser = True
 
@@ -102,6 +103,7 @@ class Login(View):
             return redirect("/profile/")
 
 
+
 class PasswordReset(View):
     def get(self, request):
 
@@ -113,6 +115,7 @@ class PasswordReset(View):
             UserClass.forget_password(tempEmail)
             return redirect("/password_reset_sent/")
         except Exception as e:
+
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
 
@@ -126,6 +129,7 @@ class PasswordResetForm(View):
     def get(self, request, token):
         try:
             user = User.objects.get(forget_password_token=token)
+
             email = user.email
             if UserClass.check_reset_password_token(email, token):
                 return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'token': token})
@@ -133,17 +137,22 @@ class PasswordResetForm(View):
             pass
         return HttpResponseBadRequest()
 
+
+
     def post(self, request, token):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm-password')
         token = request.POST.get('token')
 
+
+
         try:
             if UserClass.change_password(email, password, confirm_password):
                 return redirect("/password_reset_done/")
         except Exception as e:
             return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': str(e), 'token': token})
+
 
         return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
 
@@ -170,3 +179,4 @@ class editUsers(View):
             return redirect("/")
 
         return render(request, "edituser.html")
+

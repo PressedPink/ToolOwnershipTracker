@@ -12,6 +12,13 @@ class UserType(models.TextChoices):
     User = "U"
 
 
+class ToolType(models.TextChoices):
+    Handtool = "H"
+    Powertool = "P"
+    Operatable = "D"
+    Other = "O"
+
+
 class reportType(models.TextChoices):
     # insident occured but no noteable damage displayed at this time
     Report = "R"
@@ -71,6 +78,7 @@ class Toolbox(models.Model):
 class Tool(models.Model):
     id = models.CharField(unique=True, primary_key=True, max_length=50)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
+    toolType = models.CharField(ToolType, null=False, max_length=1)
 
 
 class ToolReport(models.Model):

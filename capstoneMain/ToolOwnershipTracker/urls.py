@@ -4,7 +4,9 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
+
 from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers
+
 
 urlpatterns = [
     path('', include('pwa.urls')),
