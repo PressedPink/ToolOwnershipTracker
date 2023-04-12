@@ -6,7 +6,7 @@ from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
-from .models import User, Jobsite
+from .models import User, Jobsite, Toolbox
 from django.views import View
 import logging
 # Create your views here.
@@ -167,8 +167,8 @@ class PasswordResetDone(View):
 
 class Jobsites(View):
     def get(self, request):
-        if helpers.redirectIfNotLoggedIn(request):
-            return redirect("/")
+        #if helpers.redirectIfNotLoggedIn(request):
+            #return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
@@ -185,5 +185,6 @@ class viewJobsitesSuperAdmin(View):
         jobsites = Jobsite.objects.all()
         user = request.session["email"]
         accType = request.session["role"]
-        return render(request, "jobsiteToolboxSA.html", {'jobsites': jobsites, 'user' : user, 'accType' : accType})
+        toolbox = Toolbox.objects.all()
+        return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox})
 
