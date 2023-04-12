@@ -33,7 +33,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 
 ]
-ALLOWED_HOSTS = ["192.168.0.210"]
+ALLOWED_HOSTS = ["192.168.0.210", "127.0.0.1"]
 
 GRAPH_MODELS = {
     'all_applications': True,
