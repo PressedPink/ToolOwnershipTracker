@@ -6,7 +6,7 @@ from django.http import request, JsonResponse
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
-from .models import User, Jobsite, Toolbox
+from .models import User, Jobsite, Toolbox, Tool
 from django.views import View
 import logging
 # Create your views here.
@@ -187,4 +187,17 @@ class viewJobsitesSuperAdmin(View):
         accType = request.session["role"]
         toolbox = Toolbox.objects.all()
         return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox})
+
+class toolMain(View):
+    def get(self, request):
+        tools = Tool.objects.all()
+        jobsites = Jobsite.objects.all()
+        toolboxes = Toolbox.objects.all()
+        return render(request, "toolMainPage.html", {"tools": tools, "toolboxes": toolboxes, "jobsites": jobsites})
+
+    def post(self, request):
+        
+        return redirect("toolReportPage.html")
+
+
 
