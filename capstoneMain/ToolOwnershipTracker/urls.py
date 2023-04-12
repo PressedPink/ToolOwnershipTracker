@@ -5,7 +5,7 @@ from django.urls import include
 
 import base
 
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, viewJobsitesSuperAdmin
 
 
 urlpatterns = [
@@ -23,4 +23,5 @@ urlpatterns = [
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('edituser/', editUsers.as_view(), name="edituser"),
     path('', Login.as_view(), name='LoginHTML'),
+    path('jobsiteToolsAsSA', viewJobsitesSuperAdmin.as_view(), name='jobsiteSA'),
 ]
