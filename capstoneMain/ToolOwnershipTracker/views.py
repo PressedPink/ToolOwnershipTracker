@@ -7,7 +7,7 @@ from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
 from .classes.Jobsite import JobsiteClass
-from .models import User, Jobsite
+from .models import User, Jobsite, Toolbox
 from django.views import View
 import logging
 
@@ -225,13 +225,34 @@ class UserToolboxes(View):
         elif userRole == 'A':  # show all users
             allUsers = User.objects.all()
 
-        # allUsers = User.objects.all()
-
         return render(request, "userToolboxes.html", {'users': allUsers})
 
 
 class viewToolbox(View):
-    def get(self, request):
+    def get(self, request, user_id):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
-        return render(request, 'userToolsAsUser.html')
+
+        user = User.objects.get(email=user_id) # user retrieved from user display page
+        try:
+            toolbox = Toolbox.objects.get(owner=user.email)
+        except Exception as e:
+            a = request.session["username"]
+            user = User.objects.get(email=a)
+            userRole = user.role
+            if userRole == 'S':  # only show users at supervisor's jobsite
+                listOfSites = Jobsite.objects.filter(
+                    owner=user)  # filter out the jobsites that are owned by the current user
+                all = User.objects.all()
+                allUsers = []
+                for site in listOfSites:
+                    for i in all:
+                        if site.containsUser(i):
+                            allUsers.append(i)
+
+            elif userRole == 'A':  # show all users
+                allUsers = User.objects.all()
+            return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers})
+
+        return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolbox})
+

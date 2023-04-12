@@ -14,7 +14,7 @@
 
   <body>
     <div class="text-center align-middle">
-        <h1>Your Toolbox</h1>
+        <h1>{{user.firstName}} {{user.lastName}}'s Toolbox</h1>
     </div>
     
     <div class="row justify-content-center" >
@@ -37,7 +37,6 @@
                         <td>{{ row.type }}</td>
                         <td>{{ row.checkoutDate }}</td>
                     </tr>
-
                 {% endfor %}
 
             </tbody>

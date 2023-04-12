@@ -16,28 +16,35 @@
             <h1>Users</h1>
         </div>
 
-        <div class="row justify-content-center" >
+        <div class="row justify-content-center">
 
-        <div class="col-auto" >
-            <div class="table" >
+        <div class="col-auto">
+            <div class="table">
                 <br>
-                <table class = "table table-responsive">
-                    <thead>
-                        <tr>
+                <p>Click on an employee's email to view their toolbox</p>
+                <br>
+                <table class="table table-responsive">
+                    <thead class="thead-light">
+                        <tr class="text left">
+                            <th>Email</th>
                             <th>Name</th>
                             <th>Role</th>
+                            <th>Jobsite</th>
                         </tr>
                     </thead>
                     {% for row in users %}
-                        <tr>
-                            <td><a href="{% url 'viewToolbox'%}">{{row.firstName}} {{row.lastName}}</td>
+                        <tr class="text left">
+                            <td><a href="{% url 'viewToolbox' row.email%}">{{row.email}}</a></td>
+                            <td>{{row.firstName}} {{row.lastName}}</td>
                             <td>{{row.role}}</td>
-
+                            <td>{{row.jobsite}}</td>
                         </tr>
                     {% endfor %}
                 </table>
+                {% if error_message %}
+                    <div class="alert alert-danger">{{ error_message }}</div>
+                {% endif %}
             </div>
         </div>
-
     </body>
 </html>

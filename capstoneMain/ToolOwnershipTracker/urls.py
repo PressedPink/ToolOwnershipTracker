@@ -25,6 +25,6 @@ urlpatterns = [
     path('editJobsite/', editJobsite.as_view(), name='editJobsite'),
     path('edituser/', editUsers.as_view(), name="edituser"),
     path('userToolboxes/', UserToolboxes.as_view(), name='userToolboxes'),
-    path('viewToolbox/', viewToolbox.as_view(), name='viewToolbox'),
+    path('viewToolbox/<str:user_id>/', viewToolbox.as_view(), name='viewToolbox'),
     path('', Login.as_view(), name='LoginHTML'),
 ]
