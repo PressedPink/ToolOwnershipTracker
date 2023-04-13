@@ -51,7 +51,7 @@ class JobsiteClass:
         if JobsiteClass.isValidOwner(self, email):
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 jobsiteOwner = User.objects.get(email=email)
-                jobsite = Jobsite.objects.get(id = jobsiteID)
+                jobsite = Jobsite.objects.get(id=jobsiteID)
                 jobsite.owner = jobsiteOwner
                 jobsite.save()
                 return True
@@ -72,7 +72,7 @@ class JobsiteClass:
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 if not JobsiteClass.containsUser(self, jobsiteID, email):
                     user = User.objects.get(email=email)
-                    jobsite = Jobsite.objects.get(id = jobsiteID)
+                    jobsite = Jobsite.objects.get(id=jobsiteID)
                     jobsite.assigned.add(user)
                     jobsite.save()
                     return True
@@ -114,7 +114,7 @@ class JobsiteClass:
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 jobsite = Jobsite.objects.get(id = jobsiteID)
                 user = User.objects.get(email = email)
-                if jobsite.assigned.filter(User = user).exists():
+                if jobsite.assigned.filter(email = user).exists():
                     return True
                 else:
                     return False
@@ -124,7 +124,7 @@ class JobsiteClass:
             raise Exception("User does not exist!")
         
     def jobsiteExists(self, title, email):
-        user = User.objects.get(email = email)
+        user = User.objects.get(email=email)
         test = list(map(str, Jobsite.objects.filter(title = title, owner = user)))
         if len(test) == 0:
             return False

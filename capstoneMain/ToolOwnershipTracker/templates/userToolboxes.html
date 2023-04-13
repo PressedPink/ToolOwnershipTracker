@@ -37,7 +37,7 @@
                             <td><a href="{% url 'viewToolbox' row.email%}">{{row.email}}</a></td>
                             <td>{{row.firstName}} {{row.lastName}}</td>
                             <td>{{row.role}}</td>
-                            <td>{{row.jobsite}}</td>
+                            <td>{{jobsite.row}}</td>
                         </tr>
                     {% endfor %}
                 </table>
