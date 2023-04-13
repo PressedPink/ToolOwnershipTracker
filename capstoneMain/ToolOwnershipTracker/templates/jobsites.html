@@ -31,8 +31,6 @@
 
                 </tr>
             </thead>
-
-
             <tbody>
                 {% for row in jobsites %}
                     <tr class="text-left">
@@ -40,15 +38,27 @@
 
                         <td>{{ row.owner.firstName }}</td>
                         <td>{{ row.title }}</td>
-                        <td>{{ row.assigned.firstName }}</td>
+                        <td>
+                            {% if row.assigned.all %}
+                                {% for user in jobsite.assigned.all %}
+                                    {{ user.firstName }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                No users assigned
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{% url 'removeJobsite' row.id%}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Delete</button>
+                            </form>
+                        </td>
                     </tr>
 
                 {% endfor %}
 
             </tbody>
-
-
-
         </table>
         </div>
     </div>

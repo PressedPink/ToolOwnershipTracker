@@ -1,29 +1,42 @@
-
-from ToolOwnershipTracker.classes import Tool
+from ToolOwnershipTracker.classes.Tool import Tool
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
+from ToolOwnershipTracker.classes.Users import UserClass
 
 
 class ToolboxClass:
-    def createToolbox(self, owner):
-        if ToolboxClass.isValidJobsite(owner):
-            ownerName = None
-            jobsite = owner
-        elif User.verifyEmailExists(owner):
-            if not ToolboxClass.checkToolboxExists(self, owner):
-                ownerName = owner
-                jobsite = None
+    def createUserToolbox(self, email):
+        if UserClass.verifyEmailExists(email):
+            if ToolboxClass.checkUserToolboxDoesNotExist(email):
+                toolboxOwner = User.objects.get(email = email)
+                newToolbox = Toolbox(owner=toolboxOwner, jobsite = None)
+                newToolbox.save()
+            else:
+                raise Exception("User toolbox already exists!")
         else:
-            raise Exception("Toolbox MUST have a Owner or a Jobsite")
-            return False
-        newToolbox = Toolbox(owner=ownerName, jobsite=jobsite)
-        newToolbox.save()
+            raise Exception("User does not exist!")
+        
+    def createJobsiteToolbox(self, email, jobsiteID):
+        if ToolboxClass.isValidJobsite(jobsiteID):
+            if ToolboxClass.checkJobsiteToolboxDoesNotExist(jobsiteID):
+                jobsiteOwner = User.objects.get(email = email)
+                jobsite = Jobsite.objects.get(id = jobsiteID)
+                newToolbox = Toolbox(owner = jobsiteOwner, jobsite = jobsite)
+                newToolbox.save()
+            else:
+                raise Exception("Jobsite toolbox already exists!")
+        else:
+            raise Exception("Jobsite does not exist!")
 
-    # tests to make sure the owner is a Jobsite
-    def isValidJobsite(self, owner):
-        test = list(map(str, Jobsite.objects.filter(id=owner)))
-        if test.length == 0:
+
+    def isValidJobsite(jobsiteID):
+        test = list(map(str, Jobsite.objects.filter(id = jobsiteID)))
+        if len(test) == 0:
             return False
         return True
+    
+    def isEmpty(jobsite):
+        pass
+
 
     # adds tool to toolbox if it does not belong somewhere
     def addTool(self, tool):
@@ -70,8 +83,17 @@ class ToolboxClass:
                 return False
         return True
 
-    def checkToolboxExists(self, owner):
-        if self.owner.contains(owner):
-            raise Exception("That user already has a toolbox")
+    def checkUserToolboxDoesNotExist(email):
+        user = User.objects.get(email = email)
+        test = list(map(str, Toolbox.objects.filter(owner = user, jobsite = None)))
+        if len(test) == 0:
+            return True
+        else:
             return False
-        return True
+
+    def checkJobsiteToolboxDoesNotExist(jobsiteID):
+        test = list(map(str, Toolbox.objects.filter(id = jobsiteID)))
+        if len(test) == 0:
+            return True
+        else:
+            return False

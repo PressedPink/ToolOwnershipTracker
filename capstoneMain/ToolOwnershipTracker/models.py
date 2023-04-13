@@ -45,8 +45,8 @@ class Jobsite(models.Model):
 
 
 class Toolbox(models.Model):
-    id = models.CharField(unique=True, primary_key=True, max_length=50,)
-    tools = models.CharField(User,  null=True, max_length=50)
+    id = models.AutoField(primary_key=True)
+    #tools = models.CharField(User,  null=True, max_length=50)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, )
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
 
@@ -54,5 +54,6 @@ class Toolbox(models.Model):
 
 
 class Tool(models.Model):
-    id = models.CharField(unique=True, primary_key=True, max_length=50)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=300)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)

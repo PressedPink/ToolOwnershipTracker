@@ -9,6 +9,7 @@ from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from . import models
 from .models import User, Jobsite
 from django.views import View
+from django.db import connections
 import logging
 # Create your views here.
 
@@ -166,6 +167,13 @@ class Jobsites(View):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
+        assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
+        return render(request, "jobsites.html", {'jobsites': allJobsites})
+    
+class removeJobsite(View):
+    def post(self, request, jobsite_id):
+        JobsiteClass.removeJobsite(self, jobsite_id)
+        allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
 
@@ -190,7 +198,8 @@ class createJobsite(View):
             allJobsites = Jobsite.objects.all()
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
-            return render(request, 'createJobsites.html', {'error_message': str(e)})
+            allJobsites = Jobsite.objects.all()
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
         
 class editJobsite(View):
     def get(self, request, jobsite_id):
@@ -206,17 +215,20 @@ class editJobsite(View):
         return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
-        owner = request.POST.get('owner')
+        email = request.POST.get('owner')
         email_list = request.POST.getlist('email_list[]')
-        jobsite = Jobsite.objects.get(id=jobsite_id)
         try:
-            JobsiteClass.changeTitle(jobsite, title)
-            JobsiteClass.assignOwner(jobsite, owner)
+            JobsiteClass.assignTitle(self, jobsite_id, title)
+            JobsiteClass.assignOwner(self, jobsite_id, email)
+            for email in email_list:
+                JobsiteClass.addUser(self, jobsite_id, email)
+                jobsite = Jobsite.objects.get(id = jobsite_id)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
+            jobsite = Jobsite.objects.get(id = jobsite_id)
             return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
 
 
