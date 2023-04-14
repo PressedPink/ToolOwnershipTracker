@@ -1,0 +1,33 @@
+{% extends 'toolReport.html' %}
+
+
+{% block content %}
+
+  <p>
+    <a href="{% url 'report_add' %}">Report</a>
+  </p>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Jobsite</th>
+        <th>Toolbox</th>
+        <th>Tool</th>
+        <th>Report Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in report %}
+        <tr>
+          <td><a href="{% url 'i_change' i.pk %}">{{ i.jobsite }}</a></td>
+          <td>{{ i.toolbox.id }}</td>
+          <td>{{ i.tool.id }}</td>
+          <td>{{ i.reportType }}</td>
+          <td>{{ i.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

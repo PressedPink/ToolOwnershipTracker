@@ -1,0 +1,49 @@
+{% extends 'toolReport.html' %}
+
+{% block content %}
+  <form method="post" id="reportForm" data-toolbox-url="{% url 'ajax_load_toolbox' %}" novalidate>
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+    
+    <button type="submit">Save</button>
+    <a href="{% url 'report_changelist' %}">Nevermind</a>
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    $("#id_jobsite").change(function () {
+      var url = $("#reportForm").attr("data-toolbox-url");  // get the url of the `load_cities` view
+      var jobsiteId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: '{% url 'ajax_load_toolbox' %}',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'jobsite': jobsiteId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_toolbox").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    // this one is for fetching vanue data
+    $("#id_toolbox").change(function () { //django-model-form created this id
+      var url = $("#reportForm").attr("data-cities-url");  // get the url of the `load_cities` view
+      var toolboxId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: '{% url 'ajax_load_tool' %}',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/) person_form.html template has this url var
+        data: {
+          'toolbox': toolboxId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_tool").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  </script>
+
+{% endblock %}
