@@ -18,14 +18,6 @@ from django.shortcuts import render, redirect
 from ToolOwnershipTracker.models import User, UserType
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
-
-
-from django.shortcuts import render, get_object_or_404
-from ToolOwnershipTracker.classes.Users import UserClass 
-from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
-from . import models
-from .models import User, Jobsite
-from django.views import View
 from django.db import connections
 import logging
 # Create your views here.
@@ -228,8 +220,18 @@ class createJobsite(View):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
+        jobsite = Jobsite.objects.get(id=17)
         allUsers = User.objects.all()
         allUserEmails = [user.email for user in allUsers]
+        assigned_users = jobsite.assigned.all()
+        
+        alexuser = User.objects.filter(email="alex_fuller@ymail.com")
+        #jobsite.assigned.add(alexuser)
+        
+        print(assigned_users)
+        print(len(assigned_users))
+        print("done")
+        
         return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
     def post(self, request):
         title = request.POST.get('title')
@@ -269,6 +271,8 @@ class editJobsite(View):
             JobsiteClass.assignOwner(self, jobsite_id, email)
             for email in email_list:
                 JobsiteClass.addUser(self, jobsite_id, email)
+                
+                print(jobsite)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:

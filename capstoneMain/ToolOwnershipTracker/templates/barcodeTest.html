@@ -23,13 +23,7 @@
             width: 100%;
         }
 
-        video {
-            width: 100%;
-            max-width: 480px;
-            height: auto;
-            border-radius: 5px;
-            display: block;
-        }
+         
 
         button {
             background-color: #007bff;
@@ -54,112 +48,129 @@
             max-width: 480px;
             width: 100%;
         }
+        #camera-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #guide-box {
+            position: absolute;
+            border: 2px solid green;
+            width: 50%;
+            height: 50%;
+            top: 25%;
+            left: 25%;
+            pointer-events: none;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 </head>
 <body>
     <div class="container">
         <video id="camera" playsinline></video>
         <canvas id="canvas" style="display:none;"></canvas>
         <button id="start-camera">Start Camera</button>
-        <button id="capture-image">Capture Image</button>
-        <button id="submit-image">Process Image</button>
         <div id="result"></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script>
-       const startButton = document.getElementById('start-camera');
-        const captureButton = document.getElementById('capture-image');
-        const submitButton = document.getElementById('submit-image');
+        const startButton = document.getElementById('start-camera');
         const cameraElement = document.getElementById('camera');
         const canvasElement = document.getElementById('canvas');
         const resultContainer = document.getElementById('result');
 
-        let capturedImageDataUrl;
-
-        // Set up the camera
-navigator.mediaDevices.getUserMedia({
-    video: {
-        facingMode: 'environment'
-    }
-})
-    .then(stream => {
-        cameraElement.srcObject = stream;
-        cameraElement.addEventListener('loadedmetadata', () => {
-            cameraElement.play();
-        });
-    })
-    .catch(error => {
-        alert('Failed to access the camera: ' + error.message);
-    });
-
-// Start the camera when the button is clicked
-startButton.addEventListener('click', () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('Your browser does not support the camera API.');
-        return;
-    }
-
-    navigator.mediaDevices.getUserMedia({
-        video: {
-            facingMode: 'environment'
-        }
-    })
-        .then(stream => {
-            cameraElement.srcObject = stream;
-            cameraElement.addEventListener('loadedmetadata', () => {
-                cameraElement.play();
+        // Initialize QuaggaJS
+        function initQuagga() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: cameraElement,
+                    constraints: {
+                        facingMode: "environment",
+                    }
+                },
+                locator: {
+                    patchSize: "medium",
+                    halfSample: true
+                },
+                numOfWorkers: 2,
+                decoder: {
+                    readers: ["code_128_reader"]
+                },
+                locate: true
+            }, function (error) {
+                if (error) {
+                    console.log('Error initializing QuaggaJS:', error);
+                    return;
+                }
+                Quagga.start();
             });
-        })
-        .catch(error => {
-            alert('Failed to access the camera: ' + error.message);
-        });
-});
 
-        // Set up the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                cameraElement.srcObject = stream;
-                cameraElement.addEventListener('loadedmetadata', () => {
-                    cameraElement.play();
+            Quagga.onDetected(async (result) => {
+                Quagga.stop();
+
+                canvasElement.width = cameraElement.videoWidth;
+                canvasElement.height = cameraElement.videoHeight;
+                const context = canvasElement.getContext('2d');
+                context.drawImage(cameraElement, 0, 0);
+                const capturedImageDataUrl = canvasElement.toDataURL('image/png');
+                const imageData = capturedImageDataUrl.split(',')[1];
+
+                const response = await fetch('/process_image/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `image=${encodeURIComponent(imageData)}`,
                 });
-            })
-            .catch(error => {
-                alert('Failed to access the camera: ' + error.message);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultContainer.textContent = JSON.stringify(data);
+                } else {
+                    alert('Failed to process the barcode.');
+                }
             });
+        }
 
-        // Capture the image
-        captureButton.addEventListener('click', () => {
-            canvasElement.width = cameraElement.videoWidth;
-            canvasElement.height = cameraElement.videoHeight;
-            const context = canvasElement.getContext('2d');
-            context.drawImage(cameraElement, 0, 0);
-            capturedImageDataUrl = canvasElement.toDataURL('image/png');
-        });
-
-        // Send the captured image to the server for processing
-        submitButton.addEventListener('click', async () => {
-            if (!capturedImageDataUrl) {
-                alert('Please capture an image first.');
+        // Start the camera and QuaggaJS when the button is clicked
+        startButton.addEventListener('click', () => {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Your browser does not support the camera API.');
                 return;
             }
 
-            const imageData = capturedImageDataUrl.split(',')[1];
-
-            const response = await fetch('/process_image/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `image=${encodeURIComponent(imageData)}`,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                resultContainer.textContent = JSON.stringify(data);
-            } else {
-                alert('Failed to process the image.');
-            }
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment'
+                }
+            })
+                .then(stream => {
+                    cameraElement.srcObject = stream;
+                    cameraElement.addEventListener('loadedmetadata', async () => {
+                        try {
+                            await cameraElement.play();
+                            initQuagga();
+                        } catch (error) {
+                            console.log('Error while playing the video:', error);
+                        }
+                    });
+                })
+                .catch(error => {
+                    alert('Failed to access the camera: ' + error.message);
+                });
         });
     </script>
 </body>
+</html>
+
+
 </html>
