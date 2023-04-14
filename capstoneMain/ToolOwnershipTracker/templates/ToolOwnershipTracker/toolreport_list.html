@@ -20,7 +20,7 @@
     <tbody>
       {% for i in report %}
         <tr>
-          <td><a href="{% url 'i_change' i.pk %}">{{ i.jobsite }}</a></td>
+          <td>{{ i.jobsite }}</td>
           <td>{{ i.toolbox.id }}</td>
           <td>{{ i.tool.id }}</td>
           <td>{{ i.reportType }}</td>

@@ -31,9 +31,10 @@ urlpatterns = [
      path('edituser/', editUsers.as_view(), name="edituser"),
      path('', Login.as_view(), name='LoginHTML'),
      path('jobsiteToolsAsSA/', viewJobsitesSuperAdmin.as_view(), name='jobsiteSA'),
-     path('toolReport/', views.reportListView.as_view(), name='report_changelist'),
-     path('add/', views.reportCreateView.as_view(), name='report_add'),
-     path('<int:pk>/', views.reportUpdateView.as_view(), name='report_change'),
+
+     path('toolReport/', views.ReportListView.as_view(), name='report_changelist'),
+     path('add/', views.ReportCreateView.as_view(), name='report_add'),
+     path('<int:pk>/', views.ReportUpdateView.as_view(), name='report_change'),
      path('ajax/load-toolbox/', views.load_toolbox, name='ajax_load_toolbox'),
      path('ajax/load-tool/', views.load_tool, name='ajax_load_tool'),
      

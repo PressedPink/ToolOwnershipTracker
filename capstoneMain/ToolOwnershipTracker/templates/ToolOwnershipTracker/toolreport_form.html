@@ -1,12 +1,14 @@
 {% extends 'toolReport.html' %}
 
 {% block content %}
+
+
   <form method="post" id="reportForm" data-toolbox-url="{% url 'ajax_load_toolbox' %}" novalidate>
     {% csrf_token %}
     <table>
       {{ form.as_table }}
     </table>
-
+    
     <button type="submit">Save</button>
     <a href="{% url 'report_changelist' %}">Nevermind</a>
   </form>
@@ -14,32 +16,32 @@
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script>
     $("#id_jobsite").change(function () {
-      var url = $("#reportForm").attr("data-toolbox-url");  
+      var url = $("#ReportForm").attr("data-toolbox-url");  
       var jobsiteId = $(this).val();  
 
-      $.ajax({                      
-        url: '{% url 'ajax_load_toolbox' %}',                 
+      $.ajax({                       
+        url: '{% url 'ajax_load_toolbox' %}',                  
         data: {
-          'jobsite': jobsiteId       
+          'jobsite': jobsiteId      
         },
-        success: function (data) {  
+        success: function (data) {   
           $("#id_toolbox").html(data);  
         }
       });
 
     });
-
+    
     $("#id_toolbox").change(function () { 
-      var url = $("#reportForm").attr("data-toolbox-url");  
-      var toolboxId = $(this).val();
+      var url = $("#ReportForm").attr("data-toolbox-url");  
+      var toolboxId = $(this).val(); 
 
       $.ajax({                      
-        url: '{% url 'ajax_load_tool' %}',                 
+        url: '{% url 'ajax_load_tool' %}',               
         data: {
-          'toolbox': toolboxId       
+          'toolbox': toolboxId      
         },
-        success: function (data) {  
-          $("#id_tool").html(data); 
+        success: function (data) {   
+          $("#id_tool").html(data);  
         }
       });
 

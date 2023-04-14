@@ -1,22 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 # from classes.profile import Profile
-from ToolOwnershipTracker.models import User, UserType
+from ToolOwnershipTracker.models import User
 from django.http import HttpResponseBadRequest
-from django.http import request, JsonResponse
 from ToolOwnershipTracker.classes.Users import UserClass
-from . import models
 from .models import User, Jobsite, Toolbox, Tool, ToolReport
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
-from ToolOwnershipTracker.forms import reportForm
-import logging
+from ToolOwnershipTracker.forms import ReportForm
 # Create your views here.
 
-
-# class Login(View):
-#    email = str(request.POST['Email Address']).strip()
-#    password = str(request.POST['Password'])
 class helpers():
     def redirectIfNotLoggedIn(request):
         if request.session["username"] is None:
@@ -190,28 +183,30 @@ class viewJobsitesSuperAdmin(View):
         toolbox = Toolbox.objects.all()
         return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox})
 
-class reportListView(ListView):
+class ReportListView(ListView):
     model = ToolReport
     context_object_name = 'report'
 
-class reportCreateView(CreateView):
+
+class ReportCreateView(CreateView):
     model = ToolReport
-    form_class = reportForm
+    form_class = ReportForm
     success_url = reverse_lazy('report_changelist')
 
-class reportUpdateView(UpdateView):
+
+class ReportUpdateView(UpdateView):
     model = ToolReport
-    form_class = reportForm
+    form_class = ReportForm
     success_url = reverse_lazy('report_changelist')
 
 def load_toolbox(request):
-    jobsite_id = request.GET.get('jobSite')
-    toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id)
-    context = {'toolbox':toolbox}
-    return render(request, "dropdown.html", context)
+    jobsite_id = request.GET.get('jobsite')    
+    toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id).order_by('id')
+    context = {'toolbox': toolbox}
+    return render(request, 'ToolOwnershipTracker/toolbox_ddl.html', context)
 
 def load_tool(request):
-    toolbox_id = request.GET.get('toolbox')
-    tools = Tool.objects.filter(toolbox_id=toolbox_id)
-    context = {'tools': tools}
-    return render(request, "dropdown2.html",context)
+    toolbox_id = request.GET.get('toolbox')    
+    tool = Tool.objects.filter(toolbox_id=toolbox_id).order_by('id')
+    context = {'tool': tool}
+    return render(request, 'ToolOwnershipTracker/tool_ddl.html', context)

@@ -1,34 +1,34 @@
 from django import forms
 from ToolOwnershipTracker.models import ToolReport, Tool, Toolbox, Jobsite, User, ToolType
 
-class reportForm(forms.ModelForm):
+class ReportForm(forms.ModelForm):
     class Meta:
         model = ToolReport
-        fields = ('reportType', 'jobSite', 'toolbox', 'tool', 'description')
+        fields = ('id', 'jobsite', 'toolbox', 'tool')
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs) 
+        super().__init__(*args, **kwargs)
 
-        self.fields['toolbox'].queryset = Tool.objects.none()
+        self.fields['toolbox'].queryset = Toolbox.objects.none()
 
-        if 'jobSite' in self.data:
+        
+
+        if 'jobsite' in self.data:
             try:
-                jobsite_id = int(self.data.get('jobSite'))
-                self.fields['toolbox'].queryset = Toolbox.objects.filter(jobsite_id=jobsite_id)
-            except(ValueError, TypeError):
-                pass
-
+                jobsite_id = int(self.data.get('jobsite'))
+                self.fields['toolbox'].queryset = Toolbox.objects.filter(jobsite_id=jobsite_id).order_by('id')
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty Toolbox queryset
         elif self.instance.pk:
-            self.fields['toolbox'].queryset = self.instance.jobsite.toolbox_set
+            self.fields['toolbox'].queryset = self.instance.jobsite.toolbox_set.order_by('id')
 
-        self.fields['tool'].queryset = Toolbox.objects.none()
+        self.fields['tool'].queryset = Tool.objects.none()
         if 'toolbox' in self.data:
             try:
                 toolbox_id = int(self.data.get('toolbox'))
-                self.fields['tool'].queryset = Tool.objects.filter(toolbox_id=toolbox_id)
-            except(ValueError, TypeError):
-                pass
-
+                self.fields['tool'].queryset = Tool.objects.filter(toolbox_id=toolbox_id).order_by('id')
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty Toolbox queryset
         elif self.instance.pk:
-            self.fields['tool'].queryset = self.instance.toolbox.tool_set
+            self.fields['tool'].queryset = self.instance.toolbox.tool.order_by('id')
 
