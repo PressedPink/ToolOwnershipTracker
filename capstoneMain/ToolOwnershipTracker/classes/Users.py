@@ -210,7 +210,7 @@ class UserClass:
 
     def verifyEmailExists(self, email):
         test = list(map(str, User.objects.filter(email=email)))
-        if test.length == 0:
+        if len(test) == 0:
             return False
         return True
 

@@ -15,41 +15,56 @@
     <div class="text-center align-middle">
         <h1>Jobsites</h1>
     </div>
-    
-    <div class="row justify-content-center" >
-        
-    <div class="col-auto">
-        <table class = "table table-responsive">
-            <thead class="thead-light">
-                <tr class="text-left">
-                    <th>ID</th>
-                    <th>Owner</th>
-                    <th>Title</th>
-                    <th>Assigned To</th>
-
-                </tr>
-            </thead>
-
-
-            <tbody>
-                {% for row in jobsites %}
-                    <tr class="text-left">
-                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
-
-                        <td>{{ row.owner.firstName }}</td>
-                        <td>{{ row.title }}</td>
-                        <td>{{ row.assigned.firstName }}</td>
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-
-
-        </table>
-        </div>
+    <div class="container">
+        <section class="mx-auto my-5" style="max-width: 23rem;">
+            <div class="pages card-body rounded-top">
+                {% if error_message %}
+                    <div class="alert alert-danger">{{ error_message }}</div>
+                {% endif %}
+            </div>
+        </section>
     </div>
-      
+            
+    </div>
+    <div class="row justify-content-center" >
+        <div class="col-auto">
+            <table class = "table table-responsive">
+                <thead class="thead-light">
+                    <tr class="text-left">
+                        <th>ID</th>
+                        <th>Owner</th>
+                        <th>Title</th>
+                        <th>Assigned To</th>
+                        <th>Delete Jobsite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in jobsites %}
+                        <tr class="text-left">
+                            <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
+                            <td>{{ row.owner.firstName }}</td>
+                            <td>{{ row.title }}</td>
+                            <td>
+                                {% if row.assigned.all %}
+                                    {% for user in jobsite.assigned.all %}
+                                        {{ user.firstName }}
+                                        {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    No users assigned
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <form action="{% url 'removeJobsite' row.id%}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
   </body>
 </html>

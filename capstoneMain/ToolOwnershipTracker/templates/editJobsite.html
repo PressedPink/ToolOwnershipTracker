@@ -17,7 +17,7 @@
             {% if error_message %}
               <div class="alert alert-danger">{{ error_message }}</div>
             {% endif %}
-            <form action="{% url 'editJobsite' jobsite.id%}" method="post" class="text-center">
+            <form action="{% url 'editJobsite' jobsite.id%}" method="post" class="text-center" autocomplete="off">
               {% csrf_token %}
               <div class="form-group">
                 <label for="title">New Title</label>

@@ -5,119 +5,127 @@ import uuid
 
 
 class JobsiteClass:
-    def createJobsite(self, title, owner):
-        if JobsiteClass.checkTitle(self, title):
-            if JobsiteClass.isValid(self, owner):
-                if JobsiteClass.isValidOwner(self, owner):
-                    jobsiteOwner = User.objects.filter(email=owner)[0]
-                    jobsite = Jobsite(owner=jobsiteOwner, title=title)
-                    #tbox = ToolboxClass.createToolbox(jobsite=jobsite)
-                    jobsite.save()
-                    #tbox.save()
-                    return True
+    def createJobsite(self, title, email):
+        if JobsiteClass.isValidTitle(self, title):
+            if UserClass.verifyEmailExists(self, email):
+                if JobsiteClass.isValidOwner(self, email):
+                    if not JobsiteClass.jobsiteAlreadyExists(self, title, email):
+                        jobsiteOwner = User.objects.get(email=email)
+                        jobsite = Jobsite(owner=jobsiteOwner, title=title)
+                        jobsite.save()
+                        ToolboxClass.createJobsiteToolbox(self=self, email=email, jobsiteID=jobsite.id)
+                        
+                        return True
+                    else:
+                        raise Exception("Jobsite already exists!")
                 else:
-                    raise Exception(
-                        "This user cannot be the owner of a jobsite")
-                    return False
+                    raise Exception("Jobsite owner must be of type supervisor or administrator!")
             else:
-                raise Exception("The owner is not a valid user")
-                return False
+                raise Exception("User does not exist!")
         else:
-            raise Exception("Name of Jobsite cannot be left empty")
-            return False
+            raise Exception("Name of jobsite cannot be left empty")
 
-    def checkTitle(self, title):
+    def isValidTitle(self, title):
         if title is None:
             return False
         return True
-
-    def assignOwner(self, owner):
-        if JobsiteClass.isValid(self, owner):
-            if JobsiteClass.isValidOwner(self, owner):
-                jobsiteOwner = User.objects.filter(email=owner)[0]
-                self.owner = jobsiteOwner
-                self.save()
-                return True
+    
+    def assignTitle(self, jobsiteID, title):
+        if JobsiteClass.isValidTitle(self, title):
+            if JobsiteClass.isValidJobsite(self, jobsiteID):
+                jobsite = Jobsite.objects.get(id = jobsiteID)
+                jobsite.title = title
+                jobsite.save()
             else:
-                raise Exception("This person cannot own a jobsite")
-                return False
+                raise Exception("Jobsite does not exist!")
         else:
-            raise Exception("This user does not exist")
-            return False
+            raise Exception("Name of jobsite cannot be left empty")
 
-    def addUser(self, email):
-        if UserClass.verifyEmailExists(self, email):
-            user = User.objects.filter(email=email)[0]
-            if not (self.containsUser(user)):
-                jobsite = Jobsite.objects.get(owner = self.owner)
-                jobsite.assigned.add(user)
+    def isValidOwner(self, email):
+        user = User.objects.get(email=email)
+        if user.role == 'U':
+            return False
+        return True
+
+    def assignOwner(self, jobsiteID, email):
+        if JobsiteClass.isValidOwner(self, email):
+            if JobsiteClass.isValidJobsite(self, jobsiteID):
+                jobsiteOwner = User.objects.get(email=email)
+                jobsite = Jobsite.objects.get(id = jobsiteID)
+                jobsite.owner = jobsiteOwner
                 jobsite.save()
                 return True
             else:
-                raise Exception("This user is already assigned this Jobsite")
-                return False
+                raise Exception("Jobsite does not exist!")
         else:
-            raise Exception("This user does not exist")
-            return False
-
-    def changeTitle(self, title):
-        if JobsiteClass.checkTitle(self, title):
-            self.title = title
-            self.save()
-
-    def removeJobsite(self):
-        if self.toolbox.tools is not None:
-            raise Exception("Cannot remove jobsite until tools are returned")
-            return False
-        self.remove(self)
-        return True
-
-    def isInJobsite(self, email):
-        if not self.assigned.contains(email):
-            return False
-        return True
-
-    def removeUser(self, email):
-        if JobsiteClass.isValid(self, email):
-            if JobsiteClass.isInJobsite(self, email):
-                self.assigned.remove(email)
-                return True
-            raise Exception("User is not in Jobsite")
-            return False
-        return False
-
-    def isValid(self, email):
-        test = list(map(str, User.objects.filter(email=email)))
+            raise Exception("User does not exist!")
+    
+    def isValidJobsite(self, jobsiteID):
+        test = list(map(str, Jobsite.objects.filter(id = jobsiteID)))
         if len(test) == 0:
-            raise Exception("User does not exist")
             return False
-        return True
+        else:
+            return True
 
-    def isValidOwner(self, owner):
-        tempUser = User.objects.filter(email=owner)[0]
-        if tempUser.role is 'U':
-            return False
-        return True
+    def addUser(self, jobsiteID, email):
+        if UserClass.verifyEmailExists(self, email):
+            if JobsiteClass.isValidJobsite(self, jobsiteID):
+                if not JobsiteClass.containsUser(self, jobsiteID, email):
+                    user = User.objects.get(email=email)
+                    jobsite = Jobsite.objects.get(id = jobsiteID)
+                    jobsite.assigned.add(user)
+                    jobsite.save()
+                    return True
+                else:
+                    raise Exception("User is already assigned to this jobsite!")
+            else:
+                raise Exception("Jobsite does not exist!")
+        else:
+            raise Exception("User does not exist!")
 
-    def addTool(self, tool):
-        if not Toolbox.validTool(tool):
-            raise Exception("Tool does not exist")
-        self.toolbox.add(tool)
+    def removeJobsite(self, jobsiteID):
+        jobsite = Jobsite.objects.get(id = jobsiteID)
+        toolbox = Toolbox.objects.get(jobsite = jobsite)
+        if ToolboxClass.isEmpty(self, toolbox.id):
+            jobsite.delete()
+            return True
+        else:
+            raise Exception("Jobsite toolbox must be empty before jobsite removal!")
 
-    def removeTool(self, tool):
-        if JobsiteClass.containsTool(self, tool):
-            self.toolbox.remove(tool)
+    def removeUser(self, jobsiteID, email):
+        if UserClass.verifyEmailExists(self, email):
+            if JobsiteClass.isValidJobsite(self, jobsiteID):
+                if JobsiteClass.containsUser(self, jobsiteID, email):
+                    jobsite = Jobsite.objects.get(id = jobsiteID)
+                    user = User.objects.get(email = email)
+                    jobsite.assigned.remove(user)
+                    jobsite.save()
+                    return True
+                else:
+                    raise Exception("User not assigned to jobsite!")
+            else:
+                raise Exception("Jobsite does not exist!")
+        else:
+            raise Exception("User does not exist!")
 
-    def containsTool(self, tool):
-        test = list(map(str, Jobsite.objects.filter(tool=tool)))
+    def containsUser(self, jobsiteID, email):
+        if UserClass.verifyEmailExists(self, email):
+            if JobsiteClass.isValidJobsite(self, jobsiteID):
+                jobsite = Jobsite.objects.get(id = jobsiteID)
+                user = User.objects.get(email = email)
+                if jobsite.assigned.filter(User = user).exists():
+                    return True
+                else:
+                    return False
+            else:
+                raise Exception("Jobsite does not exist!")
+        else:
+            raise Exception("User does not exist!")
+        
+    def jobsiteAlreadyExists(self, title, email):
+        user = User.objects.get(email = email)
+        test = list(map(str, Jobsite.objects.filter(title = title, owner = user)))
         if len(test) == 0:
-            raise Exception("Tool does not exist")
-            return False
-        return True
-
-    def containsUser(self, user):
-        jobsite = Jobsite.objects.get(owner = self.owner)
-        if jobsite.assigned.filter(pk=user.pk).exists():
             return False
         else:
             return True
