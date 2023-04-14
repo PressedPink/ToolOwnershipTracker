@@ -9,11 +9,11 @@ class JobsiteClass:
         if JobsiteClass.isValidTitle(self, title):
             if UserClass.verifyEmailExists(self, email):
                 if JobsiteClass.isValidOwner(self, email):
-                    if not JobsiteClass.jobsiteExists(self, title, email):
+                    if not JobsiteClass.jobsiteAlreadyExists(self, title, email):
                         jobsiteOwner = User.objects.get(email=email)
                         jobsite = Jobsite(owner=jobsiteOwner, title=title)
                         jobsite.save()
-                        #ToolboxClass.createJobsiteToolbox(self=self, email=email, jobsiteID=jobsite.id)
+                        ToolboxClass.createJobsiteToolbox(self=self, email=email, jobsiteID=jobsite.id)
                         
                         return True
                     else:
@@ -85,13 +85,12 @@ class JobsiteClass:
 
     def removeJobsite(self, jobsiteID):
         jobsite = Jobsite.objects.get(id = jobsiteID)
-        #toolbox = Toolbox.objects.get(jobsite = jobsite)
-        #if ToolboxClass.isEmpty(toolbox.id):
-            #remove the jobsite
-        jobsite.delete()
-        return True
-        #else:
-            #raise Exception("Jobsite toolbox must be empty before jobsite removal!")
+        toolbox = Toolbox.objects.get(jobsite = jobsite)
+        if ToolboxClass.isEmpty(self, toolbox.id):
+            jobsite.delete()
+            return True
+        else:
+            raise Exception("Jobsite toolbox must be empty before jobsite removal!")
 
     def removeUser(self, jobsiteID, email):
         if UserClass.verifyEmailExists(self, email):
@@ -123,7 +122,7 @@ class JobsiteClass:
         else:
             raise Exception("User does not exist!")
         
-    def jobsiteExists(self, title, email):
+    def jobsiteAlreadyExists(self, title, email):
         user = User.objects.get(email = email)
         test = list(map(str, Jobsite.objects.filter(title = title, owner = user)))
         if len(test) == 0:

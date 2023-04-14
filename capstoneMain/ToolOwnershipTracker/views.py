@@ -161,6 +161,12 @@ class PasswordResetDone(View):
     def post(self, request):
         return redirect("")
 
+class editUsers(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        return render(request, "edituser.html")
 
 class Jobsites(View):
     def get(self, request):
@@ -169,33 +175,25 @@ class Jobsites(View):
         allJobsites = Jobsite.objects.all()
         assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
         return render(request, "jobsites.html", {'jobsites': allJobsites})
-    
-class removeJobsite(View):
-    def post(self, request, jobsite_id):
-        JobsiteClass.removeJobsite(self, jobsite_id)
-        allJobsites = Jobsite.objects.all()
-        return render(request, "jobsites.html", {'jobsites': allJobsites})
-
-
-class editUsers(View):
-    def get(self, request):
-        if helpers.redirectIfNotLoggedIn(request):
-            return redirect("/")
-
-        return render(request, "edituser.html")
 
 class createJobsite(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
-        return render(request, 'createJobsites.html', {'jobsites': allJobsites})
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+        return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
         try:
             JobsiteClass.createJobsite(self, title, owner)
+            jobsite = Jobsite.objects.get(owner=owner, title=title)
             allJobsites = Jobsite.objects.all()
+            email_list = request.POST.getlist('email_list[]')
+            for email in email_list:
+                JobsiteClass.addUser(self, jobsite, email)
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
@@ -222,7 +220,6 @@ class editJobsite(View):
             JobsiteClass.assignOwner(self, jobsite_id, email)
             for email in email_list:
                 JobsiteClass.addUser(self, jobsite_id, email)
-                jobsite = Jobsite.objects.get(id = jobsite_id)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
@@ -230,5 +227,13 @@ class editJobsite(View):
             allUserEmails = [user.email for user in allUsers]
             jobsite = Jobsite.objects.get(id = jobsite_id)
             return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
-
-
+    
+class removeJobsite(View):
+    def post(self, request, jobsite_id):
+        try:
+            JobsiteClass.removeJobsite(self, jobsite_id)
+        except Exception as e:
+            allJobsites = Jobsite.objects.all()
+            return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
+        allJobsites = Jobsite.objects.all()
+        return redirect("/jobsites/", {'jobsites': allJobsites})
