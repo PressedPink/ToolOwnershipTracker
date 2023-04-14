@@ -201,12 +201,12 @@ class ReportUpdateView(UpdateView):
 
 def load_toolbox(request):
     jobsite_id = request.GET.get('jobsite')    
-    toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id).order_by('id')
+    toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id)
     context = {'toolbox': toolbox}
     return render(request, 'ToolOwnershipTracker/toolbox_ddl.html', context)
 
 def load_tool(request):
     toolbox_id = request.GET.get('toolbox')    
-    tool = Tool.objects.filter(toolbox_id=toolbox_id).order_by('id')
+    tool = Tool.objects.filter(toolbox_id=toolbox_id)
     context = {'tool': tool}
     return render(request, 'ToolOwnershipTracker/tool_ddl.html', context)
