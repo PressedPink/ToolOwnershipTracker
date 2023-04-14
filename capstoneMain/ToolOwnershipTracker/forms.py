@@ -4,7 +4,7 @@ from ToolOwnershipTracker.models import ToolReport, Tool, Toolbox, Jobsite, User
 class reportForm(forms.ModelForm):
     class Meta:
         model = ToolReport
-        fields = {'tool', 'jobSite', 'toolbox','reportType','description'}
+        fields = ('reportType', 'jobSite', 'toolbox', 'tool', 'description')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs) 
@@ -17,10 +17,10 @@ class reportForm(forms.ModelForm):
                 self.fields['toolbox'].queryset = Toolbox.objects.filter(jobsite_id=jobsite_id)
             except(ValueError, TypeError):
                 pass
-            
+
         elif self.instance.pk:
             self.fields['toolbox'].queryset = self.instance.jobsite.toolbox_set
-        
+
         self.fields['tool'].queryset = Toolbox.objects.none()
         if 'toolbox' in self.data:
             try:
@@ -28,6 +28,7 @@ class reportForm(forms.ModelForm):
                 self.fields['tool'].queryset = Tool.objects.filter(toolbox_id=toolbox_id)
             except(ValueError, TypeError):
                 pass
-        
+
         elif self.instance.pk:
             self.fields['tool'].queryset = self.instance.toolbox.tool_set
+
