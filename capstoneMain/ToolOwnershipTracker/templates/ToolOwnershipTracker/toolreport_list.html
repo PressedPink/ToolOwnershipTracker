@@ -3,31 +3,43 @@
 
 {% block content %}
 
-  <p>
-    <a href="{% url 'report_add' %}">Report</a>
-  </p>
+<div class="text-center align-middle">
+  <h1>Reports</h1>
+</div>
 
-  <table border="1">
-    <thead>
-      <tr>
+<div class="pages" class="text-center" style="text-align: center">
+  <div class="row justify-content-center" >
+    <div class="col-auto">
+
+  <table class = "table table-responsive">
+    <thead class="thead-light">
+      <tr class="text-left">
+        <th>Report Type</th>
         <th>Jobsite</th>
         <th>Toolbox</th>
         <th>Tool</th>
-        <th>Report Type</th>
+        <th>Topic</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       {% for i in report %}
         <tr>
-          <td>{{ i.jobsite }}</td>
-          <td>{{ i.toolbox.id }}</td>
-          <td>{{ i.tool.id }}</td>
           <td>{{ i.reportType }}</td>
+          <td>{{ i.jobsite.name }}</td>
+          <td>{{ i.toolbox.name }}</td>
+          <td>{{ i.tool.name }}</td>
+          <td>{{ i.name }}</td>
           <td>{{ i.description }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  <form action={% url 'report_add' %}>
+    <button class="btn btn-primary">Report</a>
+  </form>
+</div>
+</div>
+</div>
 
 {% endblock %}
