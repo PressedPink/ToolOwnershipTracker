@@ -191,9 +191,9 @@ class createJobsite(View):
             JobsiteClass.createJobsite(self, title, owner)
             jobsite = Jobsite.objects.get(owner=owner, title=title)
             allJobsites = Jobsite.objects.all()
-            email_list = request.POST.getlist('email_list[]')
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite, email)
+            #email_list = request.POST.getlist('email_list[]')
+            #for email in email_list:
+                #JobsiteClass.addUser(self, jobsite, email)
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
@@ -214,12 +214,19 @@ class editJobsite(View):
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
-        email_list = request.POST.getlist('email_list[]')
+        email_list = request.POST.getlist('emails[]')
         try:
             JobsiteClass.assignTitle(self, jobsite_id, title)
             JobsiteClass.assignOwner(self, jobsite_id, email)
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite_id, email)
+            #for email in email_list:
+                #JobsiteClass.addUser(self, jobsite_id, email)
+                #jobsite = Jobsite.objects.get(id = jobsite_id)
+            #allJobsites = Jobsite.objects.all()
+            #assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
+            #for users in assigned_users:
+                #for user in users:
+                   # print(user.firstName)
+            #print("HEllO")
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
@@ -234,6 +241,7 @@ class removeJobsite(View):
             JobsiteClass.removeJobsite(self, jobsite_id)
         except Exception as e:
             allJobsites = Jobsite.objects.all()
+            redirect("/jobsites/")
             return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
         allJobsites = Jobsite.objects.all()
-        return redirect("/jobsites/", {'jobsites': allJobsites})
+        return redirect("/jobsites/")

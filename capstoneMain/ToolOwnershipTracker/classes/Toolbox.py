@@ -14,7 +14,7 @@ class ToolboxClass:
             raise Exception("User does not exist!")
         
     def createJobsiteToolbox(self, email, jobsiteID):
-        if ToolboxClass.isValidJobsite(jobsiteID):
+        if ToolboxClass.isValidJobsite(self, jobsiteID):
             if ToolboxClass.checkJobsiteToolboxDoesNotExist(jobsiteID):
                 jobsiteOwner = User.objects.get(email = email)
                 jobsite = Jobsite.objects.get(id = jobsiteID)
