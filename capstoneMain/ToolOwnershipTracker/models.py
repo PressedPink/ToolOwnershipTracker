@@ -51,7 +51,7 @@ class User(models.Model):
 
 
 class Jobsite(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50)
     # dictates supervisor that can view
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     title = models.CharField(max_length=40)
@@ -59,7 +59,7 @@ class Jobsite(models.Model):
     assigned = models.CharField(User, null=True, max_length=50)
 
     def __str__(self):
-        return self.id
+        return self.name
 
 
 # defines a toolbox for a Jobsite OR a User -- should NOT have both
@@ -68,35 +68,35 @@ class Jobsite(models.Model):
 
 
 class Toolbox(models.Model):
-    id = models.CharField(unique=True, primary_key=True, max_length=50, )
+    name = models.CharField(max_length=50)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.id
+        return self.name
 
 class Tool(models.Model):
-    id = models.CharField(unique=True, primary_key=True, max_length=50)
+    name = models.CharField(max_length=50)
     #toolType = models.CharField(ToolType, null=True, max_length=1)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.id
+        return self.name
 # defines a tool. Tools WITHOUT a toolbox are not assigned to a user OR a jobsite
 
 
 
 class ToolReport(models.Model):
-    id = models.CharField(unique=True, primary_key=True, max_length=50)
+    name = models.CharField(max_length=50)
     #reporter = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     #created = models.DateTimeField(editable=False, auto_now_add=True)
     toolbox = models.ForeignKey(Toolbox, null=True, on_delete=models.CASCADE)
     tool = models.ForeignKey(Tool, null=True, on_delete=models.CASCADE)
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE)
     #time = models.DateTimeField(auto_now_add=True)
-    #reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
-    #description = models.CharField(max_length=350)
-    
+    reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
+    description = models.CharField(max_length=350)
+
     def __str__(self):
-        return self.id
+        return self.name
 
