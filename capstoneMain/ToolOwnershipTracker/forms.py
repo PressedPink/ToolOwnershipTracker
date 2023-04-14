@@ -1,16 +1,18 @@
 from django import forms
 from ToolOwnershipTracker.models import ToolReport, Tool, Toolbox, Jobsite, User, ToolType
+from django.forms import ModelForm, Textarea, TextInput
 
 class ReportForm(forms.ModelForm):
     class Meta:
         model = ToolReport
-        fields = ('reportType','jobsite', 'toolbox', 'tool', 'name','description')
-
+        fields = ('reportType','jobsite', 'toolbox', 'tool', 'topic','description')
+        widgets = {
+          'description': Textarea(attrs={'size':'20'}),
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['description'].widget.attrs['size'] = 20
         self.fields['toolbox'].queryset = Toolbox.objects.none()
-
-        
 
         if 'jobsite' in self.data:
             try:
