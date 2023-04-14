@@ -29,6 +29,22 @@
               <label for="owner">Owner</label>
               <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="Owner" required>
             </div>
+            <div class="form-group">
+              <label for="title">Add User(s)</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="search" name="search" aria-describedby="search" placeholder="Search Users...">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="add-email">Add</button>
+                </div>
+              </div>
+              <select hidden id="dropdown">
+                <option value="">All</option>
+                {% for user in users %}
+                  <option value="{{ user }}">{{ user }}</option>
+                {% endfor %}
+              </select>
+              <ul id="selected-emails"></ul>
+            </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
@@ -63,7 +79,80 @@
         </div>
       </div>
     </div>
-      </section>
-    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+      var searchInput = document.getElementById("search");
+      var dropdown = document.getElementById("dropdown");
+      var dropdownMenu = document.createElement("div");
+      dropdownMenu.classList.add("dropdown-menu");
+      dropdown.parentNode.insertBefore(dropdownMenu, dropdown.nextSibling);
+
+      var options = [];
+      for (var i = 0; i < dropdown.options.length; i++) {
+          options.push(dropdown.options[i].text.toLowerCase());
+      }
+
+      var emails = []; // Initialize an empty array to store selected emails
+
+      searchInput.addEventListener("input", function() {
+          var value = searchInput.value.toLowerCase();
+          var matchingOptions = [];
+
+          for (var i = 0; i < options.length; i++) {
+          if (options[i].indexOf(value) > -1) {
+              matchingOptions.push(dropdown.options[i].text);
+          }
+          }
+
+          if (matchingOptions.length > 0) {
+          dropdownMenu.innerHTML = "";
+          for (var i = 0; i < matchingOptions.length; i++) {
+              var dropdownOption = document.createElement("div");
+              dropdownOption.classList.add("dropdown-option");
+              dropdownOption.textContent = matchingOptions[i];
+              dropdownOption.addEventListener("click", function(event) {
+              var email = event.target.textContent;
+              searchInput.value = "";
+              dropdownMenu.innerHTML = "";
+              emails.push(email); // Add the selected email to the emails array
+              updateEmailList(); // Update the email list displayed on the form
+              });
+              dropdownMenu.appendChild(dropdownOption);
+          }
+          dropdownMenu.style.display = "block";
+          } else {
+          dropdownMenu.innerHTML = "";
+          dropdownMenu.style.display = "none";
+          }
+      });
+
+      document.addEventListener("click", function(event) {
+          if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          dropdownMenu.style.display = "none";
+          }
+      });
+
+      function updateEmailList() {
+          var emailList = document.getElementById("selected-emails");
+          emailList.innerHTML = "";
+          for (var i = 0; i < emails.length; i++) {
+          var emailItem = document.createElement("li");
+          emailItem.textContent = emails[i];
+          emailList.appendChild(emailItem);
+          var removeButton = document.createElement("button");
+          removeButton.textContent = "Remove";
+          removeButton.classList.add("btn", "btn-link", "p-0", "m-0", "ml-2");
+          removeButton.addEventListener("click", function(event) {
+              var emailToRemove = event.target.previousSibling.textContent;
+              emails = emails.filter(function(email) {
+              return email !== emailToRemove;
+              });
+              updateEmailList();
+          });
+          emailList.appendChild(removeButton);
+          }
+      }
+      });
+    </script>
   </body>
-  </html>
+</html>

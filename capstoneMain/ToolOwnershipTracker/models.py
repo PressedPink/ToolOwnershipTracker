@@ -50,9 +50,8 @@ class Toolbox(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, )
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
 
+
 # defines a tool. Tools WITHOUT a toolbox are not assigned to a user OR a jobsite
-
-
 class Tool(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300)
