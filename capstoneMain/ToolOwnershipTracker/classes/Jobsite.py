@@ -113,7 +113,7 @@ class JobsiteClass:
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 jobsite = Jobsite.objects.get(id = jobsiteID)
                 user = User.objects.get(email = email)
-                if jobsite.assigned.filter(User = user).exists():
+                if jobsite.assigned.filter(email = user.email).exists():
                     return True
                 else:
                     return False

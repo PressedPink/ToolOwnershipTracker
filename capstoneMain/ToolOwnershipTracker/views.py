@@ -4,13 +4,15 @@ from ToolOwnershipTracker.models import User, UserType
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from ToolOwnershipTracker.classes.Users import UserClass 
+from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from . import models
-from .models import User, Jobsite
+from .models import User, Jobsite, Toolbox
 from django.views import View
 from django.db import connections
 import logging
+
+
 # Create your views here.
 
 
@@ -30,7 +32,6 @@ class SignUp(View):
         return render(request, "signup.html")
 
     def post(self, request):
-
         # NEED TO MAKE SURE PASSWORD IS UTF-8
         firstName = str(request.POST['firstName'])
         lastName = str(request.POST['lastName'])
@@ -59,9 +60,8 @@ class EditUser(View):
 
 class Profile(View):
     def get(self, request):
-
-       # if helpers.redirectIfNotLoggedIn(request):
-       #     return redirect("/")
+        # if helpers.redirectIfNotLoggedIn(request):
+        #     return redirect("/")
 
         a = request.session["username"]
         b = User.objects.get(email=a)
@@ -71,7 +71,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
-        #print(UserClass.hashPass("alexf"))
+        # print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -84,12 +84,12 @@ class Login(View):
         badPassword = False
 
         try:
-            
+
             email = request.POST['InputUsername']
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
-            
+
             print(password)
             badPassword = (user.password != password)
         except Exception as e:
@@ -124,7 +124,6 @@ class PasswordReset(View):
 
 class PasswordResetSent(View):
     def get(self, request):
-
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 
@@ -149,9 +148,11 @@ class PasswordResetForm(View):
             if UserClass.change_password(email, password, confirm_password):
                 return redirect("/password_reset_done/")
         except Exception as e:
-            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': str(e), 'token': token})
+            return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                          {'error_message': str(e), 'token': token})
 
-        return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
+        return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                      {'error_message': 'Failed to reset password.', 'token': token})
 
 
 class PasswordResetDone(View):
@@ -161,12 +162,14 @@ class PasswordResetDone(View):
     def post(self, request):
         return redirect("")
 
+
 class editUsers(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
 
         return render(request, "edituser.html")
+
 
 class Jobsites(View):
     def get(self, request):
@@ -176,6 +179,7 @@ class Jobsites(View):
         assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
+
 class createJobsite(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
@@ -184,6 +188,7 @@ class createJobsite(View):
         allUsers = User.objects.all()
         allUserEmails = [user.email for user in allUsers]
         return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
+
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
@@ -198,7 +203,8 @@ class createJobsite(View):
         except Exception as e:
             allJobsites = Jobsite.objects.all()
             return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
-        
+
+
 class editJobsite(View):
     def get(self, request, jobsite_id):
         if helpers.redirectIfNotLoggedIn(request):
@@ -209,8 +215,9 @@ class editJobsite(View):
             allUserEmails = [user.email for user in allUsers]
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
-        
+
         return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
+
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
@@ -225,9 +232,11 @@ class editJobsite(View):
         except Exception as e:
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
-            jobsite = Jobsite.objects.get(id = jobsite_id)
-            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
-    
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            return render(request, 'editJobsite.html',
+                          {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
+
+
 class removeJobsite(View):
     def post(self, request, jobsite_id):
         try:
@@ -237,3 +246,76 @@ class removeJobsite(View):
             return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
         allJobsites = Jobsite.objects.all()
         return redirect("/jobsites/", {'jobsites': allJobsites})
+
+
+class UserToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == 'S':  # only show users at supervisor's jobsite
+            listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
+            all = User.objects.all()
+            allUsers = []
+            for site in listOfSites:
+                for i in all:
+                    if JobsiteClass.containsUser(self, site.id, i.email):
+                        allUsers.append(i)
+
+        elif userRole == 'A':  # show all users
+            allU = User.objects.all()
+            allUsers = {}
+            allSites = Jobsite.objects.all()
+            added = False
+            for person in allU:
+                for site in allSites:
+                    if added:
+                        break
+                    if JobsiteClass.containsUser(self, site.id, person.email):
+                        allUsers.update({person: site.id})
+                        added = True
+                if not added:
+                    allUsers.update({person: "not assigned"})
+                added = False
+            print("allUsers:")
+            print(allUsers)
+
+        #jobsiteDict = {}
+        #allSites = Jobsite.objects.all()
+        #for site in allSites:
+            #for person in allUsers:
+                #if JobsiteClass.containsUser(self, site.id, person.email):
+                    #jobsiteDict.update({person: site.id})
+
+        return render(request, "userToolboxes.html", {'users': allUsers})
+
+
+class viewToolbox(View):
+    def get(self, request, user_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        user = User.objects.get(email=user_id)  # user retrieved from user display page
+        try:
+            toolbox = Toolbox.objects.get(owner=user)
+        except Exception as e:
+            a = request.session["username"]
+            user = User.objects.get(email=a)
+            userRole = user.role
+            if userRole == 'S':  # only show users at supervisor's jobsite
+                listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
+                all = User.objects.all()
+                allUsers = []
+                for site in listOfSites:
+                    for i in all:
+                        if JobsiteClass.containsUser(self, site.id, i.email):
+                            allUsers.append(i)
+
+            elif userRole == 'A':  # show all users
+                allUsers = User.objects.all()
+            return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers})
+
+        return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolbox})

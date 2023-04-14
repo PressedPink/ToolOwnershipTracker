@@ -32,12 +32,12 @@
                             <th>Jobsite</th>
                         </tr>
                     </thead>
-                    {% for row in users %}
+                    {% for key, value in users.items %}
                         <tr class="text left">
-                            <td><a href="{% url 'viewToolbox' row.email%}">{{row.email}}</a></td>
-                            <td>{{row.firstName}} {{row.lastName}}</td>
-                            <td>{{row.role}}</td>
-                            <td>{{jobsite.row}}</td>
+                            <td><a href="{% url 'viewToolbox' key.email%}">{{key.email}}</a></td>
+                            <td>{{key.firstName}} {{key.lastName}}</td>
+                            <td>{{key.role}}</td>
+                            <td>{{value}}</td>
                         </tr>
                     {% endfor %}
                 </table>
