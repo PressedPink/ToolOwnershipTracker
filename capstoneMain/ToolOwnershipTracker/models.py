@@ -87,7 +87,7 @@ class Tool(models.Model):
 
 
 class ToolReport(models.Model):
-    name = models.CharField(max_length=50)
+    topic = models.CharField(max_length=50)
     #reporter = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     #created = models.DateTimeField(editable=False, auto_now_add=True)
     toolbox = models.ForeignKey(Toolbox, null=True, on_delete=models.CASCADE)
@@ -98,5 +98,5 @@ class ToolReport(models.Model):
     description = models.CharField(max_length=350)
 
     def __str__(self):
-        return self.name
+        return self.topic
 
