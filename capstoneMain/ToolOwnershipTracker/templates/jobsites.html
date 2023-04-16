@@ -48,9 +48,8 @@
                             <td>{{ row.title }}</td>
                             <td>
                                 {% if row.assigned.all %}
-                                    {% for user in jobsite.assigned.all %}
-                                        {{ user.firstName }}
-                                        {% if not forloop.last %}, {% endif %}
+                                    {% for user in row.assigned.all %}
+                                        {{ user.firstName }}, 
                                     {% endfor %}
                                 {% else %}
                                     No users assigned

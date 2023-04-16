@@ -1,9 +1,8 @@
 from ToolOwnershipTracker.models import User, Toolbox, Jobsite
-from ToolOwnershipTracker.classes.Users import UserClass
 
 class ToolboxClass:
     def createUserToolbox(self, email):
-        if UserClass.verifyEmailExists(email):
+        if ToolboxClass.verifyEmailExists(self, email):
             if ToolboxClass.checkUserToolboxDoesNotExist(email):
                 toolboxOwner = User.objects.get(email = email)
                 newToolbox = Toolbox(owner=toolboxOwner, jobsite = None)
@@ -53,3 +52,9 @@ class ToolboxClass:
             return True
         else:
             return False
+    
+    def verifyEmailExists(self, email):
+        test = list(map(str, User.objects.filter(email=email)))
+        if len(test) == 0:
+            return False
+        return True

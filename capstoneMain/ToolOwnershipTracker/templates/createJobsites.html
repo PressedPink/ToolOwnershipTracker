@@ -19,7 +19,7 @@
           {% if error_message %}
             <div class="alert alert-danger">{{ error_message }}</div>
           {% endif %}
-          <form action="{% url 'createJobsite'%}" method="post" class="text-center">
+          <form action="{% url 'createJobsite'%}" method="post" class="text-center" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
               <label for="title">Title</label>
@@ -68,9 +68,17 @@
 
                       <tr class="text-left">
                         <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
-                          <td>{{ row.owner.firstName }}</td>
-                          <td>{{ row.title }}</td>
-                          <td>{{ row.assigned.firstName }}</td>
+                        <td>{{ row.owner.firstName }}</td>
+                        <td>{{ row.title }}</td>
+                        <td>
+                            {% if row.assigned.all %}
+                                {% for user in row.assigned.all %}
+                                    {{ user.firstName }}, 
+                                {% endfor %}
+                            {% else %}
+                                No users assigned
+                            {% endif %}
+                        </td>
                       </tr>
   
                   {% endfor %}

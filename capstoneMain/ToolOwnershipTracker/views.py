@@ -32,29 +32,53 @@ class SignUp(View):
     def post(self, request):
 
         # NEED TO MAKE SURE PASSWORD IS UTF-8
-        firstName = str(request.POST['firstName'])
-        lastName = str(request.POST['lastName'])
-        email = str(request.POST['email']).strip()
-        password = str(request.POST['password1'])
-        confirmPassword = str(request.POST['password2'])
+        firstName = request.POST.get('firstName')
+        lastName = request.POST.get('lastName')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirmPassword = request.POST.get('confirmPassword')
         # Role = str(request.P0ST['User Type'])
-        address = str(request.POST['address'])
-        phoneNumber = str(request.POST['phone'])
-
-        UserClass.createUser(UserClass, email=email, password=password, firstName=firstName,
-                             lastName=lastName, phone=phoneNumber, address=address, confirmPassword=confirmPassword)
-        return redirect('/')
-
-
-# For the signup.html page, which allows the user to be redirected to the signup page when successfully or unsuccesfully signing up.
-class SignUp(View):
-    def get(self, request):
-        return render(request, "signup.html")
+        address = request.POST.get('address')
+        phone = str(request.POST.get('phone'))
+        try:
+            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone)
+            return redirect('/')
+        except Exception as e:
+            return render(request, "signup.html", {'error_message': str(e)})
 
 
 class EditUser(View):
     def get(self, request):
         return render(request, "edituser.html")
+    def post(self, request):
+        email = request.session["username"]
+        user = User.objects.get(email = email)
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        newPassword = request.POST.get('newPassword')
+        confirmPassword = request.POST.get('confirmPassword')
+        if len(phone) != 0:
+            UserClass.editPhone(user, phone)
+        if len(address) != 0:
+            UserClass.editAddress(user, address)
+        if len(newPassword) != 0:
+            if len(confirmPassword) != 0:
+                try:
+                    UserClass.change_password(email, newPassword, confirmPassword)
+                except Exception as e:
+                    return render(request, "edituser.html", {'error_message': str(e)})
+            else:
+                return render(request, "edituser.html", {'error_message': "Cannot update password without confirm password field!"})
+
+
+        return redirect("/profile/")
+        
+        
+        
+
+        
+
+
 
 
 class Profile(View):
@@ -89,18 +113,15 @@ class Login(View):
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
-            
-            print(password)
             badPassword = (user.password != password)
         except Exception as e:
-            print(e)
             noSuchUser = True
 
         if noSuchUser:
-            return render(request, "LoginHTML.html", {"message": "no user"})
+            return render(request, "LoginHTML.html", {"error_message": "No such user exists!"})
 
         elif badPassword:
-            return render(request, "LoginHTML.html", {"message": "bad password"})
+            return render(request, "LoginHTML.html", {"error_message": "Incorrect password!"})
         else:
             request.session["username"] = user.email
             # request.session["name"] = user.name
