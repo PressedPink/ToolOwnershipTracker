@@ -256,41 +256,83 @@ class UserToolboxes(View):
         a = request.session["username"]
         user = User.objects.get(email=a)
         userRole = user.role
-        if userRole == 'S':  # only show users at supervisor's jobsite
+        if userRole == 'S':  # only show users at supervisor's jobsites
             listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
             all = User.objects.all()
-            allUsers = []
+            allU = []
             for site in listOfSites:
                 for i in all:
                     if JobsiteClass.containsUser(self, site.id, i.email):
-                        allUsers.append(i)
-
+                        allU.append(i)
+            allUsers = {}
+            for person in allU:
+                assignedSites = ""
+                added = False
+                for site in listOfSites:
+                    if JobsiteClass.containsUser(self, site.id, person.email):
+                        if added:
+                            assignedSites = assignedSites + ", " + str(site.id)
+                        else:
+                            assignedSites = str(site.id)
+                        added = True
+                allUsers.update({person: assignedSites})
         elif userRole == 'A':  # show all users
             allU = User.objects.all()
             allUsers = {}
             allSites = Jobsite.objects.all()
-            added = False
             for person in allU:
-                for site in allSites:
+                if person.role == "U":
+                    assignedSites = ""
+                    added = False
+                    for site in allSites:
+                        if JobsiteClass.containsUser(self, site.id, person.email):
+                            if added:
+                                assignedSites = assignedSites + ", " + str(site.id)
+                            else:
+                                assignedSites = str(site.id)
+                            added = True
+                    if not added:
+                        assignedSites = "Not Assigned"
+                    allUsers.update({person: assignedSites})
+                elif person.role == "S":
+                    ownedSites = ""
+                    added = False
+                    for site in allSites:
+                        if site.owner == person:
+                            if added:
+                                ownedSites = ownedSites + ", " + str(site.id)
+                            else:
+                                ownedSites = str(site.id)
+                            added = True
+                    if not added:
+                        ownedSites = "Not Assigned"
+                    allUsers.update({person: ownedSites})
+        if user.role == "A":
+            listOfSites = ""
+            added = False
+            for site in allSites:
+                if site.owner == user:
                     if added:
-                        break
-                    if JobsiteClass.containsUser(self, site.id, person.email):
-                        allUsers.update({person: site.id})
-                        added = True
-                if not added:
-                    allUsers.update({person: "not assigned"})
-                added = False
-            print("allUsers:")
-            print(allUsers)
-
-        #jobsiteDict = {}
-        #allSites = Jobsite.objects.all()
-        #for site in allSites:
-            #for person in allUsers:
-                #if JobsiteClass.containsUser(self, site.id, person.email):
-                    #jobsiteDict.update({person: site.id})
-
-        return render(request, "userToolboxes.html", {'users': allUsers})
+                        listOfSites = listOfSites + ", " + str(site.id)
+                    else:
+                        listOfSites = str(site.id)
+                    added = True
+            if not added:
+                listOfSites = "None"
+        elif user.role == "S":
+            newListOfSites = ""
+            listOfSites = Jobsite.objects.filter(owner=user)
+            added = False
+            for site in listOfSites:
+                if added:
+                    newListOfSites = newListOfSites + ", " + str(site.id)
+                else:
+                    newListOfSites = str(site.id)
+                added = True
+            if not added:
+                newListOfSites = "None"
+            listOfSites = newListOfSites
+        return render(request, "userToolboxes.html", {'users': allUsers, 'currentUser': user, 'sites': listOfSites})
 
 
 class viewToolbox(View):
@@ -305,17 +347,83 @@ class viewToolbox(View):
             a = request.session["username"]
             user = User.objects.get(email=a)
             userRole = user.role
-            if userRole == 'S':  # only show users at supervisor's jobsite
+            if userRole == 'S':  # only show users at supervisor's jobsites
                 listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
                 all = User.objects.all()
-                allUsers = []
+                allU = []
                 for site in listOfSites:
                     for i in all:
                         if JobsiteClass.containsUser(self, site.id, i.email):
-                            allUsers.append(i)
-
+                            allU.append(i)
+                allUsers = {}
+                for person in allU:
+                    assignedSites = ""
+                    added = False
+                    for site in listOfSites:
+                        if JobsiteClass.containsUser(self, site.id, person.email):
+                            if added:
+                                assignedSites = assignedSites + ", " + str(site.id)
+                            else:
+                                assignedSites = str(site.id)
+                            added = True
+                    allUsers.update({person: assignedSites})
             elif userRole == 'A':  # show all users
-                allUsers = User.objects.all()
-            return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers})
+                allU = User.objects.all()
+                allUsers = {}
+                allSites = Jobsite.objects.all()
+                for person in allU:
+                    if person.role == "U":
+                        assignedSites = ""
+                        added = False
+                        for site in allSites:
+                            if JobsiteClass.containsUser(self, site.id, person.email):
+                                if added:
+                                    assignedSites = assignedSites + ", " + str(site.id)
+                                else:
+                                    assignedSites = str(site.id)
+                                added = True
+                        if not added:
+                            assignedSites = "Not Assigned"
+                        allUsers.update({person: assignedSites})
+                    elif person.role == "S":
+                        ownedSites = ""
+                        added = False
+                        for site in allSites:
+                            if site.owner == person:
+                                if added:
+                                    ownedSites = ownedSites + ", " + str(site.id)
+                                else:
+                                    ownedSites = str(site.id)
+                                added = True
+                        if not added:
+                            ownedSites = "Not Assigned"
+                        allUsers.update({person: ownedSites})
+            if user.role == "A":
+                listOfSites = ""
+                added = False
+                for site in allSites:
+                    if site.owner == user:
+                        if added:
+                            listOfSites = listOfSites + ", " + str(site.id)
+                        else:
+                            listOfSites = str(site.id)
+                        added = True
+                if not added:
+                    listOfSites = "None"
+            elif user.role == "S":
+                newListOfSites = ""
+                listOfSites = Jobsite.objects.filter(owner=user)
+                added = False
+                for site in listOfSites:
+                    if added:
+                        newListOfSites = newListOfSites + ", " + str(site.id)
+                    else:
+                        newListOfSites = str(site.id)
+                    added = True
+                if not added:
+                    newListOfSites = "None"
+                listOfSites = newListOfSites
+            return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers,
+                                                          'currentUser': user, 'sites': listOfSites})
 
         return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolbox})
