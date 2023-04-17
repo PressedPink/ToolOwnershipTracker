@@ -21,11 +21,11 @@
               {% csrf_token %}
               <div class="form-group">
                 <label for="title">New Title</label>
-                <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="New Title" required>
+                <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="New Title">
               </div>
               <div class="form-group">
                 <label for="owner">New Owner</label>
-                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner" required>
+                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner">
               </div>
               <div class="form-group">
                 <label for="title">Add User(s)</label>
@@ -35,6 +35,7 @@
                     <button class="btn btn-outline-secondary" type="button" id="add-email">Add</button>
                   </div>
                 </div>
+                <input type="hidden" name="email_list" id="email-list-input">
                 <select hidden id="dropdown">
                   <option value="">All</option>
                   {% for user in users %}
@@ -56,24 +57,24 @@
         var dropdownMenu = document.createElement("div");
         dropdownMenu.classList.add("dropdown-menu");
         dropdown.parentNode.insertBefore(dropdownMenu, dropdown.nextSibling);
-
+  
         var options = [];
         for (var i = 0; i < dropdown.options.length; i++) {
             options.push(dropdown.options[i].text.toLowerCase());
         }
-
+  
         var emails = []; // Initialize an empty array to store selected emails
-
+  
         searchInput.addEventListener("input", function() {
             var value = searchInput.value.toLowerCase();
             var matchingOptions = [];
-
+  
             for (var i = 0; i < options.length; i++) {
             if (options[i].indexOf(value) > -1) {
                 matchingOptions.push(dropdown.options[i].text);
             }
             }
-
+  
             if (matchingOptions.length > 0) {
             dropdownMenu.innerHTML = "";
             for (var i = 0; i < matchingOptions.length; i++) {
@@ -95,13 +96,13 @@
             dropdownMenu.style.display = "none";
             }
         });
-
+  
         document.addEventListener("click", function(event) {
             if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
             dropdownMenu.style.display = "none";
             }
         });
-
+  
         function updateEmailList() {
             var emailList = document.getElementById("selected-emails");
             emailList.innerHTML = "";
@@ -121,6 +122,8 @@
             });
             emailList.appendChild(removeButton);
             }
+            var emailListInput = document.getElementById("email-list-input");
+            emailListInput.value = emails.join(",");
         }
         });
       </script>

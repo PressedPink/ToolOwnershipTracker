@@ -227,19 +227,14 @@ class editJobsite(View):
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
-        email_list = request.POST.getlist('emails[]')
         try:
-            JobsiteClass.assignTitle(self, jobsite_id, title)
-            JobsiteClass.assignOwner(self, jobsite_id, email)
-            #for email in email_list:
-                #JobsiteClass.addUser(self, jobsite_id, email)
-                #jobsite = Jobsite.objects.get(id = jobsite_id)
-            #allJobsites = Jobsite.objects.all()
-            #assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
-            #for users in assigned_users:
-                #for user in users:
-                   # print(user.firstName)
-            #print("HEllO")
+            if(len(title) != 0):
+                JobsiteClass.assignTitle(self, jobsite_id, title)
+            if(len(email) != 0):
+                JobsiteClass.assignOwner(self, jobsite_id, email)
+            email_list = request.POST.get('email_list', '').split(',')
+            for email in email_list:
+                JobsiteClass.addUser(self, jobsite_id, email)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
