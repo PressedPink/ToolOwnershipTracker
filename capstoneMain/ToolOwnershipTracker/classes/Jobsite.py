@@ -71,6 +71,7 @@ class JobsiteClass:
         if UserClass.verifyEmailExists(self, email):
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 if not JobsiteClass.containsUser(self, jobsiteID, email):
+                    print("Made it here!")
                     user = User.objects.get(email=email)
                     jobsite = Jobsite.objects.get(id = jobsiteID)
                     jobsite.assigned.add(user)
@@ -113,7 +114,7 @@ class JobsiteClass:
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 jobsite = Jobsite.objects.get(id = jobsiteID)
                 user = User.objects.get(email = email)
-                if jobsite.assigned.filter(User = user).exists():
+                if jobsite.assigned.filter(email = user.email).exists():
                     return True
                 else:
                     return False

@@ -20,7 +20,7 @@ class UserClass:
                         if UserClass.checkPhone(self, phone):
                             if UserClass.verifyPasswordRequirements(self, password,confirmPassword):
                                 if not UserClass.verifyEmailExists(self, email):
-                                    hashPass = UserClass.hashPass(self, password)
+                                    hashPass = UserClass.hashPass(password)
                                     # U = basic user, S = Supervisor A = Admin
                                     newUser = User(firstName=firstName, lastName=lastName, email=email, role='U', password=hashPass, address=address, phone=phone, forget_password_token = hashPass)
                                     newUser.save()

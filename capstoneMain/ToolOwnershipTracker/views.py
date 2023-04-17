@@ -73,13 +73,6 @@ class EditUser(View):
 
         return redirect("/profile/")
         
-        
-        
-
-        
-
-
-
 
 class Profile(View):
     def get(self, request):
@@ -89,7 +82,6 @@ class Profile(View):
 
         a = request.session["username"]
         b = User.objects.get(email=a)
-
         return render(request, "profile.html", {"currentUser": b})
 
 
@@ -212,9 +204,9 @@ class createJobsite(View):
             JobsiteClass.createJobsite(self, title, owner)
             jobsite = Jobsite.objects.get(owner=owner, title=title)
             allJobsites = Jobsite.objects.all()
-            #email_list = request.POST.getlist('email_list[]')
-            #for email in email_list:
-                #JobsiteClass.addUser(self, jobsite, email)
+            email_list = request.POST.get('email_list', '').split(',')
+            for email in email_list:
+                JobsiteClass.addUser(self, jobsite.id, email)
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             allJobsites = Jobsite.objects.all()

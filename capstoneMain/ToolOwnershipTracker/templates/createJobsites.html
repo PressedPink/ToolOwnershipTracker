@@ -37,6 +37,7 @@
                   <button class="btn btn-outline-secondary" type="button" id="add-email">Add</button>
                 </div>
               </div>
+              <input type="hidden" name="email_list" id="email-list-input">
               <select hidden id="dropdown">
                 <option value="">All</option>
                 {% for user in users %}
@@ -159,6 +160,8 @@
           });
           emailList.appendChild(removeButton);
           }
+          var emailListInput = document.getElementById("email-list-input");
+          emailListInput.value = emails.join(",");
       }
       });
     </script>
