@@ -225,7 +225,7 @@ class editJobsite(View):
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
         
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, })
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
