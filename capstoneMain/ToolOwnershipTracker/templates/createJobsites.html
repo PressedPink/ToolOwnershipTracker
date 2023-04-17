@@ -33,18 +33,27 @@
               <label for="title">Add User(s)</label>
               <div class="input-group">
                 <input type="text" class="form-control" id="search" name="search" aria-describedby="search" placeholder="Search Users...">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="button" id="add-email">Add</button>
-                </div>
               </div>
               <input type="hidden" name="email_list" id="email-list-input">
-              <select hidden id="dropdown">
-                <option value="">All</option>
-                {% for user in users %}
-                  <option value="{{ user }}">{{ user }}</option>
-                {% endfor %}
-              </select>
-              <ul id="selected-emails"></ul>
+                <select hidden id="dropdown">
+                  {% for user in users %}
+                    <option value="{{ user }}">{{ user }}</option>
+                  {% endfor %}
+                </select>
+            </div>
+            <div class="container">
+              <div class="row justify-content-center" >
+                <div class="col-auto">
+                  <table class = "table table-responsive" id="selected-emails">
+                    <thead class="thead-light">
+                      <tr class="text-left">
+                        <th class="text-left">Added User(s)</th>
+                        <th class="text-left">Remove User</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              </div>
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -72,15 +81,15 @@
                         <td>{{ row.owner.firstName }}</td>
                         <td>{{ row.title }}</td>
                         <td>
-                            {% if row.assigned.all %}
-                                {% for user in row.assigned.all %}
-                                    {{ user.firstName }}, 
-                                {% endfor %}
-                            {% else %}
-                                No users assigned
-                            {% endif %}
+                          {% if row.assigned.all %}
+                              {% for user in row.assigned.all %}
+                                  {{user.firstName}}{% if not forloop.last %}, {% endif %}
+                              {% endfor %}
+                          {% else %}
+                              No users assigned
+                          {% endif %}
                         </td>
-                      </tr>
+                    </tr>
   
                   {% endfor %}
               </tbody>
@@ -142,26 +151,30 @@
       });
 
       function updateEmailList() {
-          var emailList = document.getElementById("selected-emails");
-          emailList.innerHTML = "";
-          for (var i = 0; i < emails.length; i++) {
-          var emailItem = document.createElement("li");
-          emailItem.textContent = emails[i];
-          emailList.appendChild(emailItem);
+        var emailTable = document.getElementById("selected-emails");
+        for (var i = emailTable.rows.length - 1; i > 0; i--) {
+          emailTable.deleteRow(i);
+        }
+        for (var i = 0; i < emails.length; i++) {
+          var emailRow = emailTable.insertRow(-1);
+          var emailCell = emailRow.insertCell(0);
+          var removeCell = emailRow.insertCell(1);
+          var emailText = document.createTextNode(emails[i]);
           var removeButton = document.createElement("button");
           removeButton.textContent = "Remove";
-          removeButton.classList.add("btn", "btn-link", "p-0", "m-0", "ml-2");
+          removeButton.classList.add("btn", "btn-link", "p-0", "m-0");
           removeButton.addEventListener("click", function(event) {
-              var emailToRemove = event.target.previousSibling.textContent;
-              emails = emails.filter(function(email) {
+            var emailToRemove = event.target.parentNode.parentNode.cells[0].textContent;
+            emails = emails.filter(function(email) {
               return email !== emailToRemove;
-              });
-              updateEmailList();
+            });
+            updateEmailList();
           });
-          emailList.appendChild(removeButton);
-          }
-          var emailListInput = document.getElementById("email-list-input");
-          emailListInput.value = emails.join(",");
+          emailCell.appendChild(emailText);
+          removeCell.appendChild(removeButton);
+        }
+        var emailListInput = document.getElementById("email-list-input");
+        emailListInput.value = emails.join(",");
       }
       });
     </script>

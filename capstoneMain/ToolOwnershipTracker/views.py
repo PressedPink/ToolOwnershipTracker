@@ -205,8 +205,10 @@ class createJobsite(View):
             jobsite = Jobsite.objects.get(owner=owner, title=title)
             allJobsites = Jobsite.objects.all()
             email_list = request.POST.get('email_list', '').split(',')
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite.id, email)
+            if email_list:
+                for email in email_list:
+                    if len(email) != 0:
+                        JobsiteClass.addUser(self, jobsite.id, email)
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
@@ -223,7 +225,7 @@ class editJobsite(View):
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
         
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, })
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
@@ -233,8 +235,10 @@ class editJobsite(View):
             if(len(email) != 0):
                 JobsiteClass.assignOwner(self, jobsite_id, email)
             email_list = request.POST.get('email_list', '').split(',')
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite_id, email)
+            if email_list:
+                for email in email_list:
+                    if len(email) != 0:
+                        JobsiteClass.addUser(self, jobsite_id, email)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:

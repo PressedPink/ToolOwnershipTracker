@@ -49,7 +49,7 @@
                             <td>
                                 {% if row.assigned.all %}
                                     {% for user in row.assigned.all %}
-                                        {{ user.firstName }}, 
+                                        {{user.firstName}}{% if not forloop.last %}, {% endif %}
                                     {% endfor %}
                                 {% else %}
                                     No users assigned
