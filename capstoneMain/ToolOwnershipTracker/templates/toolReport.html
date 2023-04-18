@@ -88,20 +88,6 @@
 		</thead>
 		<tbody>
 		  {% for i in report %}
-		  {% if user == i.reporter.email %}
-			<tr>
-			  <td>{{i.topic}}</td>
-			  <td>{{ i.reportType }}</td>
-			  <td>{{ i.reporter }}</td>
-			  <td>{{ i.jobsite.name }}</td>
-			  <td>{{ i.toolbox.name }}</td>
-			  <td>{{ i.tool.name }}</td>
-			  <td>{{ i.created }}</td>
-			  <td>{{ i.time }}</td>
-			  <td>{{ i.description }}</td>
-			 </td>
-			</tr>
-			{%endif%}
 			{% if role == "A" %}
 			<tr>
 			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
@@ -119,8 +105,7 @@
 			 </form>
 			 </td>
 			</tr>
-			{%endif%}
-			{% if user == i.jobsite.owner %}
+			{% elif user == i.jobsite.owner %}
 			<tr>
 			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
 			  <td>{{ i.reportType }}</td>
@@ -135,6 +120,19 @@
 				{% csrf_token %}
 				<button class="btn btn-danger" type="submit" ><i class="fa fa-trash"></i>Delete</button>
 			 </form>
+			 </td>
+			</tr>
+			{% elif user == i.reporter.email %}
+			<tr>
+			  <td>{{i.topic}}</td>
+			  <td>{{ i.reportType }}</td>
+			  <td>{{ i.reporter }}</td>
+			  <td>{{ i.jobsite.name }}</td>
+			  <td>{{ i.toolbox.name }}</td>
+			  <td>{{ i.tool.name }}</td>
+			  <td>{{ i.created }}</td>
+			  <td>{{ i.time }}</td>
+			  <td>{{ i.description }}</td>
 			 </td>
 			</tr>
 			{%endif%}
