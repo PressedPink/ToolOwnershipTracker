@@ -2,14 +2,13 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.urls import include
+from django.views.generic import RedirectView
 
 import base
 from . import views
 from ToolOwnershipTracker.views import (
      Profile, Login, PasswordReset, PasswordResetSent, 
      PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, viewJobsitesSuperAdmin,
-
-
 
 
 )
@@ -34,9 +33,10 @@ urlpatterns = [
 
      path('toolReport/', views.ReportListView.as_view(), name='report_changelist'),
      path('add/', views.ReportCreateView.as_view(), name='report_add'),
-     path('<int:pk>/', views.ReportUpdateView.as_view(), name='report_change'),
+     path('update/<int:pk>/', views.ReportUpdateView.as_view(), name='report_change'),
      path('ajax/load-toolbox/', views.load_toolbox, name='ajax_load_toolbox'),
      path('ajax/load-tool/', views.load_tool, name='ajax_load_tool'),
+     path('<int:pk>', views.delete_object_function, name='delete_object'),
      
 
 ]
