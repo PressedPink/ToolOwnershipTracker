@@ -184,8 +184,12 @@ class viewJobsitesSuperAdmin(View):
         return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox})
 
 class ReportListView(ListView):
-    model = ToolReport
-    context_object_name = 'report'
+    def get(self, request):
+        model = ToolReport
+        toolreport = ToolReport.objects.all()
+        #user = request.session["email"]
+        user = "user"
+        return render(request, "toolReport.html", {'user': user, 'report': toolreport})
 
 
 class ReportCreateView(CreateView):
@@ -193,6 +197,14 @@ class ReportCreateView(CreateView):
     form_class = ReportForm
     success_url = reverse_lazy('report_changelist')
 
+    def get_form_kwargs(self):
+        """ Passes the request object to the form class.
+         This is necessary to only display members that belong to a given user"""
+
+        kwargs = super(ReportCreateView, self).get_form_kwargs()
+        #kwargs['reporter'] = self.request.session["email"]
+        kwargs['reporter'] = "a@a.com"
+        return kwargs
 
 class ReportUpdateView(UpdateView):
     model = ToolReport
