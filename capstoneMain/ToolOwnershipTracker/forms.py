@@ -22,7 +22,6 @@ class ReportForm(forms.ModelForm):
             email=self.reporter)
         self.fields['description'].widget.attrs['size'] = 20
         self.fields['toolbox'].queryset = Toolbox.objects.none()
-
         if 'jobsite' in self.data:
             try:
                 jobsite_id = int(self.data.get('jobsite'))
@@ -40,5 +39,5 @@ class ReportForm(forms.ModelForm):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty Toolbox queryset
         elif self.instance.pk:
-            self.fields['tool'].queryset = self.instance.toolbox.tool.order_by('name')
+            self.fields['tool'].queryset = Tool.objects.all()
 
