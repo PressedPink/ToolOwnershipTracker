@@ -1,16 +1,25 @@
 from django import forms
 from ToolOwnershipTracker.models import ToolReport, Tool, Toolbox, Jobsite, User, ToolType
 from django.forms import ModelForm, Textarea, TextInput
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+class TimeInput(forms.TimeInput):
+    input_type = 'time'
 
 class ReportForm(forms.ModelForm):
     class Meta:
         model = ToolReport
-        fields = ('reportType','jobsite', 'toolbox', 'tool', 'topic','description')
+        fields = ('reportType','reporter', 'jobsite', 'toolbox', 'tool', 'topic', 'created', 'description')
         widgets = {
           'description': Textarea(attrs={'size':'20'}),
+          'created': DateInput()
         }
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.reporter = kwargs.pop('reporter')
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.fields['reporter'].queryset = User.objects.filter(
+            email=self.reporter)
         self.fields['description'].widget.attrs['size'] = 20
         self.fields['toolbox'].queryset = Toolbox.objects.none()
 
