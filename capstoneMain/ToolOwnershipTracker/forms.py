@@ -10,10 +10,11 @@ class TimeInput(forms.TimeInput):
 class ReportForm(forms.ModelForm):
     class Meta:
         model = ToolReport
-        fields = ('reportType','reporter', 'jobsite', 'toolbox', 'tool', 'topic', 'created', 'description')
+        fields = ('reportType','reporter', 'jobsite', 'toolbox', 'tool', 'topic', 'created', 'time', 'description')
         widgets = {
           'description': Textarea(attrs={'size':'20'}),
-          'created': DateInput()
+          'created': DateInput(),
+          'time': TimeInput()
         }
     def __init__(self, *args, **kwargs):
         self.reporter = kwargs.pop('reporter')
