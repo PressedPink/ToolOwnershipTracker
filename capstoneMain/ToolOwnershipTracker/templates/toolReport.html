@@ -59,8 +59,55 @@
         
       <div class="col-auto">
     <hr>
-    {% block content %}
-    {% endblock %}
+	{% block content %}
+
+	<div class="text-center align-middle">
+	  <h1>Reports</h1>
+	</div>
+	
+	<div class="pages" class="text-center" style="text-align: center">
+	  <div class="row justify-content-center" >
+		<div class="col-auto">
+	
+	  <table class = "table table-responsive">
+		<thead class="thead-light">
+		  <tr class="text-left">
+			<th>Topic</th>
+			<th>Report Type</th>
+			<th>Reporter</th>
+			<th>Jobsite</th>
+			<th>Toolbox</th>
+			<th>Tool</th>
+			<th>Created</th>
+			<th>Description</th>
+			<th>Delete</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  {% for i in report %}
+			<tr>
+			  <td>{{ i.topic }}</td>
+			  <td>{{ i.reportType }}</td>
+			  <td>{{ i.reporter }}</td>
+			  <td>{{ i.jobsite.name }}</td>
+			  <td>{{ i.toolbox.name }}</td>
+			  <td>{{ i.tool.name }}</td>
+			  <td>{{ i.created }}</td>
+			  <td>{{ i.description }}</td>
+			  <td>{{ i.pk }} Delete</td>
+			</tr>
+		  {% endfor %}
+		</tbody>
+	  </table>
+	  <form action={% url 'report_add' %}>
+		<button class="btn btn-primary">Report</a>
+	  </form>
+	</div>
+	</div>
+	</div>
+	
+	{% endblock %}
+	
       </div>
     </div>
   </body>
