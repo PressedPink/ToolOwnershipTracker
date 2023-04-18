@@ -80,13 +80,16 @@
 			<th>Tool</th>
 			<th>Created</th>
 			<th>Description</th>
+			{% if role == "A" or role == "S" %}
 			<th>Delete</th>
+			{% endif %}
 		  </tr>
 		</thead>
 		<tbody>
 		  {% for i in report %}
+		  {% if user == i.reporter.email %}
 			<tr>
-			  <td>{{ i.topic }}</td>
+			  <td>{{i.topic}}</td>
 			  <td>{{ i.reportType }}</td>
 			  <td>{{ i.reporter }}</td>
 			  <td>{{ i.jobsite.name }}</td>
@@ -94,8 +97,43 @@
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
 			  <td>{{ i.description }}</td>
-			  <td>{{ i.pk }} Delete</td>
+			 </td>
 			</tr>
+			{%endif%}
+			{% if role == "A" %}
+			<tr>
+			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
+			  <td>{{ i.reportType }}</td>
+			  <td>{{ i.reporter }}</td>
+			  <td>{{ i.jobsite.name }}</td>
+			  <td>{{ i.toolbox.name }}</td>
+			  <td>{{ i.tool.name }}</td>
+			  <td>{{ i.created }}</td>
+			  <td>{{ i.description }}</td>
+			  <td><form action="{% url 'delete_object' pk=i.id %}" method="post">
+				{% csrf_token %}
+				<button class="btn btn-danger" type="submit" ><i class="fa fa-trash"></i>Delete</button>
+			 </form>
+			 </td>
+			</tr>
+			{%endif%}
+			{% if user == i.jobsite.owner %}
+			<tr>
+			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
+			  <td>{{ i.reportType }}</td>
+			  <td>{{ i.reporter }}</td>
+			  <td>{{ i.jobsite.name }}</td>
+			  <td>{{ i.toolbox.name }}</td>
+			  <td>{{ i.tool.name }}</td>
+			  <td>{{ i.created }}</td>
+			  <td>{{ i.description }}</td>
+			  <td><form action="{% url 'delete_object' pk=i.id %}" method="post">
+				{% csrf_token %}
+				<button class="btn btn-danger" type="submit" ><i class="fa fa-trash"></i>Delete</button>
+			 </form>
+			 </td>
+			</tr>
+			{%endif%}
 		  {% endfor %}
 		</tbody>
 	  </table>
