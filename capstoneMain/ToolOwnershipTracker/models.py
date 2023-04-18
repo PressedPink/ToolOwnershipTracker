@@ -77,7 +77,7 @@ class Toolbox(models.Model):
 
 class Tool(models.Model):
     name = models.CharField(max_length=50)
-    toolType = models.CharField(ToolType, null=True, max_length=1)
+    #toolType = models.CharField(ToolType, null=True, max_length=1)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
@@ -93,7 +93,7 @@ class ToolReport(models.Model):
     toolbox = models.ForeignKey(Toolbox, null=True, on_delete=models.CASCADE)
     tool = models.ForeignKey(Tool, null=True, on_delete=models.CASCADE)
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE)
-    time = models.TimeField(auto_now=True)
+    time = models.TimeField()
     reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
     description = models.CharField(max_length=350)
 
