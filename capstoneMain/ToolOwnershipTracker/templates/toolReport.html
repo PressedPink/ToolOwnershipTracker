@@ -79,6 +79,7 @@
 			<th>Toolbox</th>
 			<th>Tool</th>
 			<th>Created</th>
+			<th>Time</th>
 			<th>Description</th>
 			{% if role == "A" or role == "S" %}
 			<th>Delete</th>
@@ -96,6 +97,7 @@
 			  <td>{{ i.toolbox.name }}</td>
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
+			  <td>{{ i.time }}</td>
 			  <td>{{ i.description }}</td>
 			 </td>
 			</tr>
@@ -109,6 +111,7 @@
 			  <td>{{ i.toolbox.name }}</td>
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
+			  <td>{{ i.time }}</td>
 			  <td>{{ i.description }}</td>
 			  <td><form action="{% url 'delete_object' pk=i.id %}" method="post">
 				{% csrf_token %}
@@ -126,6 +129,7 @@
 			  <td>{{ i.toolbox.name }}</td>
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
+			  <td>{{ i.time }}</td>
 			  <td>{{ i.description }}</td>
 			  <td><form action="{% url 'delete_object' pk=i.id %}" method="post">
 				{% csrf_token %}
