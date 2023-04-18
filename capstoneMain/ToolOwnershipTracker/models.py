@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 
 # defining three user roles for our app
 
@@ -77,7 +77,7 @@ class Toolbox(models.Model):
 
 class Tool(models.Model):
     name = models.CharField(max_length=50)
-    #toolType = models.CharField(ToolType, null=True, max_length=1)
+    toolType = models.CharField(ToolType, null=True, max_length=1)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
@@ -88,12 +88,12 @@ class Tool(models.Model):
 
 class ToolReport(models.Model):
     topic = models.CharField(max_length=50)
-    #reporter = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    #created = models.DateTimeField(editable=False, auto_now_add=True)
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    created = models.DateField()
     toolbox = models.ForeignKey(Toolbox, null=True, on_delete=models.CASCADE)
     tool = models.ForeignKey(Tool, null=True, on_delete=models.CASCADE)
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE)
-    #time = models.DateTimeField(auto_now_add=True)
+    time = models.TimeField(auto_now=True)
     reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
     description = models.CharField(max_length=350)
 
