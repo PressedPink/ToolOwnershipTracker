@@ -1,13 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 # from classes.profile import Profile
 from ToolOwnershipTracker.models import User
 from django.http import HttpResponseBadRequest
 from ToolOwnershipTracker.classes.Users import UserClass
 from .models import User, Jobsite, Toolbox, Tool, ToolReport
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from ToolOwnershipTracker.forms import ReportForm
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 # Create your views here.
 
 class helpers():
@@ -185,11 +187,12 @@ class viewJobsitesSuperAdmin(View):
 
 class ReportListView(ListView):
     def get(self, request):
-        model = ToolReport
         toolreport = ToolReport.objects.all()
         #user = request.session["email"]
-        user = "user"
-        return render(request, "toolReport.html", {'user': user, 'report': toolreport})
+        #role = request.session["role"]
+        user = "a@a.com"
+        role = "U"
+        return render(request, "toolReport.html", {'user': user, 'report': toolreport, "role": role})
 
 
 class ReportCreateView(CreateView):
@@ -211,6 +214,15 @@ class ReportUpdateView(UpdateView):
     form_class = ReportForm
     success_url = reverse_lazy('report_changelist')
 
+    def get_form_kwargs(self):
+        """ Passes the request object to the form class.
+         This is necessary to only display members that belong to a given user"""
+
+        kwargs = super(ReportUpdateView, self).get_form_kwargs()
+        #kwargs['reporter'] = self.request.session["email"]
+        kwargs['reporter'] = "a@a.com"
+        return kwargs
+
 def load_toolbox(request):
     jobsite_id = request.GET.get('jobsite')    
     toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id)
@@ -222,3 +234,8 @@ def load_tool(request):
     tool = Tool.objects.filter(toolbox_id=toolbox_id)
     context = {'tool': tool}
     return render(request, 'ToolOwnershipTracker/tool_ddl.html', context)
+
+def delete_object_function(request, pk):
+    ob = ToolReport.objects.get(pk=pk)
+    ob.delete()
+    return render(request, 'toolReport.html')
