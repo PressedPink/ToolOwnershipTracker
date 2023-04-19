@@ -4,10 +4,13 @@ from ToolOwnershipTracker.models import Jobsite, Toolbox, Tool
 
 
 class ToolClass:
-    def createTool(self):
-        tool = Tool()
-        tool.save()
-        return True
+    def createTool(self, name, toolType):
+        if ToolClass.isValidName(self, name):
+            tool = Tool(name = name, toolType = toolType)
+            tool.save()
+            return True
+        else:
+            raise Exception("Name of tool cannot be left empty!")
 
     def isValidName(self, name):
         if name is None:
@@ -54,8 +57,8 @@ class ToolClass:
                     if not ToolClass.containedInAnyToolbox(self, toolID):
                         tool = Tool.objects.get(id = toolID)
                         toolbox = Toolbox.objects.get(id = toolboxID)
-                        tool.toolbox = toolbox
-                        tool.save()
+                        toolbox.tools.add(tool)
+                        toolbox.save()
                         return True
                     else:
                         raise Exception("Tool is already contained in another toolbox!")
@@ -71,8 +74,9 @@ class ToolClass:
             if ToolClass.isValidToolbox(self, toolboxID):
                 if ToolClass.containedInThisToolbox(self, toolID, toolboxID):
                     tool = Tool.objects.get(id = toolID)
-                    tool.toolbox = None
-                    tool.save()
+                    toolbox = Toolbox.objects.get(id = toolboxID)
+                    toolbox.tools.remove(tool)
+                    toolbox.save()
                     return True
                 else:
                     raise Exception("Tool is not contained in this toolbox!")
@@ -86,7 +90,7 @@ class ToolClass:
             if ToolClass.isValidToolbox(self, toolboxID):
                 tool = Tool.objects.get(id = toolID)
                 toolbox = Toolbox.objects.get(id = toolboxID)
-                if tool.toolbox == toolbox:
+                if toolbox.tools.filter(id = tool.id).exists():
                     return True
                 else:
                     return False
@@ -98,10 +102,12 @@ class ToolClass:
     def containedInAnyToolbox(self, toolID):
         if ToolClass.isValidTool(self, toolID):
             tool = Tool.objects.get(id = toolID)
-            if tool.toolbox != None:
-                return True
-            else:
-                return False
+            allToolboxes = Toolbox.objects.all()
+            for toolbox in allToolboxes:
+                 if toolbox.tools.filter(id = tool.id).exists():
+                    return True
+        else:
+            raise Exception("Tool does not exist!")
 
     def deleteTool(self, toolID):
         if not ToolClass.containedInAnyToolbox(self, toolID):
