@@ -57,8 +57,8 @@ class ToolClass:
                     if not ToolClass.containedInAnyToolbox(self, toolID):
                         tool = Tool.objects.get(id = toolID)
                         toolbox = Toolbox.objects.get(id = toolboxID)
-                        toolbox.tools.add(tool)
-                        toolbox.save()
+                        tool.toolbox = toolbox
+                        tool.save()
                         return True
                     else:
                         raise Exception("Tool is already contained in another toolbox!")
@@ -74,9 +74,8 @@ class ToolClass:
             if ToolClass.isValidToolbox(self, toolboxID):
                 if ToolClass.containedInThisToolbox(self, toolID, toolboxID):
                     tool = Tool.objects.get(id = toolID)
-                    toolbox = Toolbox.objects.get(id = toolboxID)
-                    toolbox.tools.remove(tool)
-                    toolbox.save()
+                    tool.toolbox = None
+                    tool.save()
                     return True
                 else:
                     raise Exception("Tool is not contained in this toolbox!")
@@ -90,7 +89,7 @@ class ToolClass:
             if ToolClass.isValidToolbox(self, toolboxID):
                 tool = Tool.objects.get(id = toolID)
                 toolbox = Toolbox.objects.get(id = toolboxID)
-                if toolbox.tools.filter(id = tool.id).exists():
+                if tool.toolbox == toolbox:
                     return True
                 else:
                     return False
@@ -102,10 +101,10 @@ class ToolClass:
     def containedInAnyToolbox(self, toolID):
         if ToolClass.isValidTool(self, toolID):
             tool = Tool.objects.get(id = toolID)
-            allToolboxes = Toolbox.objects.all()
-            for toolbox in allToolboxes:
-                 if toolbox.tools.filter(id = tool.id).exists():
-                    return True
+            if tool.toolbox != None:
+                return True
+            else:
+                return False
         else:
             raise Exception("Tool does not exist!")
 
