@@ -36,8 +36,6 @@ class User(models.Model):
     forget_password_token = models.CharField(max_length=100, default="")
 
 # defines a Jobsite
-
-
 class Jobsite(models.Model):
     id = models.AutoField(primary_key=True)
     # dictates supervisor that can view
@@ -46,20 +44,17 @@ class Jobsite(models.Model):
     # dictates users that can view
     assigned = models.ManyToManyField(User, related_name='assigned', blank=True)
 
-# defines a toolbox for a Jobsite OR a User -- should NOT have both
-# noteownerANDjobsite should not BOTH be null, will verify and address in logic
+class Toolbox(models.Model):
+    id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, )
+    jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
 
-# defines a tool. Tools WITHOUT a toolbox are not assigned to a user OR a jobsite
+
 class Tool(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300)
     toolType = models.CharField(
         max_length=1, choices=ToolType.choices, default=ToolType.Other)
-
-class Toolbox(models.Model):
-    id = models.AutoField(primary_key=True)
-    tools = models.ManyToManyField(Tool, related_name='tools', blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, )
-    jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
+    toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
 
 

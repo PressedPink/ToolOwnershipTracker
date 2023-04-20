@@ -257,3 +257,9 @@ class removeJobsite(View):
             return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
         allJobsites = Jobsite.objects.all()
         return redirect("/jobsites/")
+    
+class createTool(View):
+    def get(self, request):
+        return render(request, 'createTool.html')
+    def post():
+        pass
