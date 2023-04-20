@@ -54,6 +54,9 @@
 		</div>
 	</nav>
 	<body>
+		<div class="pages" class="text-center" style="text-align: center">
+			<div class="row justify-content-center" >
+			  <div class="col-auto">
 		{% block content %}
 		<div class="content">
 			<div class="table">
@@ -69,14 +72,16 @@
 					{% if accType == 'S' %}
                         <tbody>
 					    {% for i in jobsites %}
-					        {% if i.owner == user %}
-					        <tr class = "text-left">
-						    <td>{{ i.title }}</td>
-						        {% for z in toolbox %}
-						            {% if z.jobsite.id == i.id %}
-						             <td>{{ z.tools.id }}</td>
+					        <tr class = "table table-responsive">
+							{% if i.owner.email == user %}
+						    <td>{{ i.name }}</td>
+							<td>
+						        {% for z in tool %}
+						            {% if z.toolbox.jobsite.name == i.name %}
+									{{ z.name }} {{z.toolType}}<p></p>
                                     {% endif %}
 						        {% endfor %}
+							</td>
                             {% endif %}
 						{% endfor %}
                             </tr>
@@ -87,11 +92,15 @@
 					{% if accType == 'A' %}
                     <tbody>
 						{% for i in jobsites %}
-                            <tr class = "text-left">
-                            <td>{{ i.title }}</td>
-						    {% for z in toolbox %}
-						        <td>{{ z.tools }}</td>
+                            <tr class = "table table-responsive">
+                            <td>{{ i.name }}</td>
+							<td>
+						    {% for z in tool %}
+								{% if z.toolbox.jobsite.name == i.name %}
+						        {{ z.name }} {{z.toolType}}<p></p>
+								{% endif %}
 						    {% endfor %}
+							</td>
 						{% endfor %}
                     </tr>
                     </tbody>
@@ -101,5 +110,6 @@
 			</div>
 		</div>
 		{% endblock %}
+	</div></div></div>
 	</body>
 </html>
