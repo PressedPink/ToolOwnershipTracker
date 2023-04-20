@@ -7,7 +7,7 @@ from .models import User, Jobsite, Toolbox, Tool, ToolReport
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from ToolOwnershipTracker.forms import ReportForm
+from .forms import ReportForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 # Create your views here.
@@ -46,11 +46,9 @@ class SignUp(View):
     def get(self, request):
         return render(request, "signup.html")
 
-
 class EditUser(View):
     def get(self, request):
         return render(request, "edituser.html")
-
 
 class Profile(View):
     def get(self, request):
@@ -99,8 +97,6 @@ class Login(View):
             # request.session["name"] = user.name
             return redirect("/profile/")
 
-
-
 class PasswordReset(View):
     def get(self, request):
 
@@ -115,12 +111,10 @@ class PasswordReset(View):
 
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
-
 class PasswordResetSent(View):
     def get(self, request):
 
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
-
 
 class PasswordResetForm(View):
     def get(self, request, token):
@@ -153,7 +147,6 @@ class PasswordResetForm(View):
 
         return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
 
-
 class PasswordResetDone(View):
     def get(self, request):
         return render(request, 'ForgotPasswordTemplates/password_reset_done.html')
@@ -161,14 +154,12 @@ class PasswordResetDone(View):
     def post(self, request):
         return redirect("")
 
-
 class Jobsites(View):
     def get(self, request):
         #if helpers.redirectIfNotLoggedIn(request):
             #return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
-
 
 class editUsers(View):
     def get(self, request):
@@ -180,10 +171,13 @@ class editUsers(View):
 class viewJobsitesSuperAdmin(View):
     def get(self, request):
         jobsites = Jobsite.objects.all()
-        user = request.session["email"]
-        accType = request.session["role"]
+        #user = request.session["email"]
+        user = "a@a.com"
+        #accType = request.session["role"]
+        accType = "A"
         toolbox = Toolbox.objects.all()
-        return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox})
+        tool = Tool.objects.all()
+        return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox, 'tool': tool})
 
 class ReportListView(ListView):
     def get(self, request):
@@ -191,13 +185,13 @@ class ReportListView(ListView):
         #user = request.session["email"]
         #role = request.session["role"]
         user = "a@a.com"
-        role = "U"
+        role = "A"
         return render(request, "toolReport.html", {'user': user, 'report': toolreport, "role": role})
-
 
 class ReportCreateView(CreateView):
     model = ToolReport
     form_class = ReportForm
+    template_name = 'ToolReportTemplates/toolreport_form.html'
     success_url = reverse_lazy('report_changelist')
 
     def get_form_kwargs(self):
@@ -212,6 +206,7 @@ class ReportCreateView(CreateView):
 class ReportUpdateView(UpdateView):
     model = ToolReport
     form_class = ReportForm
+    template_name = 'ToolReportTemplates/toolreport_form.html'
     success_url = reverse_lazy('report_changelist')
 
     def get_form_kwargs(self):
@@ -227,13 +222,13 @@ def load_toolbox(request):
     jobsite_id = request.GET.get('jobsite')    
     toolbox = Toolbox.objects.filter(jobsite_id=jobsite_id)
     context = {'toolbox': toolbox}
-    return render(request, 'ToolOwnershipTracker/toolbox_ddl.html', context)
+    return render(request, 'ToolReportTemplates/toolbox_ddl.html', context)
 
 def load_tool(request):
     toolbox_id = request.GET.get('toolbox')    
     tool = Tool.objects.filter(toolbox_id=toolbox_id)
     context = {'tool': tool}
-    return render(request, 'ToolOwnershipTracker/tool_ddl.html', context)
+    return render(request, 'ToolReportTemplates/tool_ddl.html', context)
 
 def delete_object_function(request, pk):
     ob = ToolReport.objects.get(pk=pk)
