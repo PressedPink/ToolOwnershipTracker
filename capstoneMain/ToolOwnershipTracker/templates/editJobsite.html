@@ -21,29 +21,38 @@
               {% csrf_token %}
               <div class="form-group">
                 <label for="title">New Title</label>
-                <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="New Title" required>
+                <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="New Title">
               </div>
               <div class="form-group">
                 <label for="owner">New Owner</label>
-                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner" required>
+                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner">
               </div>
               <div class="form-group">
                 <label for="title">Add User(s)</label>
                 <div class="input-group">
                   <input type="text" class="form-control" id="search" name="search" aria-describedby="search" placeholder="Search Users...">
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="add-email">Add</button>
-                  </div>
                 </div>
+                <input type="hidden" name="email_list" id="email-list-input">
                 <select hidden id="dropdown">
-                  <option value="">All</option>
                   {% for user in users %}
                     <option value="{{ user }}">{{ user }}</option>
                   {% endfor %}
                 </select>
-                <ul id="selected-emails"></ul>
               </div>
-              <br>
+              <div class="container">
+                <div class="row justify-content-center" >
+                  <div class="col-auto">
+                    <table class = "table table-responsive" id="selected-emails">
+                      <thead class="thead-light">
+                        <tr class="text-left">
+                          <th class="text-left">Added User(s)</th>
+                          <th class="text-left">Remove User</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+                </div>
+              </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
@@ -56,24 +65,24 @@
         var dropdownMenu = document.createElement("div");
         dropdownMenu.classList.add("dropdown-menu");
         dropdown.parentNode.insertBefore(dropdownMenu, dropdown.nextSibling);
-
+  
         var options = [];
         for (var i = 0; i < dropdown.options.length; i++) {
             options.push(dropdown.options[i].text.toLowerCase());
         }
-
+  
         var emails = []; // Initialize an empty array to store selected emails
-
+  
         searchInput.addEventListener("input", function() {
             var value = searchInput.value.toLowerCase();
             var matchingOptions = [];
-
+  
             for (var i = 0; i < options.length; i++) {
             if (options[i].indexOf(value) > -1) {
                 matchingOptions.push(dropdown.options[i].text);
             }
             }
-
+  
             if (matchingOptions.length > 0) {
             dropdownMenu.innerHTML = "";
             for (var i = 0; i < matchingOptions.length; i++) {
@@ -95,32 +104,38 @@
             dropdownMenu.style.display = "none";
             }
         });
-
+  
         document.addEventListener("click", function(event) {
             if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
             dropdownMenu.style.display = "none";
             }
         });
-
+  
         function updateEmailList() {
-            var emailList = document.getElementById("selected-emails");
-            emailList.innerHTML = "";
-            for (var i = 0; i < emails.length; i++) {
-            var emailItem = document.createElement("li");
-            emailItem.textContent = emails[i];
-            emailList.appendChild(emailItem);
+          var emailTable = document.getElementById("selected-emails");
+          for (var i = emailTable.rows.length - 1; i > 0; i--) {
+            emailTable.deleteRow(i);
+          }
+          for (var i = 0; i < emails.length; i++) {
+            var emailRow = emailTable.insertRow(-1);
+            var emailCell = emailRow.insertCell(0);
+            var removeCell = emailRow.insertCell(1);
+            var emailText = document.createTextNode(emails[i]);
             var removeButton = document.createElement("button");
             removeButton.textContent = "Remove";
-            removeButton.classList.add("btn", "btn-link", "p-0", "m-0", "ml-2");
+            removeButton.classList.add("btn", "btn-link", "p-0", "m-0");
             removeButton.addEventListener("click", function(event) {
-                var emailToRemove = event.target.previousSibling.textContent;
-                emails = emails.filter(function(email) {
+              var emailToRemove = event.target.parentNode.parentNode.cells[0].textContent;
+              emails = emails.filter(function(email) {
                 return email !== emailToRemove;
-                });
-                updateEmailList();
+              });
+              updateEmailList();
             });
-            emailList.appendChild(removeButton);
-            }
+            emailCell.appendChild(emailText);
+            removeCell.appendChild(removeButton);
+          }
+          var emailListInput = document.getElementById("email-list-input");
+          emailListInput.value = emails.join(",");
         }
         });
       </script>

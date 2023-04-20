@@ -4,29 +4,28 @@ from django.conf import settings
 import hashlib
 import re
 import uuid
-from re import search
-from django.shortcuts import render, redirect
-from django.views import View
-from django.forms import models
 
 # import capstoneMain.ToolOwnershipTracker.models
-from ToolOwnershipTracker.models import User, Toolbox, Jobsite
+from ToolOwnershipTracker.models import User
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 
 
 class UserClass:
     # if role does not work, change 'U' to UserType.User
     def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
-        if self.checkEmail(self, email) and self.checkFirstName(self, firstName) and self.checkLastName(self,
-                                                                                                        lastName) and self.checkAddress(
-                self, address) and self.checkPhone(self, phone) and self.verifyPasswordRequirements(self, password,
-                                                                                                    confirmPassword) and not self.verifyEmailExists(
-                self, email):
-            hashPass = self.hashPass(password)
-            # U = basic user, S = Supervisor A = Admin
-            newUser = User(firstname=firstName, lastname=lastName, email=email,
-                           role='U', password=hashPass, address=address, phone=phone)
-            newUser.save()
-
+        if UserClass.checkEmail(self, email):
+            if UserClass.checkFirstName(self, firstName):
+                if UserClass.checkLastName(self, lastName):
+                    if UserClass.checkAddress(self, address):
+                        if UserClass.checkPhone(self, phone):
+                            if UserClass.verifyPasswordRequirements(self, password,confirmPassword):
+                                if not UserClass.verifyEmailExists(self, email):
+                                    hashPass = UserClass.hashPass(password)
+                                    # U = basic user, S = Supervisor A = Admin
+                                    newUser = User(firstName=firstName, lastName=lastName, email=email, role='U', password=hashPass, address=address, phone=phone, forget_password_token = hashPass)
+                                    newUser.save()
+                                    ToolboxClass.createUserToolbox(self, email)
+            
     def checkAddress(self, address):
         if address is None:
             raise Exception("Address may not be left blank")
@@ -50,6 +49,8 @@ class UserClass:
         test = list(map(str, User.objects.filter(email=email)))
         if len(test) != 0:
             raise Exception("User already exists")
+        else:
+            return True
         # removed as regex is handled in input fields
         # if not '@' & '.' in email:
             # raise Exception("Email is Invalid")
@@ -58,8 +59,6 @@ class UserClass:
         num = len(phone)
         if phone is None:
             raise Exception("Phone Number may not be left blank")
-        if len(phone) == 10:
-            raise Exception("Please include your country code")
         if len(phone) == 7:
             raise Exception("Please include your country and area codes")
         if len(phone) > 12:
@@ -133,17 +132,17 @@ class UserClass:
             self.save()
 
     def editAddress(self, address):
-        if self.checkAddress(self, address):
+        if UserClass.checkAddress(self, address):
             self.address = address
             self.save()
 
     def editEmail(self, email):
-        if self.checkEmail(self, email):
+        if UserClass.checkEmail(self, email):
             self.email = email
             self.save()
 
     def editPhone(self, phone):
-        if self.checkPhone(self, phone):
+        if UserClass.checkPhone(self, phone):
             self.phone = phone
             self.save()
 
