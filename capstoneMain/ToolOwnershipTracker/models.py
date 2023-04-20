@@ -54,7 +54,6 @@ class Jobsite(models.Model):
     name = models.CharField(max_length=50)
     # dictates supervisor that can view
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    title = models.CharField(max_length=40)
     # dictates users that can view
     assigned = models.CharField(User, null=True, max_length=50)
 
@@ -77,7 +76,7 @@ class Toolbox(models.Model):
 
 class Tool(models.Model):
     name = models.CharField(max_length=50)
-    #toolType = models.CharField(ToolType, null=True, max_length=1)
+    toolType = models.CharField(max_length=1, choices=ToolType.choices, default=ToolType.Handtool)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
