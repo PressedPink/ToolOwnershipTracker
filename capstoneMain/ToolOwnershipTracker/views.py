@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 # from classes.profile import Profile
-from ToolOwnershipTracker.models import User, UserType
+from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from ToolOwnershipTracker.classes.Users import UserClass 
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Tool import ToolClass
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 from . import models
 from .models import User, Jobsite
 from django.views import View
@@ -82,7 +84,13 @@ class Profile(View):
 
         a = request.session["username"]
         b = User.objects.get(email=a)
-        return render(request, "profile.html", {"currentUser": b})
+        allSites = Jobsite.objects.all()
+        assignedSites = []
+        for site in allSites:
+            if JobsiteClass.containsUser(self, site.id, b.email):
+                assignedSites.append(site.id)
+
+        return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites})
 
 
 class Login(View):
@@ -222,10 +230,11 @@ class editJobsite(View):
             jobsite = Jobsite.objects.get(id=jobsite_id)
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
+            assignedUsers = jobsite.assigned.all()
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
         
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
@@ -235,10 +244,16 @@ class editJobsite(View):
             if(len(email) != 0):
                 JobsiteClass.assignOwner(self, jobsite_id, email)
             email_list = request.POST.get('email_list', '').split(',')
+            remove_email_list = request.POST.get('remove_email_list', '').split(',')
             if email_list:
                 for email in email_list:
                     if len(email) != 0:
                         JobsiteClass.addUser(self, jobsite_id, email)
+
+            if remove_email_list:
+                for email in remove_email_list:
+                    if len(email) != 0:
+                        JobsiteClass.removeUser(self, jobsite_id, email)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
@@ -260,6 +275,69 @@ class removeJobsite(View):
     
 class createTool(View):
     def get(self, request):
-        return render(request, 'createTool.html')
-    def post():
-        pass
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+    def post(self, request):
+        name = request.POST.get('name')
+        owner = request.POST.get('toolboxOwner')
+        jobsiteName = request.POST.get('jobsiteName')
+        toolbox_type = request.POST.get('toolboxType')
+        tool_type = request.POST.get('toolType')
+        if(tool_type == "Handtool"):
+            type = "H"
+        if(tool_type == "Powertool"):
+            type = "P"
+        if(tool_type == "Operatable"):
+            type = "D"
+        if(tool_type == "Other"):
+            type = "O"
+
+
+        if(toolbox_type == "JobsiteToolbox"):
+            if(len(jobsiteName) != 0):
+                test = list(map(str, Jobsite.objects.filter(title = jobsiteName)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name = name)
+                        jobsite = Jobsite.objects.get(title = jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite = jobsite)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input a jobsite to assign tool to!'})
+        elif(toolbox_type == "UserToolbox"):
+            if(len(owner) != 0):
+                test = list(map(str, User.objects.filter(email = owner)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name = name)
+                        toolbox = Toolbox.objects.get(owner = owner, jobsite = None)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input an owner to assign tool to!'})
+        else:
+            try:
+                ToolClass.createTool(self, name, type)
+                return render(request, 'createTool.html')
+            except Exception as e:
+                return render(request, 'createTool.html', {'errror_message': str(e)})
+            
+
+
+

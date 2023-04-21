@@ -40,7 +40,7 @@ class Jobsite(models.Model):
     id = models.AutoField(primary_key=True)
     # dictates supervisor that can view
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=40, unique=True)
     # dictates users that can view
     assigned = models.ManyToManyField(User, related_name='assigned', blank=True)
 
@@ -52,7 +52,7 @@ class Toolbox(models.Model):
 
 class Tool(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=300)
+    name = models.CharField(max_length=300, unique=True)
     toolType = models.CharField(
         max_length=1, choices=ToolType.choices, default=ToolType.Other)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)

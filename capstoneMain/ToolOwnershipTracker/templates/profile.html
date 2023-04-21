@@ -39,6 +39,14 @@
             <div class="col-sm-4"><strong>Phone:</strong></div>
             <div class="col-sm-8">{{currentUser.phone}}</div>
           </div>
+          <div class="row">
+            <div class="col-sm-4"><strong>Jobsites:</strong></div>
+            <div class="col-sm-8">
+              {% for jobsite in assignedSites %}
+                {{jobsite}}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </div>
+          </div>
         </div>
       </div>
     </section>
