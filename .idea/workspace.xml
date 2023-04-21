@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="COMPLETED User List display as a supervisor and an admin. Jobsites for each user are listed respectively. At the top of the page, the current user is and their owned jobsites are displayed! NEED to implement toolbox view now">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Got some stuff working. Still work to be done" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -124,7 +118,7 @@
       <workItem from="1681686481469" duration="4856000" />
       <workItem from="1681751455140" duration="4364000" />
       <workItem from="1681949539706" duration="886000" />
-      <workItem from="1682006371833" duration="4342000" />
+      <workItem from="1682006371833" duration="4787000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -259,7 +253,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681755783127</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Got some stuff working. Still work to be done">
+      <created>1682011069666</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1682011069666</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -284,7 +285,8 @@
     <MESSAGE value="edit made to Jobsite.py containsUser. Work in progress" />
     <MESSAGE value="User list functionality" />
     <MESSAGE value="COMPLETED User List display as a supervisor and an admin. Jobsites for each user are listed respectively. At the top of the page, the current user is and their owned jobsites are displayed! NEED to implement toolbox view now" />
-    <option name="LAST_COMMIT_MESSAGE" value="COMPLETED User List display as a supervisor and an admin. Jobsites for each user are listed respectively. At the top of the page, the current user is and their owned jobsites are displayed! NEED to implement toolbox view now" />
+    <MESSAGE value="Got some stuff working. Still work to be done" />
+    <option name="LAST_COMMIT_MESSAGE" value="Got some stuff working. Still work to be done" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679520752009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/AcceptanceTests" />
