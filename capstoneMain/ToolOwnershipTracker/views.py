@@ -156,8 +156,8 @@ class PasswordResetDone(View):
 
 class Jobsites(View):
     def get(self, request):
-        #if helpers.redirectIfNotLoggedIn(request):
-            #return redirect("/")
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
         allJobsites = Jobsite.objects.all()
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
@@ -170,22 +170,30 @@ class editUsers(View):
 
 class viewJobsitesSuperAdmin(View):
     def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        
         jobsites = Jobsite.objects.all()
-        #user = request.session["email"]
-        user = "a@a.com"
-        #accType = request.session["role"]
-        accType = "A"
+        user = request.session["email"]
+        accType = request.session["role"]
         toolbox = Toolbox.objects.all()
         tool = Tool.objects.all()
+        #user = "a@a.com"
+        #accType = "A"
+
+
         return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox, 'tool': tool})
 
 class ReportListView(ListView):
     def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        
         toolreport = ToolReport.objects.all()
-        #user = request.session["email"]
-        #role = request.session["role"]
-        user = "a@a.com"
-        role = "A"
+        user = request.session["email"]
+        role = request.session["role"]
+        #user = "a@a.com"
+        #role = "U"
         return render(request, "toolReport.html", {'user': user, 'report': toolreport, "role": role})
 
 class ReportCreateView(CreateView):
@@ -199,8 +207,8 @@ class ReportCreateView(CreateView):
          This is necessary to only display members that belong to a given user"""
 
         kwargs = super(ReportCreateView, self).get_form_kwargs()
-        #kwargs['reporter'] = self.request.session["email"]
-        kwargs['reporter'] = "a@a.com"
+        kwargs['reporter'] = self.request.session["email"]
+        #kwargs['reporter'] = "a@a.com"
         return kwargs
 
 class ReportUpdateView(UpdateView):
@@ -214,8 +222,8 @@ class ReportUpdateView(UpdateView):
          This is necessary to only display members that belong to a given user"""
 
         kwargs = super(ReportUpdateView, self).get_form_kwargs()
-        #kwargs['reporter'] = self.request.session["email"]
-        kwargs['reporter'] = "a@a.com"
+        kwargs['reporter'] = self.request.session["email"]
+        #kwargs['reporter'] = "a@a.com"
         return kwargs
 
 def load_toolbox(request):
@@ -233,4 +241,4 @@ def load_tool(request):
 def delete_object_function(request, pk):
     ob = ToolReport.objects.get(pk=pk)
     ob.delete()
-    return render(request, 'toolReport.html')
+    return render(request, 'ToolReportTemplates/tool_delete.html')
