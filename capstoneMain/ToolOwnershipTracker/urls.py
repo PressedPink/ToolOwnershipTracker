@@ -6,7 +6,7 @@ from django.urls import include
 import base
 
 
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, barCodeTest, process_image, UserToolboxes, viewToolbox, myToolbox
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, barCodeTest, process_image, process_image_to_tool, UserToolboxes, viewToolbox, myToolbox,ScanToJobsiteToolbox,ScanToUserToolbox
 
     
 
@@ -34,4 +34,7 @@ urlpatterns = [
     path('', Login.as_view(), name='LoginHTML'),
     path('barcodeTest/', barCodeTest.as_view(), name="barcodeTest"),
     path('process_image/', process_image, name='process_image'),
+    path('barcodeScanToUser/', ScanToUserToolbox.as_view(), name="scanUser"),
+    path('barcodeScanToJobsite/', ScanToJobsiteToolbox.as_view(), name="scanJobsite"),
+    path('process_image_to_tool/', process_image_to_tool, name='process_image'),
 ]

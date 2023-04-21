@@ -22,10 +22,7 @@
             max-width: 480px;
             width: 100%;
         }
-        video{
-            width: 640px;
-            height: 480px;
-        }
+
          
 
         button {
@@ -79,11 +76,26 @@
 </head>
 {% include  "navbar.html" %}
 <body>
+    
     <div class="container">
+        
         <video id="camera" playsinline></video>
         <canvas id="canvas" style="display:none;"></canvas>
         <button id="start-camera">Start Camera</button>
-        <div id="result"></div>
+        <form method="post" class="text-center" style="text-align: center" action="/barcodeScanToUser/" autocomplete="off">
+            {% csrf_token %}
+        <div > <input name="result" id="result" required disabled value={{message}}></input>
+        <select type="text" id="userSites" name="userSites">
+            {% for jobsite in jobsiteList%}
+            <option>{{jobsite.id}} | {{jobsite.title}}</option>
+            {% endfor%}
+            </select>
+        </div>
+
+        
+            
+        <div id="addButton" hidden><button>Add to Toolbox</button></div>
+        </form>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
@@ -131,7 +143,7 @@
                 const capturedImageDataUrl = canvasElement.toDataURL('image/png');
                 const imageData = capturedImageDataUrl.split(',')[1];
 
-                const response = await fetch('/process_image/', {
+                const response = await fetch('/process_image_to_tool/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -141,9 +153,16 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    resultContainer.textContent = JSON.stringify(data);
+                    resultContainer.value = JSON.stringify(data);
+                    resultContainer.removeAttribute("disabled");
+                    var x  = document.getElementById("addButton")
+                    x.removeAttribute("hidden");
+
+                    
                 } else {
                     alert('Failed to process the barcode.');
+                    var x  = document.getElementById("addButton")
+                    x.addAttribute("hidden");
                 }
             });
         }

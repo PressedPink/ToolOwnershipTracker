@@ -21,11 +21,13 @@ from django.http import request, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Tool import ToolClass
 from . import models
 from .models import User, Jobsite, Toolbox, Tool
 from django.views import View
 from django.db import connections
 import logging
+import json
 # Create your views here.
 
 
@@ -227,6 +229,35 @@ def process_image(request):
 
         # Return the results as a JSON response
         response_data = {'results': results}
+        return JsonResponse(response_data)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def process_image_to_tool(request):
+    if request.method == 'POST':
+        # Decode the base64 image data
+        image_data = base64.b64decode(request.POST.get('image'))
+
+        # Convert the image data to a PIL Image
+        image = Image.open(io.BytesIO(image_data))
+
+        # Process the image using Pyzbar
+        decoded_objects = decode(image)
+        results = []
+        toolID=""
+        for obj in decoded_objects:
+            if (obj.data.decode("utf-8")):
+                toolID = obj.data.decode("utf-8")
+                
+        print(toolID)
+        # Return the results as a JSON response
+        response_data = {"toolID": toolID}
+        
+        
+        
+        
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -544,4 +575,86 @@ class myToolbox(View):
                 toolsInBox.append(i)
 
         return render(request, 'currentUserToolbox.html', {"user": user, "tools": toolsInBox})
+    
+class ScanToUserToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        message = ""
+        jobsiteList = Jobsite.objects.filter(assigned=a)
 
+        print(jobsiteList)
+        print("done!")
+        
+        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message,"jobsiteList": jobsiteList})
+    
+    def post(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        
+        jobsiteList = Jobsite.objects.filter(assigned=a)
+        
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+        siteSelection = request.POST.get('userSites').split('|')[0].strip()
+        print(siteSelection)
+        try:
+            
+            dict = json.loads(result)
+            print(dict)
+            print("in post")
+            toolID = dict["toolID"]
+            
+        
+        except:
+            message = message + "bad barcode read"
+            
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+            
+        except:
+            message = message +  "tool does not exist in system"
+            
+        try:
+            userToolbox = Toolbox.objects.get(
+                owner=user, jobsite=siteSelection)
+            if (ToolClass.containedInAnyToolbox(sysTool.id)):
+
+                ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
+
+            ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
+
+        except:
+            message = message + "tool was not moved properly"
+        
+        message =  siteSelection 
+
+    
+        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, "jobsiteList": jobsiteList})
+
+class ScanToJobsiteToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        
+        jobsiteList = Jobsite.objects.get(owner=user)
+        toolsInBox = []
+        message = ""
+        
+        return render(request, 'barcodeScanToJobsite.html', {"user": user, "jobsites": jobsiteList , "message": message})
+    
+    def post(self,request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        
+        message = "error"
+        
+        
+        return render(request, 'barcodeScanToUser.html', {"user": user,"message": message})

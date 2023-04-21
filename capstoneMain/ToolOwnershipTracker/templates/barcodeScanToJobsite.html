@@ -22,10 +22,7 @@
             max-width: 480px;
             width: 100%;
         }
-        video{
-            width: 640px;
-            height: 480px;
-        }
+
          
 
         button {
@@ -79,6 +76,7 @@
 </head>
 {% include  "navbar.html" %}
 <body>
+
     <div class="container">
         <video id="camera" playsinline></video>
         <canvas id="canvas" style="display:none;"></canvas>
@@ -131,7 +129,7 @@
                 const capturedImageDataUrl = canvasElement.toDataURL('image/png');
                 const imageData = capturedImageDataUrl.split(',')[1];
 
-                const response = await fetch('/process_image/', {
+                const response = await fetch('/process_image_to_tool/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
