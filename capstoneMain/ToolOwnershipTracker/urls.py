@@ -6,7 +6,9 @@ from django.urls import include
 import base
 
 
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, barCodeTest, process_image
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, barCodeTest, process_image, UserToolboxes, viewToolbox, myToolbox
+
+    
 
 urlpatterns = [
     path('', include('pwa.urls')),
@@ -26,6 +28,9 @@ urlpatterns = [
     path('removeJobsite/<int:jobsite_id>/', removeJobsite.as_view(), name='removeJobsite'),
     path('edituser/', EditUser.as_view(), name="edituser"),
     path('createTool/', createTool.as_view(), name="createTool"),
+    path('userToolboxes/', UserToolboxes.as_view(), name='userToolboxes'),
+    path('viewToolbox/<str:user_id>/', viewToolbox.as_view(), name='viewToolbox'),
+    path('currentUserToolbox/', myToolbox.as_view(), name='myToolbox'),
     path('', Login.as_view(), name='LoginHTML'),
     path('barcodeTest/', barCodeTest.as_view(), name="barcodeTest"),
     path('process_image/', process_image, name='process_image'),
