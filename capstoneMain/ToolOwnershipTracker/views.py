@@ -15,9 +15,17 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 # from classes.profile import Profile
-from ToolOwnershipTracker.models import User, UserType
+from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from ToolOwnershipTracker.classes.Users import UserClass 
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Tool import ToolClass
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
+from . import models
+from .models import User, Jobsite
+from django.views import View
 from django.db import connections
 import logging
 # Create your views here.
@@ -40,30 +48,47 @@ class SignUp(View):
 
     def post(self, request):
         # NEED TO MAKE SURE PASSWORD IS UTF-8
-        firstName = str(request.POST['firstName'])
-        lastName = str(request.POST['lastName'])
-        email = str(request.POST['email']).strip()
-        password = str(request.POST['password1'])
-        confirmPassword = str(request.POST['password2'])
+        firstName = request.POST.get('firstName')
+        lastName = request.POST.get('lastName')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirmPassword = request.POST.get('confirmPassword')
         # Role = str(request.P0ST['User Type'])
-        address = str(request.POST['address'])
-        phoneNumber = str(request.POST['phone'])
-
-        UserClass.createUser(UserClass, email=email, password=password, firstName=firstName,
-                             lastName=lastName, phone=phoneNumber, address=address, confirmPassword=confirmPassword)
-        return redirect('/')
-
-
-# For the signup.html page, which allows the user to be redirected to the signup page when successfully or unsuccesfully signing up.
-class SignUp(View):
-    def get(self, request):
-        return render(request, "signup.html")
+        address = request.POST.get('address')
+        phone = str(request.POST.get('phone'))
+        try:
+            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone)
+            return redirect('/')
+        except Exception as e:
+            return render(request, "signup.html", {'error_message': str(e)})
 
 
 class EditUser(View):
     def get(self, request):
         return render(request, "edituser.html")
+    def post(self, request):
+        email = request.session["username"]
+        user = User.objects.get(email = email)
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        newPassword = request.POST.get('newPassword')
+        confirmPassword = request.POST.get('confirmPassword')
+        if len(phone) != 0:
+            UserClass.editPhone(user, phone)
+        if len(address) != 0:
+            UserClass.editAddress(user, address)
+        if len(newPassword) != 0:
+            if len(confirmPassword) != 0:
+                try:
+                    UserClass.change_password(email, newPassword, confirmPassword)
+                except Exception as e:
+                    return render(request, "edituser.html", {'error_message': str(e)})
+            else:
+                return render(request, "edituser.html", {'error_message': "Cannot update password without confirm password field!"})
 
+
+        return redirect("/profile/")
+        
 
 class Profile(View):
     def get(self, request):
@@ -72,8 +97,13 @@ class Profile(View):
 
         a = request.session["username"]
         b = User.objects.get(email=a)
+        allSites = Jobsite.objects.all()
+        assignedSites = []
+        for site in allSites:
+            if JobsiteClass.containsUser(self, site.id, b.email):
+                assignedSites.append(site.id)
 
-        return render(request, "profile.html", {"currentUser": b})
+        return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites})
 
 
 class Login(View):
@@ -95,18 +125,16 @@ class Login(View):
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
             password = UserClass.hashPass(password)
-
-            print(password)
             badPassword = (user.password != password)
 
         except Exception as e:
             noSuchUser = True
 
         if noSuchUser:
-            return render(request, "LoginHTML.html", {"message": "no user"})
+            return render(request, "LoginHTML.html", {"error_message": "No such user exists!"})
 
         elif badPassword:
-            return render(request, "LoginHTML.html", {"message": "bad password"})
+            return render(request, "LoginHTML.html", {"error_message": "Incorrect password!"})
         else:
             request.session["username"] = user.email
             # request.session["name"] = user.name
@@ -240,9 +268,11 @@ class createJobsite(View):
             JobsiteClass.createJobsite(self, title, owner)
             jobsite = Jobsite.objects.get(owner=owner, title=title)
             allJobsites = Jobsite.objects.all()
-            email_list = request.POST.getlist('email_list[]')
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite, email)
+            email_list = request.POST.get('email_list', '').split(',')
+            if email_list:
+                for email in email_list:
+                    if len(email) != 0:
+                        JobsiteClass.addUser(self, jobsite.id, email)
             return render(request, 'createJobsites.html', {'jobsites': allJobsites})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
@@ -257,22 +287,30 @@ class editJobsite(View):
             jobsite = Jobsite.objects.get(id=jobsite_id)
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
+            assignedUsers = jobsite.assigned.all()
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
-
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
-
+        
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
-        email_list = request.POST.getlist('email_list[]')
         try:
-            JobsiteClass.assignTitle(self, jobsite_id, title)
-            JobsiteClass.assignOwner(self, jobsite_id, email)
-            for email in email_list:
-                JobsiteClass.addUser(self, jobsite_id, email)
-                
-                print(jobsite)
+            if(len(title) != 0):
+                JobsiteClass.assignTitle(self, jobsite_id, title)
+            if(len(email) != 0):
+                JobsiteClass.assignOwner(self, jobsite_id, email)
+            email_list = request.POST.get('email_list', '').split(',')
+            remove_email_list = request.POST.get('remove_email_list', '').split(',')
+            if email_list:
+                for email in email_list:
+                    if len(email) != 0:
+                        JobsiteClass.addUser(self, jobsite_id, email)
+
+            if remove_email_list:
+                for email in remove_email_list:
+                    if len(email) != 0:
+                        JobsiteClass.removeUser(self, jobsite_id, email)
             allJobsites = Jobsite.objects.all()
             return render(request, "jobsites.html", {'jobsites': allJobsites})
         except Exception as e:
@@ -287,6 +325,76 @@ class removeJobsite(View):
             JobsiteClass.removeJobsite(self, jobsite_id)
         except Exception as e:
             allJobsites = Jobsite.objects.all()
+            redirect("/jobsites/")
             return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
         allJobsites = Jobsite.objects.all()
-        return redirect("/jobsites/", {'jobsites': allJobsites})
+        return redirect("/jobsites/")
+    
+class createTool(View):
+    def get(self, request):
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+    def post(self, request):
+        name = request.POST.get('name')
+        owner = request.POST.get('toolboxOwner')
+        jobsiteName = request.POST.get('jobsiteName')
+        toolbox_type = request.POST.get('toolboxType')
+        tool_type = request.POST.get('toolType')
+        if(tool_type == "Handtool"):
+            type = "H"
+        if(tool_type == "Powertool"):
+            type = "P"
+        if(tool_type == "Operatable"):
+            type = "D"
+        if(tool_type == "Other"):
+            type = "O"
+
+
+        if(toolbox_type == "JobsiteToolbox"):
+            if(len(jobsiteName) != 0):
+                test = list(map(str, Jobsite.objects.filter(title = jobsiteName)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name = name)
+                        jobsite = Jobsite.objects.get(title = jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite = jobsite)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input a jobsite to assign tool to!'})
+        elif(toolbox_type == "UserToolbox"):
+            if(len(owner) != 0):
+                test = list(map(str, User.objects.filter(email = owner)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name = name)
+                        toolbox = Toolbox.objects.get(owner = owner, jobsite = None)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input an owner to assign tool to!'})
+        else:
+            try:
+                ToolClass.createTool(self, name, type)
+                return render(request, 'createTool.html')
+            except Exception as e:
+                return render(request, 'createTool.html', {'errror_message': str(e)})
+            
+
+
+

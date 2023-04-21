@@ -4,8 +4,9 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, editUsers, barCodeTest, process_image,  createJobsite, editJobsite,removeJobsite
 
+
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, barCodeTest, process_image
 
 urlpatterns = [
     path('', include('pwa.urls')),
@@ -21,11 +22,10 @@ urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('createJobsite/', createJobsite.as_view(), name='createJobsite'),
-    path('editJobsite/<int:jobsite_id>/',
-         editJobsite.as_view(), name='editJobsite'),
-    path('edituser/', editUsers.as_view(), name="edituser"),
-    path('removeJobsite/<int:jobsite_id>/',
-         removeJobsite.as_view(), name='removeJobsite'),
+    path('editJobsite/<int:jobsite_id>/', editJobsite.as_view(), name='editJobsite'),
+    path('removeJobsite/<int:jobsite_id>/', removeJobsite.as_view(), name='removeJobsite'),
+    path('edituser/', EditUser.as_view(), name="edituser"),
+    path('createTool/', createTool.as_view(), name="createTool"),
     path('', Login.as_view(), name='LoginHTML'),
     path('barcodeTest/', barCodeTest.as_view(), name="barcodeTest"),
     path('process_image/', process_image, name='process_image'),

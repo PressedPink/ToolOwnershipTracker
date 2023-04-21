@@ -23,7 +23,7 @@ class JobsiteClass:
             else:
                 raise Exception("User does not exist!")
         else:
-            raise Exception("Name of jobsite cannot be left empty")
+            raise Exception("Name of jobsite cannot be left empty!")
 
     def isValidTitle(self, title):
         if title is None:
@@ -39,7 +39,7 @@ class JobsiteClass:
             else:
                 raise Exception("Jobsite does not exist!")
         else:
-            raise Exception("Name of jobsite cannot be left empty")
+            raise Exception("Name of jobsite cannot be left empty!")
 
     def isValidOwner(self, email):
         user = User.objects.get(email=email)
@@ -113,7 +113,7 @@ class JobsiteClass:
             if JobsiteClass.isValidJobsite(self, jobsiteID):
                 jobsite = Jobsite.objects.get(id = jobsiteID)
                 user = User.objects.get(email = email)
-                if jobsite.assigned.filter(User = user).exists():
+                if jobsite.assigned.filter(email = user.email).exists():
                     return True
                 else:
                     return False
