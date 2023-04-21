@@ -462,3 +462,21 @@ class viewToolbox(View):
                                                           'currentUser': user, 'sites': listOfSites})
 
         return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolsInBox})
+
+
+class myToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
+        toolsInBox = []
+        tools = Tool.objects.all()
+        for i in tools:
+            if (i.toolbox == toolbox):
+                toolsInBox.append(i)
+
+        return render(request, 'currentUserToolbox.html', {"user": user, "tools": toolsInBox})
+
