@@ -372,7 +372,7 @@ class viewToolbox(View):
 
         user = User.objects.get(email=user_id)  # user retrieved from user display page
         try:
-            toolbox = Toolbox.objects.get(owner=user, jobsite=None) # ask alex about jobsite=None !!!!
+            toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
             toolsInBox = []
             tools = Tool.objects.all()
             for i in tools:
@@ -471,12 +471,56 @@ class myToolbox(View):
         a = request.session["username"]
         user = User.objects.get(email=a)
         userRole = user.role
+        # add condition that prevents admins from seeing their toolbox cuz it doesn't exist
         toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
         toolsInBox = []
         tools = Tool.objects.all()
         for i in tools:
-            if (i.toolbox == toolbox):
+            if i.toolbox == toolbox:
                 toolsInBox.append(i)
 
         return render(request, 'currentUserToolbox.html', {"user": user, "tools": toolsInBox})
+
+
+class jobsiteToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == "A":
+            allJobsites = Jobsite.objects.all()
+        elif userRole == "S":
+            allJobsites = Jobsite.objects.filter(owner=user)
+
+        return render(request, 'jobsiteToolboxes.html', {"sites": allJobsites})
+
+
+class jobsiteInventory(View):
+    def get(self, request, jobsite_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        try:
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            toolbox = Toolbox.objects.get(jobsite=jobsite)
+            toolsInBox = []
+            tools = Tool.objects.all()
+            for i in tools:
+                if i.toolbox == toolbox:
+                    toolsInBox.append(i)
+
+        except Exception as e:
+            a = request.session["username"]
+            user = User.objects.get(email=a)
+            userRole = user.role
+            if userRole == "A":
+                allJobsites = Jobsite.objects.all()
+            elif userRole == "S":
+                allJobsites = Jobsite.objects.filter(owner=user)
+
+            return render(request, 'jobsiteToolboxes.html', {'error_message': str(e), "sites": allJobsites})
+
+        return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox})
+
 

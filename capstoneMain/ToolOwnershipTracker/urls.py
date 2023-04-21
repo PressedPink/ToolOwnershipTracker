@@ -5,7 +5,7 @@ from django.urls import include
 
 import base
 from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm,\
-    PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes,viewToolbox, myToolbox
+    PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes,viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory
 
 urlpatterns = [
     path('', include('pwa.urls')),
@@ -28,5 +28,7 @@ urlpatterns = [
     path('userToolboxes/', UserToolboxes.as_view(), name='userToolboxes'),
     path('viewToolbox/<str:user_id>/', viewToolbox.as_view(), name='viewToolbox'),
     path('currentUserToolbox/', myToolbox.as_view(), name='myToolbox'),
+    path('jobsiteToolboxes/', jobsiteToolboxes.as_view(), name='jobsiteToolboxes'),
+    path('jobsiteInventory/<int:jobsite_id>', jobsiteInventory.as_view(), name='jobsiteInventory'),
     path('', Login.as_view(), name='LoginHTML'),
 ]
