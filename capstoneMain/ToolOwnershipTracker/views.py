@@ -308,7 +308,14 @@ class createTool(View):
                         jobsite = Jobsite.objects.get(title = jobsiteName)
                         toolbox = Toolbox.objects.get(jobsite = jobsite)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
-                        return render(request, 'createTool.html')
+                        jobsites = Jobsite.objects.all()
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        allUsers = User.objects.all()
+                        allUserEmails = [user.email for user in allUsers]
+
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
                     except Exception as e:
                         return render(request, 'createTool.html', {'errror_message': str(e)})
                 else:
@@ -324,7 +331,14 @@ class createTool(View):
                         tool = Tool.objects.get(name = name)
                         toolbox = Toolbox.objects.get(owner = owner, jobsite = None)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
-                        return render(request, 'createTool.html')
+                        jobsites = Jobsite.objects.all()
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        allUsers = User.objects.all()
+                        allUserEmails = [user.email for user in allUsers]
+
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
                     except Exception as e:
                         return render(request, 'createTool.html', {'errror_message': str(e)})
                 else:
@@ -334,7 +348,13 @@ class createTool(View):
         else:
             try:
                 ToolClass.createTool(self, name, type)
-                return render(request, 'createTool.html')
+                jobsites = Jobsite.objects.all()
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                allUsers = User.objects.all()
+                allUserEmails = [user.email for user in allUsers]
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
             except Exception as e:
                 return render(request, 'createTool.html', {'errror_message': str(e)})
             
