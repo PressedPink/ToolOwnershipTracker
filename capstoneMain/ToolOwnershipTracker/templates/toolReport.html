@@ -116,7 +116,7 @@
 			  <td>{{ i.created }}</td>
 			  <td>{{ i.time }}</td>
 			  <td>{{ i.description }}</td>
-			  <td><form action="{% url 'delete_object' pk=i.id %}" method="post">
+			  <td><form action="{% url "delete/" 'delete_object' pk=i.id %}" method="post">
 				{% csrf_token %}
 				<button class="btn btn-danger" type="submit" ><i class="fa fa-trash"></i>Delete</button>
 			 </form>
