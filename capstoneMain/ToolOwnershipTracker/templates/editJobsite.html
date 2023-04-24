@@ -25,7 +25,14 @@
               </div>
               <div class="form-group">
                 <label for="owner">New Owner</label>
-                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner">
+                <div class = "input-group">
+                  <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="New Owner">
+                </div>
+                <select hidden id ="ownerDropdown">
+                  {% for owner in owners %}
+                    <option value = "{{ owner }}">{{ owner }}</option>
+                  {% endfor %}
+                </select>  
               </div>
               <div class="form-group">
                 <label for="title">Add User(s)</label>
@@ -90,12 +97,17 @@
         var dropdown = document.getElementById("dropdown");
         var removeSearchInput = document.getElementById("removeSearch");
         var removeDropdown = document.getElementById("removeDropdown");
+        var ownerInput = document.getElementById("owner");
+        var ownerDropdown = document.getElementById("ownerDropdown");
         var dropdownMenu = document.createElement("div");
         var removeDropdownMenu = document.createElement("div");
+        var ownerDropdownMenu = document.createElement("div");
+        ownerDropdownMenu.classList.add("dropdown-menu");
         dropdownMenu.classList.add("dropdown-menu");
         removeDropdownMenu.classList.add("dropdown-menu");
         dropdown.parentNode.insertBefore(dropdownMenu, dropdown.nextSibling);
         removeDropdown.parentNode.insertBefore(removeDropdownMenu, removeDropdown.nextSibling);
+        ownerDropdown.parentNode.insertBefore(ownerDropdownMenu, ownerDropdown.nextSibling);
   
         var options = [];
         var removeOptions = [];
@@ -105,11 +117,15 @@
         for (var i = 0; i < removeDropdown.options.length; i++) {
           removeOptions.push(removeDropdown.options[i].text.toLowerCase());
         }
+        var ownerOptions = [];
+        for (var i = 0; i < ownerDropdown.options.length; i++) {
+          ownerOptions.push(ownerDropdown.options[i].text.toLowerCase());
+        }
   
         var emails = []; // Initialize an empty array to store selected emails
         var removeEmails = [];
   
-        searchInput.addEventListener("input", function() {
+        searchInput.addEventListener("keyup", function() {
             var value = searchInput.value.toLowerCase();
             var matchingOptions = [];
   
@@ -141,7 +157,7 @@
             }
         });
 
-        removeSearchInput.addEventListener("input", function() {
+        removeSearchInput.addEventListener("keyup", function() {
           var value = removeSearchInput.value.toLowerCase();
           var matchingOptions = [];
           for (var i = 0; i < removeOptions.length; i++) {
@@ -172,11 +188,44 @@
             removeDropdownMenu.style.display = "none";
           }
         });
+
+        ownerInput.addEventListener("keyup", function() {
+          var value = ownerInput.value.toLowerCase();
+          var matchingOptions = [];
+
+          for (var i = 0; i < ownerOptions.length; i++) {
+            if(ownerOptions[i].indexOf(value) > -1) {
+              matchingOptions.push(ownerDropdown.options[i].text);
+            }
+          }
+
+          if (matchingOptions.length > 0) {
+            ownerDropdownMenu.innerHTML = "";
+            for (var i = 0; i < matchingOptions.length; i++) {
+              var dropdownOption = document.createElement("div");
+              dropdownOption.classList.add("dropdown-option");
+              dropdownOption.textContent = matchingOptions[i];
+              dropdownOption.addEventListener("click", function(event) {
+                var jobsiteOwner = event.target.textContent;
+                ownerInput.value = jobsiteOwner;
+                ownerDropdownMenu.innerHTML = "";
+                ownerDropdownMenu.style.display = "none";
+              });
+              ownerDropdownMenu.appendChild(dropdownOption);
+            }
+            ownerDropdownMenu.style.display = "block";
+          } else {
+            ownerDropdownMenu.innerHTML = "";
+            ownerDropdownMenu.style.display = "none";
+          }
+        });
+
   
         document.addEventListener("click", function(event) {
-            if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target) && !removeSearchInput.contains(event.target) && !removeDropdownMenu.contains(event.target)) {
+            if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target) && !removeSearchInput.contains(event.target) && !removeDropdownMenu.contains(event.target) && !ownerInput.contains(event.target) && !ownerDropdownMenu.contains(event.target)) {
             dropdownMenu.style.display = "none";
             removeDropdownMenu.style.display = "none";
+            ownerDropdownMenu.style.display = "none";
             }
         });
   

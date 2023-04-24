@@ -86,9 +86,15 @@ class Profile(View):
         b = User.objects.get(email=a)
         allSites = Jobsite.objects.all()
         assignedSites = []
-        for site in allSites:
-            if JobsiteClass.containsUser(self, site.id, b.email):
-                assignedSites.append(site.id)
+        if b.role == "U":
+            for site in allSites:
+                if JobsiteClass.containsUser(self, site.id, b.email):
+                    assignedSites.append(site.id)
+        elif b.role == "S":
+            for site in allSites:
+                if site.owner == b:
+                    assignedSites.append(site.id)
+
 
         return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites})
 
@@ -203,8 +209,12 @@ class createJobsite(View):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
         allUsers = User.objects.all()
+        possibleOwnersEmails = []
+        for user in allUsers:
+            if user.role == "S":
+                possibleOwnersEmails.append(user.email)
         allUserEmails = [user.email for user in allUsers]
-        return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
+        return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails, 'owners': possibleOwnersEmails})
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
@@ -218,11 +228,21 @@ class createJobsite(View):
                     if len(email) != 0:
                         JobsiteClass.addUser(self, jobsite.id, email)
             allUsers = User.objects.all()
+            possibleOwnersEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
             allUserEmails = [user.email for user in allUsers]
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails, 'owners': possibleOwnersEmails})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
+            allUsers = User.objects.all()
+            possibleOwnersEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
+            allUserEmails = [user.email for user in allUsers]
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e)})
         
 class editJobsite(View):
     def get(self, request, jobsite_id):
@@ -233,10 +253,14 @@ class editJobsite(View):
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
             assignedUsers = jobsite.assigned.all()
+            possibleOwnersEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
         
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers})
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
@@ -245,6 +269,11 @@ class editJobsite(View):
                 JobsiteClass.assignTitle(self, jobsite_id, title)
             if(len(email) != 0):
                 JobsiteClass.assignOwner(self, jobsite_id, email)
+                jobsite = Jobsite.objects.get(id = jobsite_id)
+                toolbox = Toolbox.objects.get(jobsite = jobsite)
+                owner = User.objects.get(email = email)
+                toolbox.owner = owner
+                toolbox.save()
             email_list = request.POST.get('email_list', '').split(',')
             remove_email_list = request.POST.get('remove_email_list', '').split(',')
             if email_list:
@@ -262,7 +291,11 @@ class editJobsite(View):
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
             jobsite = Jobsite.objects.get(id = jobsite_id)
-            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
+            possibleOwnersEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
+            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e)})
     
 class removeJobsite(View):
     def post(self, request, jobsite_id):
