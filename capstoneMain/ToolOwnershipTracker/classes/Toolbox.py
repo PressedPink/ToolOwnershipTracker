@@ -47,11 +47,11 @@ class ToolboxClass:
             return False
 
     def checkJobsiteToolboxDoesNotExist(jobsiteID):
-        #test = list(map(str, Toolbox.objects.filter(id = jobsiteID)))
-        #if len(test) == 0:
+        test = list(map(str, Toolbox.objects.filter(id = jobsiteID)))
+        if len(test) != 0:
             return True
-        #else:
-           # return False
+        else:
+           return False
 
     
     def verifyEmailExists(self, email):

@@ -217,7 +217,9 @@ class createJobsite(View):
                 for email in email_list:
                     if len(email) != 0:
                         JobsiteClass.addUser(self, jobsite.id, email)
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites})
+            allUsers = User.objects.all()
+            allUserEmails = [user.email for user in allUsers]
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
             return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
