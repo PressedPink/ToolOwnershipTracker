@@ -57,8 +57,10 @@ class SignUp(View):
         # Role = str(request.P0ST['User Type'])
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
+        role = request.POST.get('userTypeDropdown')
+        print(role)
         try:
-            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone)
+            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
             return redirect('/')
         except Exception as e:
             return render(request, "signup.html", {'error_message': str(e)})
