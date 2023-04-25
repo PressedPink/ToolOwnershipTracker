@@ -19,10 +19,12 @@ class ToolType(models.TextChoices):
     Other = "O"
 
 
+
 # defines the user model, which contains the following fields: username, password, accountType, email, address,
 # phone number and active status
 
 # defines a User of any type
+
 class User(models.Model):
     firstName = models.CharField(max_length=20)
     lastName = models.CharField(max_length=20)
@@ -32,6 +34,7 @@ class User(models.Model):
     # set to 32 for size of MD5 Hash
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
+
     phone = models.CharField(max_length=14, default="")
     # records if user is active for security purposes
     active = models.BooleanField
@@ -57,7 +60,8 @@ class Toolbox(models.Model):
 class Tool(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300, unique=True)
-    toolType = models.CharField(
-        max_length=1, choices=ToolType.choices, default=ToolType.Other)
+    
+    #toolType = models.CharField(
+        #max_length=1, choices=ToolType.choices, default=ToolType.Other)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
     #checkout_datetime = models.DateTimeField(blank=True, null=True)

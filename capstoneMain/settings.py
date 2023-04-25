@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
     'pwa',
+    'sslserver',
     'ToolOwnershipTracker'
 ]
 
@@ -177,3 +178,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'toolboxtrackercscapstone@gmail.com'
 EMAIL_HOST_PASSWORD = 'kxvxjlgzzhcqiefn'
+
+

@@ -1,3 +1,18 @@
+import logging
+from django.views import View
+from .models import User, Jobsite
+from .classes.Jobsite import JobsiteClass
+from . import models
+from django.shortcuts import render
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Users import UserClass
+from django.shortcuts import render, get_object_or_404
+from pyzbar.pyzbar import decode
+from PIL import Image
+import io
+import base64
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 # from classes.profile import Profile
 from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
@@ -7,14 +22,12 @@ from django.shortcuts import render, get_object_or_404
 from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from ToolOwnershipTracker.classes.Tool import ToolClass
-from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 from . import models
 from .models import User, Jobsite, Toolbox, Tool
 from django.views import View
 from django.db import connections
 import logging
-
-
+import json
 # Create your views here.
 
 
@@ -147,6 +160,7 @@ class PasswordReset(View):
             return redirect("/password_reset_sent/")
         except Exception as e:
             print(e)
+
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
 
@@ -159,6 +173,7 @@ class PasswordResetForm(View):
     def get(self, request, token):
         try:
             user = User.objects.get(forget_password_token=token)
+
             email = user.email
             if UserClass.check_reset_password_token(email, token):
                 return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'token': token})
@@ -199,6 +214,64 @@ class editUsers(View):
         return render(request, "edituser.html")
 
 
+@csrf_exempt
+def process_image(request):
+    if request.method == 'POST':
+        # Decode the base64 image data
+        image_data = base64.b64decode(request.POST.get('image'))
+
+        # Convert the image data to a PIL Image
+        image = Image.open(io.BytesIO(image_data))
+
+        # Process the image using Pyzbar
+        decoded_objects = decode(image)
+        results = []
+        for obj in decoded_objects:
+            results.append({
+                'type': obj.type,
+                'data': obj.data.decode("utf-8")
+            })
+
+        # Return the results as a JSON response
+        response_data = {'results': results}
+        return JsonResponse(response_data)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def process_image_to_tool(request):
+    if request.method == 'POST':
+        # Decode the base64 image data
+        image_data = base64.b64decode(request.POST.get('image'))
+
+        # Convert the image data to a PIL Image
+        image = Image.open(io.BytesIO(image_data))
+
+        # Process the image using Pyzbar
+        decoded_objects = decode(image)
+        results = []
+        toolID=""
+        for obj in decoded_objects:
+            if (obj.data.decode("utf-8")):
+                toolID = obj.data.decode("utf-8")
+                
+        print(toolID)
+        # Return the results as a JSON response
+        response_data = {"toolID": toolID}
+        
+        
+        
+        
+        return JsonResponse(response_data)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+class barCodeTest(View):
+    def get(self, request):
+        return render(request, "barcodeTest.html")
+
 class Jobsites(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
@@ -206,7 +279,6 @@ class Jobsites(View):
         allJobsites = Jobsite.objects.all()
         assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
         return render(request, "jobsites.html", {'jobsites': allJobsites})
-
 
 class createJobsite(View):
     def get(self, request):
@@ -253,6 +325,7 @@ class editJobsite(View):
     def get(self, request, jobsite_id):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
+
         try:
             jobsite = Jobsite.objects.get(id=jobsite_id)
             allUsers = User.objects.all()
@@ -646,3 +719,85 @@ class jobsiteInventory(View):
         return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox})
 
 
+class ScanToUserToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        message = ""
+        jobsiteList = Jobsite.objects.filter(assigned=a)
+
+        print(jobsiteList)
+        print("done!")
+        
+        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message,"jobsiteList": jobsiteList})
+    
+    def post(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        
+        jobsiteList = Jobsite.objects.filter(assigned=a)
+        
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+        siteSelection = request.POST.get('userSites').split('|')[0].strip()
+        print(siteSelection)
+        try:
+            
+            dict = json.loads(result)
+            print(dict)
+            print("in post")
+            toolID = dict["toolID"]
+            
+        
+        except:
+            message = message + "bad barcode read"
+            
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+            
+        except:
+            message = message +  "tool does not exist in system"
+            
+        try:
+            userToolbox = Toolbox.objects.get(
+                owner=user, jobsite=siteSelection)
+            if (ToolClass.containedInAnyToolbox(sysTool.id)):
+
+                ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
+
+            ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
+
+        except:
+            message = message + "tool was not moved properly"
+        
+        message =  siteSelection 
+
+    
+        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, "jobsiteList": jobsiteList})
+
+class ScanToJobsiteToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        
+        jobsiteList = Jobsite.objects.get(owner=user)
+        toolsInBox = []
+        message = ""
+        
+        return render(request, 'barcodeScanToJobsite.html', {"user": user, "jobsites": jobsiteList , "message": message})
+    
+    def post(self,request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        
+        message = "error"
+        
+        
+        return render(request, 'barcodeScanToUser.html', {"user": user,"message": message})
