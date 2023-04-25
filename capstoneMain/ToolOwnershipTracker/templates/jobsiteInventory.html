@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="UTF-8">
+      <title>User Toolbox</title>
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  </head>
+
+  {% include  "navbar.html" %}
+
+  <body>
+    <div class="text-center align-middle">
+        <h1>{{ site.title }}'s Toolbox</h1>
+    </div>
+
+    <div class="row justify-content-center" >
+
+    <div class="col-auto">
+        <table class = "table table-responsive">
+            <thead class="thead-light">
+                <tr class="text-left">
+                    <th>Tool</th>
+                    <th>Type</th>
+                    <!--<th>Checkout Date</th>-->
+                </tr>
+            </thead>
+
+
+            <tbody>
+                {% for row in tools %}
+                    <tr class="text-left">
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.toolType }}</td>
+                        <!--<td>{{ row.checkout_datetime }}</td>-->
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+
+
+
+        </table>
+        </div>
+    </div>
+
+  </body>
+</html>

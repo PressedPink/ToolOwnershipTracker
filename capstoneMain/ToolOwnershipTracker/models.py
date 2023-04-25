@@ -2,6 +2,7 @@ from django.db import models
 from django.forms import ModelForm, forms
 from django.contrib import admin
 
+
 # defining three user roles for our app
 
 
@@ -9,6 +10,7 @@ class UserType(models.TextChoices):
     Supervisor = "S"
     Admin = "A"
     User = "U"
+
 
 class ToolType(models.TextChoices):
     Handtool = "H"
@@ -35,6 +37,7 @@ class User(models.Model):
     active = models.BooleanField
     forget_password_token = models.CharField(max_length=100, default="")
 
+
 # defines a Jobsite
 class Jobsite(models.Model):
     id = models.AutoField(primary_key=True)
@@ -43,6 +46,7 @@ class Jobsite(models.Model):
     title = models.CharField(max_length=40, unique=True)
     # dictates users that can view
     assigned = models.ManyToManyField(User, related_name='assigned', blank=True)
+
 
 class Toolbox(models.Model):
     id = models.AutoField(primary_key=True)
@@ -56,5 +60,4 @@ class Tool(models.Model):
     toolType = models.CharField(
         max_length=1, choices=ToolType.choices, default=ToolType.Other)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
-
-
+    #checkout_datetime = models.DateTimeField(blank=True, null=True)
