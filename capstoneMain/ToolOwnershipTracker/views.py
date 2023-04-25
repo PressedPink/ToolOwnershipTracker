@@ -254,9 +254,7 @@ def process_image_to_tool(request):
         toolID=""
         for obj in decoded_objects:
             if (obj.data.decode("utf-8")):
-                toolID = obj.data.decode("utf-8")
-                
-        print(toolID)
+                toolID = obj.data.decode("utf-8")                
         # Return the results as a JSON response
         response_data = {"toolID": toolID}
         
@@ -728,9 +726,6 @@ class ScanToUserToolbox(View):
         userRole = user.role
         message = ""
         jobsiteList = Jobsite.objects.filter(assigned=a)
-
-        print(jobsiteList)
-        print("done!")
         
         return render(request, 'barcodeScanToUser.html', {"user": user, "message": message,"jobsiteList": jobsiteList})
     
@@ -744,12 +739,9 @@ class ScanToUserToolbox(View):
         toolID = "base"
         result = request.POST.get('result')
         siteSelection = request.POST.get('userSites').split('|')[0].strip()
-        print(siteSelection)
         try:
             
             dict = json.loads(result)
-            print(dict)
-            print("in post")
             toolID = dict["toolID"]
             
         
