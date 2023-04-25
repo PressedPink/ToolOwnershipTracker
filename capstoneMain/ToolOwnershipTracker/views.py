@@ -101,7 +101,6 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
-        #print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
