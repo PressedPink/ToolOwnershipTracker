@@ -58,7 +58,6 @@ class SignUp(View):
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
         role = request.POST.get('userTypeDropdown')
-        print(role)
         try:
             UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
             return redirect('/')
@@ -68,28 +67,64 @@ class SignUp(View):
 
 class EditUser(View):
     def get(self, request):
-        return render(request, "edituser.html")
+        email = request.session["username"]
+        user = User.objects.get(email=email)
+        role = user.role
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+        return render(request, "edituser.html", {'role': role, 'users': allUserEmails})
 
     def post(self, request):
+
+        #From Session
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email = currentUserEmail)
+        currentUserRole = currentUser.role
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+
+
         email = request.session["username"]
         user = User.objects.get(email=email)
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         newPassword = request.POST.get('newPassword')
         confirmPassword = request.POST.get('confirmPassword')
-        if len(phone) != 0:
-            UserClass.editPhone(user, phone)
-        if len(address) != 0:
-            UserClass.editAddress(user, address)
-        if len(newPassword) != 0:
-            if len(confirmPassword) != 0:
-                try:
-                    UserClass.change_password(email, newPassword, confirmPassword)
-                except Exception as e:
-                    return render(request, "edituser.html", {'error_message': str(e)})
-            else:
-                return render(request, "edituser.html",
-                              {'error_message': "Cannot update password without confirm password field!"})
+        role = request.POST.get('userTypeDropdown')
+        userToEditEmail = request.POST.get('userEmail')
+        if userToEditEmail:
+            userToEdit = User.objects.get(email = userToEditEmail)
+            userToEdit.role = role
+            userToEdit.save()
+            if len(phone) != 0:
+                UserClass.editPhone(userToEdit, phone)
+            if len(address) != 0:
+                UserClass.editAddress(userToEdit, address)
+            if len(newPassword) != 0:
+                if len(confirmPassword) != 0:
+                    try:
+                        UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
+                    except Exception as e:
+                        return render(request, "edituser.html", {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                else:
+                    return render(request, "edituser.html",
+                                {'role': currentUserRole, 'users': allUserEmails, 'error_message': "Cannot update password without confirm password field!"})
+
+        else:
+            if len(phone) != 0:
+                UserClass.editPhone(user, phone)
+            if len(address) != 0:
+                UserClass.editAddress(user, address)
+            if len(newPassword) != 0:
+                if len(confirmPassword) != 0:
+                    try:
+                        UserClass.change_password(email, newPassword, confirmPassword)
+                    except Exception as e:
+                        return render(request, "edituser.html", {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                else:
+                    return render(request, "edituser.html",
+                                {'role': currentUserRole, 'users': allUserEmails, 'error_message': "Cannot update password without confirm password field!"})
 
         return redirect("/profile/")
 

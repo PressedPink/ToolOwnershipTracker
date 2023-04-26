@@ -19,6 +19,18 @@
           {% endif %}
           <form action= "{% url 'edituser'%}" method="post" class="text-center" autocomplete="off">
             {%  csrf_token %}
+            {% if role == "A" %}
+              <div class="form-group" autocomplete="off">
+                <label for="name">User To Edit</label>
+                <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="User To Edit" placeholder="User Email" autocomplete="off" required>
+                <select hidden id="userDropdown" class="select-dropdown">
+                    {% for user in users %}
+                    <option value="{{ user }}">{{ user }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+
             <div class="form-group" autocomplete="off">
                 <label for="newPassword">New Password:</label>
                 <input type="password" class="form-control" id="newPassword" name="newPassword" aria-describedby="new password" placeholder="New Password">
@@ -35,11 +47,71 @@
                 <label for="address">Address:</label>
                 <input type="text" class="form-control" id="address" name="address" aria-describedby="address" placeholder="1111 North Maple St.">
             </div>
+            {% if role == "A" %}
+              <div class="form-group">
+                <label for="address">User Type:</label>
+                <select class="form-control pages card-body rounded-top rounded-bottom text-center" id="userTypeDropdown" name="userTypeDropdown">
+                    <option value="U">User</option>
+                    <option value="S">Supervisor</option>
+                    <option value="A">Admin</option>
+                </select>
+              </div>
+            {% endif %}
             <br>
             <button type="submit"class="btn btn-primary">Submit</button>
           </form>
         </div>
       </section>
     </div>
+    <script>
+      const userDropdown = document.getElementById("userDropdown");
+      const userSearch = document.getElementById("userEmail");
+
+      var userDropdownMenu = document.createElement("div");
+      userDropdownMenu.classList.add("dropdown-menu");
+      userDropdown.parentNode.insertBefore(userDropdownMenu, userDropdown.nextSibling);
+
+      var userOptions = []
+      for(var i = 0; i < userDropdown.options.length; i++){
+          userOptions.push(userDropdown.options[i].text.toLowerCase());
+      }
+
+      document.addEventListener("click", function(event) {
+              if (!userSearch.contains(event.target) && !userDropdown.contains(event.target)) {
+              userDropdownMenu.style.display = "none";
+              }
+      });
+
+      userSearch.addEventListener("keyup", function() {
+          var value = userSearch.value.toLowerCase();
+          var matchingOptions = [];
+
+          for(var i = 0; i <userOptions.length; i++) {
+              if(userOptions[i].indexOf(value) > -1) {
+                  matchingOptions.push(userDropdown.options[i].text);
+              }
+          }
+          if (matchingOptions.length > 0) {
+              userDropdownMenu.innerHTML = "";
+              for(var i = 0; i < matchingOptions.length; i++){
+                  var dropdownOption = document.createElement("div");
+                  dropdownOption.classList.add("dropdown-option");
+                  dropdownOption.textContent = matchingOptions[i];
+                  dropdownOption.addEventListener("click", function(event) {
+                      var email = event.target.textContent;
+                      userSearch.value = email;
+                      userDropdownMenu.innerHTML = "";
+                      userDropdownMenu.style.display = "none";
+                  });
+                  userDropdownMenu.appendChild(dropdownOption);
+              }
+              userDropdownMenu.style.display = "block";
+          }
+          else {
+              userDropdownMenu.innerHTML = "";
+              userDropdownMenu.style.display = "none";
+          }
+      });
+  </script>
   </body>
 </html>
