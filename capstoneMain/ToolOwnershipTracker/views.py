@@ -60,7 +60,7 @@ class SignUp(View):
         role = request.POST.get('userTypeDropdown')
         try:
             UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
-            return redirect('/')
+            return render(request, "signup.html", {'success_message': "User successfully created!"})
         except Exception as e:
             return render(request, "signup.html", {'error_message': str(e)})
 
@@ -110,6 +110,7 @@ class EditUser(View):
                 else:
                     return render(request, "edituser.html",
                                 {'role': currentUserRole, 'users': allUserEmails, 'error_message': "Cannot update password without confirm password field!"})
+            return render(request, "edituser.html", {'role': currentUserRole, 'users': allUserEmails, 'success_message': "User information successfully edited!"})
 
         else:
             if len(phone) != 0:
@@ -125,8 +126,7 @@ class EditUser(View):
                 else:
                     return render(request, "edituser.html",
                                 {'role': currentUserRole, 'users': allUserEmails, 'error_message': "Cannot update password without confirm password field!"})
-
-        return redirect("/profile/")
+            return redirect("/profile/")
 
 
 class Profile(View):
@@ -294,10 +294,6 @@ def process_image_to_tool(request):
                 toolID = obj.data.decode("utf-8")                
         # Return the results as a JSON response
         response_data = {"toolID": toolID}
-        
-        
-        
-        
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -312,7 +308,6 @@ class Jobsites(View):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
-        assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
 class createJobsite(View):
@@ -345,7 +340,7 @@ class createJobsite(View):
                 if user.role == "S":
                     possibleOwnersEmails.append(user.email)
             allUserEmails = [user.email for user in allUsers]
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails, 'owners': possibleOwnersEmails})
+            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'success_message': "Jobsite successfully created!"})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
             allUsers = User.objects.all()
@@ -463,10 +458,10 @@ class createTool(View):
                         allUserEmails = [user.email for user in allUsers]
 
                         allJobsiteNames = [jobsite.title for jobsite in jobsites]
-                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames, 'success_message': "Tool successfully created!"})
 
                     except Exception as e:
-                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                        return render(request, 'createTool.html', {'error_message': str(e)})
                 else:
                     return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
             else:
@@ -486,10 +481,10 @@ class createTool(View):
                         allUserEmails = [user.email for user in allUsers]
 
                         allJobsiteNames = [jobsite.title for jobsite in jobsites]
-                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+                        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames, 'success_message': "Tool successfully created!"})
 
                     except Exception as e:
-                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                        return render(request, 'createTool.html', {'error_message': str(e)})
                 else:
                     return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
             else:
@@ -502,10 +497,10 @@ class createTool(View):
                 allUsers = User.objects.all()
                 allUserEmails = [user.email for user in allUsers]
                 allJobsiteNames = [jobsite.title for jobsite in jobsites]
-                return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+                return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames, 'success_message': "Tool successfully created!"})
 
             except Exception as e:
-                return render(request, 'createTool.html', {'errror_message': str(e)})
+                return render(request, 'createTool.html', {'error_message': str(e)})
             
 
 class UserToolboxes(View):
