@@ -13,39 +13,147 @@
   {% include  "navbar.html" %}
 
   <body>
+    <br>
     <div class="text-center align-middle">
         <h1>{{user.firstName}} {{user.lastName}}'s Toolbox</h1>
     </div>
 
-    <div class="row justify-content-center" >
-
-    <div class="col-auto">
-        <table class = "table table-responsive">
-            <thead class="thead-light">
-                <tr class="text-left">
-                    <th>Tool</th>
-                    <th>Type</th>
-                    <!--<th>Checkout Date</th>-->
-                </tr>
-            </thead>
-
-
-            <tbody>
-                {% for row in tools %}
-                    <tr class="text-left">
-                        <td>{{ row.name }}</td>
-                        <td>{{ row.toolType }}</td>
-                        <!--<td>{{ row.checkout_datetime }}</td>-->
-                    </tr>
-                {% endfor %}
-
-            </tbody>
-
-
-
-        </table>
-        </div>
+    <div class="container">
+        <section class="mx-auto my-5" style="max-width: 23rem;">
+            <div class="pages" class="card-body rounded-top">
+                {% if error_message %}
+                    <div class="alert alert-danger text-center">{{ error_message }} </div>
+                {% endif %}
+                <form method="post" style="text-align: center;" action="{% url 'myToolbox'%}" autocomplete="off" id="form">
+                    <div class = "page">
+                        {% csrf_token %}
+                        <div class="row justify-content-center" >
+                            <button type="submit" name="scanTools" class="btn btn-primary" style="max-width: 9rem;">Checkout Tool(s)</button>
+                            <div class="col-auto">
+                                <br>
+                                <table class = "table table-responsive">
+                                    <thead class="thead-light">
+                                        <tr class="text-left" style="text-align: left;">
+                                            <th class="text-left">Select</th>
+                                            <th class="text-left">Tool</th>
+                                            <th class="text-left">Type</th>
+                                            <th class="text-left">Checked Out</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for tool in tools %}
+                                            <tr class="text-left">
+                                                <td class = "text-center" style="justify-content: center; vertical-align: middle;"><input class="form-check-input" name ="tools" type="checkbox" value="{{ tool.id }}"></td>
+                                                <td class = "text-left" style="text-align: left;">{{ tool.name }}</td>
+                                                <td class = "text-left" style="text-align: left;">{{ tool.toolType }}</td>
+                                                <td class = "text-left" style="text-align: left;">{{ tool.checkout_datetime }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" name="return" class="btn btn-primary">Return Tool(s)</button>
+                        <button name="trade" class="btn btn-primary" id="trade">Trade Tool(s)</button>
+                        <button type="submit" name="report" class="btn btn-primary">Report Tool</button>
+                        <br>
+                        <div class="form-group" id="selectionDiv">
+                        </div>
+                        <select hidden id="userDropdown">
+                            {% for user in users %}
+                                <option value="{{ user }}">{{ user }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </section>
     </div>
+
+    <script>
+        function setupUserSearch() {
+        const userDropdown = document.getElementById("userDropdown");
+        const userSearch = document.getElementById("userToTrade");
+        var userDropdownMenu = document.createElement("div");
+        userDropdownMenu.classList.add("dropdown-menu");
+        userDropdown.parentNode.insertBefore(userDropdownMenu, userDropdown.nextSibling);
+
+        var userOptions = []
+        for(var i = 0; i < userDropdown.options.length; i++){
+            userOptions.push(userDropdown.options[i].text.toLowerCase());
+        }
+
+        document.addEventListener("click", function(event) {
+            if (!userSearch.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdownMenu.style.display = "none";
+            }
+        });
+
+        userSearch.addEventListener("keyup", function() {
+            var value = userSearch.value.toLowerCase();
+            var matchingOptions = [];
+
+            for(var i = 0; i <userOptions.length; i++) {
+                if(userOptions[i].indexOf(value) > -1) {
+                    matchingOptions.push(userDropdown.options[i].text);
+                }
+            }
+            if (matchingOptions.length > 0) {
+                userDropdownMenu.innerHTML = "";
+                for(var i = 0; i < matchingOptions.length; i++){
+                    var dropdownOption = document.createElement("div");
+                    dropdownOption.classList.add("dropdown-option");
+                    dropdownOption.textContent = matchingOptions[i];
+                    dropdownOption.addEventListener("click", function(event) {
+                        var email = event.target.textContent;
+                        userSearch.value = email;
+                        userDropdownMenu.innerHTML = "";
+                        userDropdownMenu.style.display = "none";
+                    });
+                    userDropdownMenu.appendChild(dropdownOption);
+                }
+                userDropdownMenu.style.display = "block";
+            }
+            else {
+                userDropdownMenu.innerHTML = "";
+                userDropdownMenu.style.display = "none";
+            }
+        });
+        }
+
+        const tradeButton = document.getElementById("trade");
+
+        tradeButton.addEventListener("click", () => {
+            event.preventDefault();
+            const newFormGroup = document.createElement("div");
+            formGroupDiv = document.getElementById("selectionDiv");
+            const newLabel = document.createElement("label");
+            newLabel.textContent = "User To Trade With";
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.id = "userToTrade";
+            newInput.name = "userToTrade";
+            newInput.classList.add("form-control");
+            newInput.placeholder = "User Email";
+            var sendTrade = document.createElement("button");
+            sendTrade.textContent = "Send Trade Request";
+            sendTrade.classList.add("btn", "btn-primary");
+            sendTrade.name = "sendTrade";
+            breakElement = document.createElement("br");
+            breakElement2 = document.createElement("br");
+            form = document.getElementById("form");
+            sendTrade.addEventListener("click", function() {
+                form.submit();
+            })
+            formGroupDiv.appendChild(breakElement);
+            formGroupDiv.appendChild(newLabel);
+            formGroupDiv.appendChild(newInput);
+            form.appendChild(breakElement2);
+            form.appendChild(sendTrade);
+            setupUserSearch(); // Call the function to set up the user search
+        });
+    </script>
 
   </body>
 </html>
