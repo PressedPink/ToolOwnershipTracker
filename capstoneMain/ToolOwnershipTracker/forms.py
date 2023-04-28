@@ -8,6 +8,18 @@ class TimeInput(forms.TimeInput):
     input_type = 'time'
 
 class ReportForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.reporter = kwargs.pop('reporter')
+        self.toolbox = kwargs.pop('toolbox')
+        super(ReportForm, self).__init__(*args, **kwargs)
+
+        self.fields['reporter'].initial = self.reporter
+        self.fields['toolbox'].initial = self.toolbox
+
+        self.fields['description'].widget.attrs['size'] = 20
+        self.fields['tool'].queryset = Tool.objects.filter(toolbox = self.toolbox)
+
     class Meta:
         model = ToolReport
         fields = ('reportType','reporter', 'toolbox', 'tool', 'topic', 'created', 'time', 'description')
@@ -18,15 +30,9 @@ class ReportForm(forms.ModelForm):
           'reporter': forms.HiddenInput(),
           'toolbox': forms.HiddenInput(),
         }
-    def __init__(self, *args, **kwargs):
-        self.reporter = kwargs.pop('reporter')
-        self.toolbox = kwargs.pop('toolbox')
-        super(ReportForm, self).__init__(*args, **kwargs)
 
-        self.fields['reporter'].initial = self.reporter
-        self.fields['toolbox'].initial = self.toolbox
 
-        self.fields['reporter'].widget.attrs['disabled'] = True
-        self.fields['toolbox'].widget.attrs['disabled'] = True
-        self.fields['description'].widget.attrs['size'] = 20
-        self.fields['tool'].queryset = Tool.objects.filter(toolbox = self.toolbox)
+
+
+
+
