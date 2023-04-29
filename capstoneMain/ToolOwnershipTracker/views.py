@@ -3,11 +3,15 @@ from django.shortcuts import render, redirect
 from ToolOwnershipTracker.models import User, UserType
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
+from .models import User, Jobsite, Toolbox, Tool, ToolReport
 from django.shortcuts import render
 from ToolOwnershipTracker.classes.Users import UserClass
 from . import models
 from .models import User, Jobsite
 from django.views import View
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .forms import ReportForm
 import logging
 # Create your views here.
 
@@ -180,3 +184,65 @@ class editUsers(View):
 
         return render(request, "edituser.html")
 
+class viewJobsitesSuperAdmin(View):
+    def get(self, request):
+        jobsites = Jobsite.objects.all()
+        user = request.session["email"]
+        accType = request.session["role"]
+        #user = "a@a.com"
+        #accType = "A"
+        toolbox = Toolbox.objects.all()
+        tool = Tool.objects.all()
+        return render(request, "jobsiteToolsAsSA.html", {'jobsites': jobsites, 'accType': accType, 'user': user, 'toolbox' : toolbox, 'tool': tool})
+
+class ReportListView(ListView):
+    def get(self, request):
+        toolreport = ToolReport.objects.all()
+        user = request.session["email"]
+        role = request.session["role"]
+        #user = "a@a.com"
+        #role = "A"
+        return render(request, "toolReport.html", {'user': user, 'report': toolreport, "role": role})
+
+class ReportCreateView(CreateView):
+    model = ToolReport
+    form_class = ReportForm
+    template_name = 'ToolReportTemplates/toolreport_form.html'
+    success_url = reverse_lazy('report_changelist')
+
+    def get_form_kwargs(self):
+        #user = User.objects.get(email="a@a.com")
+        user = User.objects.get(email=self.request.session["email"])
+        toolbox = Toolbox.objects.get(owner=user)
+
+        kwargs = super(ReportCreateView, self).get_form_kwargs()
+        kwargs['reporter'] = user
+        kwargs['toolbox'] = toolbox
+        return kwargs
+
+class ReportUpdateView(UpdateView):
+    model = ToolReport
+    form_class = ReportForm
+    template_name = 'ToolReportTemplates/toolreport_form.html'
+    success_url = reverse_lazy('report_changelist')
+
+    def get_form_kwargs(self):
+        #user = User.objects.get(email="a@a.com")
+        user = User.objects.get(email=self.request.session["email"])
+        toolbox = Toolbox.objects.get(owner=user)
+
+        kwargs = super(ReportUpdateView, self).get_form_kwargs()
+        kwargs['reporter'] = user
+        kwargs['toolbox'] = toolbox
+        return kwargs
+
+def load_tool(request):
+    toolbox_id = request.GET.get('toolbox')    
+    tool = Tool.objects.filter(toolbox_id=toolbox_id)
+    context = {'tool': tool}
+    return render(request, 'ToolReportTemplates/tool_ddl.html', context)
+
+def delete_object_function(request, pk):
+    ob = ToolReport.objects.get(pk=pk)
+    ob.delete()
+    return render(request, 'ToolReportTemplates/tool_delete.html')
