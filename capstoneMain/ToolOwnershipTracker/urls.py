@@ -34,7 +34,7 @@ urlpatterns = [
      path('toolReport/', views.ReportListView.as_view(), name='report_changelist'),
      path('add/', views.ReportCreateView.as_view(), name='report_add'),
      path('update/<int:pk>/', views.ReportUpdateView.as_view(), name='report_change'),
-     path('ajax/load-toolbox/', views.load_toolbox, name='ajax_load_toolbox'),
+     #path('ajax/load-toolbox/', views.load_toolbox, name='ajax_load_toolbox'),
      path('ajax/load-tool/', views.load_tool, name='ajax_load_tool'),
      path('delete/<int:pk>/', views.delete_object_function, name='delete_object'),
      
