@@ -19,19 +19,19 @@
           <a class="dropdown-item" href="/barcodeScanToUser/" >Scan Tool to My Toolbox</a>
         </div>
       </li>
-      {% if role == "A" %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Tool
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Tool
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          {% if role == "A" %}
             <a class="dropdown-item" href="/createTool/">Create Tool</a>
-            <a class="dropdown-item" href="#">n/a</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">n/a</a>
-          </div>
-        </li>
-      {% endif %}
+          {% endif %}
+          <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">n/a</a>
+        </div>
+      </li>
       {% if role == "A" %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

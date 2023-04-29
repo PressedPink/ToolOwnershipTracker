@@ -7,10 +7,10 @@ from datetime import datetime
 
 class ToolReportClass:
 
-    def createToolReport(self, email, toolID, toolboxID, reportType, description, jobsiteID = None):
+    def createToolReport(self, email, toolID, toolboxID, reportType, description, jobsiteID):
         if UserClass.verifyEmailExists(self, email):
             if ToolClass.isValidTool(self, toolID):
-                if not ToolboxClass.checkUserToolboxDoesNotExist(self, toolboxID):
+                if ToolboxClass.checkToolboxExistsWithID(self, toolboxID):
                     time = datetime.now()
                     reporter = User.objects.get(email = email)
                     tool = Tool.objects.get(id = toolID)

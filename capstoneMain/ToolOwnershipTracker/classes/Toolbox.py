@@ -59,3 +59,9 @@ class ToolboxClass:
         if len(test) == 0:
             return False
         return True
+    
+    def checkToolboxExistsWithID(self, toolboxID):
+        test = list(map(str, Toolbox.objects.filter(id = toolboxID)))
+        if len(test) == 0:
+            return False
+        return True

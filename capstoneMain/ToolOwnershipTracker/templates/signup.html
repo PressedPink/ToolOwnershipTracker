@@ -15,10 +15,10 @@
       <section class="mx-auto my-5" style="max-width: 23rem;">
         <div class="pages card-body rounded-top">
           {% if error_message %}
-            <div class="alert alert-danger">{{ error_message }}</div>
+            <div class="alert alert-danger text-center">{{ error_message }}</div>
           {% endif %}
           {% if success_message %}
-            <div class = "alert alert-success">{{ success_message }}</div>
+            <div class = "alert alert-success text-center">{{ success_message }}</div>
           {% endif %}
           <form action= "{% url 'signup'%}" method="post" class="text-center" autocomplete="off">
             {%  csrf_token %}

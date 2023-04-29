@@ -1,33 +1,22 @@
 import logging
-from django.views import View
-from .models import User, Jobsite
-from .classes.Jobsite import JobsiteClass
-from . import models
-from django.shortcuts import render
-from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
-from ToolOwnershipTracker.classes.Users import UserClass
-from django.shortcuts import render, get_object_or_404
-from pyzbar.pyzbar import decode
+import json
 from PIL import Image
 import io
 import base64
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-# from classes.profile import Profile
-from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
-from django.http import HttpResponseBadRequest
-from django.http import request, JsonResponse
-from django.shortcuts import render, get_object_or_404
-from ToolOwnershipTracker.classes.Users import UserClass
-from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
-from ToolOwnershipTracker.classes.Tool import ToolClass
-from . import models
-from .models import User, Jobsite, Toolbox, Tool
 from django.views import View
+from .models import User, Jobsite, Toolbox, Tool, ToolReport
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Tool import ToolClass
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
+from ToolOwnershipTracker.classes.ToolReport import ToolReportClass
+from django.shortcuts import render, get_object_or_404, redirect
+from pyzbar.pyzbar import decode
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest, JsonResponse, request
 from django.db import connections
-import logging
-import json
+from datetime import datetime
+
 # Create your views here.
 
 
@@ -57,7 +46,6 @@ class SignUp(View):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirmPassword = request.POST.get('confirmPassword')
-        # Role = str(request.P0ST['User Type'])
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
         role = request.POST.get('userTypeDropdown')
@@ -501,6 +489,8 @@ class createTool(View):
                     try:
                         ToolClass.createTool(self, name, type)
                         tool = Tool.objects.get(name = name)
+                        tool.checkout_datetime = datetime.now()
+                        tool.save()
                         tool.prevToolbox = None
                         toolbox = Toolbox.objects.get(owner = owner, jobsite = None)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
@@ -814,14 +804,38 @@ class myToolbox(View):
                     if tool.toolbox == toolbox:
                         toolsInBox.append(tool)
                 return render(request,  'currentUserToolbox.html', {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails, 'error_message': "Please select tool(s) to trade!"})
-            
-        if 'report' in request.POST:
-            return redirect("/fileToolReport/")
         
 class fileToolReport(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email = currentUserEmail)
+        currentUserRole = currentUser.role
+
+        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+        toolsInPersonalToolbox = []
+        tools = Tool.objects.all()
+        for tool in tools:
+            if tool.toolbox == toolbox:
+                toolsInPersonalToolbox.append(tool)
+        
+        allJobsites = Jobsite.objects.all()
+        allTools = Tool.objects.all()
+        jobsiteToolDictionary = {}
+        for jobsite in allJobsites:
+            if jobsite.owner == currentUser:
+                currentSiteTools = []
+                for tool in allTools:
+                    if tool.toolbox != None:
+                        if tool.toolbox.jobsite != None:
+                            if tool.toolbox.jobsite == jobsite:
+                                currentSiteTools.append(tool)
+                jobsiteToolDictionary.update({jobsite:currentSiteTools})
+
+        return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInPersonalToolbox, 'jobsiteToolDictionary': jobsiteToolDictionary})
+    def post(self, request):
 
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email = currentUserEmail)
@@ -834,9 +848,57 @@ class fileToolReport(View):
             if tool.toolbox == toolbox:
                 toolsInBox.append(tool)
 
-        return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox})
-    def post(self, request):
-        pass
+        toolName = request.POST.get('toolDropdown')
+        description = request.POST.get('description')
+        reportType = request.POST.get('reportType')
+
+        toolToReport = Tool.objects.get(name = toolName)
+        toolID = toolToReport.id
+        toolbox = toolToReport.toolbox
+        toolboxID = toolbox.id
+        jobsiteID = None
+
+        if toolbox.jobsite is None:
+            #user toolbox
+            if toolToReport.prevToolbox is None:
+                jobsiteID = None
+            else:
+                jobsiteID = toolToReport.prevToolbox.jobsite.id
+        else:
+            #jobsite toolbox
+            jobsiteID = toolbox.jobsite.id
+
+        try:
+            ToolReportClass.createToolReport(self, currentUserEmail, toolID, toolboxID, reportType, description, jobsiteID)
+            toolToReport.toolbox = None
+            toolToReport.save()
+            allJobsites = Jobsite.objects.all()
+            allTools = Tool.objects.all()
+            jobsiteToolDictionary = {}
+            for jobsite in allJobsites:
+                if jobsite.owner == currentUser:
+                    currentSiteTools = []
+                    for tool in allTools:
+                        if tool.toolbox != None:
+                            if tool.toolbox.jobsite != None:
+                                if tool.toolbox.jobsite == jobsite:
+                                    currentSiteTools.append(tool)
+                    jobsiteToolDictionary.update({jobsite:currentSiteTools})
+            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox, 'success_message': "Tool report successfully created!", 'jobsiteToolDictionary': jobsiteToolDictionary})
+        except Exception as e:
+            allJobsites = Jobsite.objects.all()
+            allTools = Tool.objects.all()
+            jobsiteToolDictionary = {}
+            for jobsite in allJobsites:
+                if jobsite.owner == currentUser:
+                    currentSiteTools = []
+                    for tool in allTools:
+                        if tool.toolbox != None:
+                            if tool.toolbox.jobsite != None:
+                                if tool.toolbox.jobsite == jobsite:
+                                    currentSiteTools.append(tool)
+                    jobsiteToolDictionary.update({jobsite:currentSiteTools})
+            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox, 'error_message': str(e), 'jobsiteToolDictionary': jobsiteToolDictionary})
 
 
 
