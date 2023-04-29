@@ -1,0 +1,17 @@
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="UTF-8">
+      <title>Jobsites</title>
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
+  </head>
+{% extends 'toolReport.html' %}
+<div class="row justify-content-center" >
+        
+  <div class="col-auto">
+{% block content %}
+<body>Report successfully deleted, go <a href="{% url 'report_changelist' %}">back</a> to Tool Report page.</body>
+{% endblock %}
+</div>
+</div>
+</html>
