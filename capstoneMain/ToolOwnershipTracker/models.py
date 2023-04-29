@@ -57,10 +57,6 @@ class Jobsite(models.Model):
     # dictates users that can view
     assigned = models.CharField(User, null=True, max_length=50)
 
-    def __str__(self):
-        return self.name
-
-
 # defines a toolbox for a Jobsite OR a User -- should NOT have both
 # noteownerANDjobsite should not BOTH be null, will verify and address in logic
 
@@ -71,16 +67,10 @@ class Toolbox(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     jobsite = models.ForeignKey(Jobsite, on_delete=models.CASCADE, null=True)
 
-    def __str__(self):
-        return self.name
-
 class Tool(models.Model):
     name = models.CharField(max_length=50)
     toolType = models.CharField(max_length=1, choices=ToolType.choices, default=ToolType.Handtool)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
-
-    def __str__(self):
-        return self.name
 # defines a tool. Tools WITHOUT a toolbox are not assigned to a user OR a jobsite
 
 
@@ -95,7 +85,4 @@ class ToolReport(models.Model):
     time = models.TimeField()
     reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
     description = models.CharField(max_length=350)
-
-    def __str__(self):
-        return self.topic
 
