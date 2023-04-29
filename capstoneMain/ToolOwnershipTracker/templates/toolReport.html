@@ -72,17 +72,22 @@
 	  <table class = "table table-responsive">
 		<thead class="thead-light">
 		  <tr class="text-left">
+			{% if role == "A" %}
 			<th>Topic</th>
 			<th>Report Type</th>
 			<th>Reporter</th>
-			<th>Jobsite</th>
-			<th>Toolbox</th>
 			<th>Tool</th>
 			<th>Created</th>
 			<th>Time</th>
 			<th>Description</th>
-			{% if role == "A" or role == "S" %}
 			<th>Delete</th>
+			{% elif role == "U" %}
+			<th>Topic</th>
+			<th>Report Type</th>
+			<th>Tool</th>
+			<th>Created</th>
+			<th>Time</th>
+			<th>Description</th>
 			{% endif %}
 		  </tr>
 		</thead>
@@ -93,8 +98,6 @@
 			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
 			  <td>{{ i.reportType }}</td>
 			  <td>{{ i.reporter }}</td>
-			  <td>{{ i.jobsite.name }}</td>
-			  <td>{{ i.toolbox.name }}</td>
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
 			  <td>{{ i.time }}</td>
@@ -105,30 +108,10 @@
 			 </form>
 			 </td>
 			</tr>
-			{% elif user == i.jobsite.owner %}
-			<tr>
-			  <td><a href="/update/{{i.pk}}/">{{i.topic}}</a></td>
-			  <td>{{ i.reportType }}</td>
-			  <td>{{ i.reporter }}</td>
-			  <td>{{ i.jobsite.name }}</td>
-			  <td>{{ i.toolbox.name }}</td>
-			  <td>{{ i.tool.name }}</td>
-			  <td>{{ i.created }}</td>
-			  <td>{{ i.time }}</td>
-			  <td>{{ i.description }}</td>
-			  <td><form action="{% url "delete/" 'delete_object' pk=i.id %}" method="post">
-				{% csrf_token %}
-				<button class="btn btn-danger" type="submit" ><i class="fa fa-trash"></i>Delete</button>
-			 </form>
-			 </td>
-			</tr>
 			{% elif user == i.reporter.email %}
 			<tr>
 			  <td>{{ i.topic }}</td>
 			  <td>{{ i.reportType }}</td>
-			  <td>{{ i.reporter }}</td>
-			  <td>{{ i.jobsite.name }}</td>
-			  <td>{{ i.toolbox.name }}</td>
 			  <td>{{ i.tool.name }}</td>
 			  <td>{{ i.created }}</td>
 			  <td>{{ i.time }}</td>
