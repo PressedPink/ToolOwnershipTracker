@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport
 
     
 
@@ -37,4 +37,5 @@ urlpatterns = [
     path('barcodeScanToUser/', ScanToUserToolbox.as_view(), name="scanUser"),
     path('barcodeScanToJobsite/', ScanToJobsiteToolbox.as_view(), name="scanJobsite"),
     path('process_image_to_tool/', process_image_to_tool, name='process_image'),
+    path('fileToolReport/', fileToolReport.as_view(), name="fileToolReport"),
 ]

@@ -814,8 +814,30 @@ class myToolbox(View):
                     if tool.toolbox == toolbox:
                         toolsInBox.append(tool)
                 return render(request,  'currentUserToolbox.html', {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails, 'error_message': "Please select tool(s) to trade!"})
+            
         if 'report' in request.POST:
-            return redirect("/password_reset/")
+            return redirect("/fileToolReport/")
+        
+class fileToolReport(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email = currentUserEmail)
+        currentUserRole = currentUser.role
+
+        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+        toolsInBox = []
+        tools = Tool.objects.all()
+        for tool in tools:
+            if tool.toolbox == toolbox:
+                toolsInBox.append(tool)
+
+        return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox})
+    def post(self, request):
+        pass
+
 
 
 class jobsiteToolboxes(View):

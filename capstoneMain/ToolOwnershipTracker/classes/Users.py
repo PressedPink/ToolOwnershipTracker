@@ -29,18 +29,18 @@ class UserClass:
             
     def checkAddress(self, address):
         if address is None:
-            raise Exception("Address may not be left blank")
+            raise Exception("Address may not be left blank!")
             return False
         return True
 
     def checkFirstName(self, firstName):
         if firstName is None:
-            raise Exception("First Name may not be left blank")
+            raise Exception("First name may not be left blank!")
         return True
 
     def checkLastName(self, lastName):
         if lastName is None:
-            raise Exception("Last Name may not be left blank")
+            raise Exception("Last name may not be left blank!")
         return True
 
 
@@ -48,11 +48,10 @@ class UserClass:
 
     def checkEmail(self, email):
         if email is None:
-            raise Exception("Unique Email Required")
+            raise Exception("Email may not be left blank!")
         test = list(map(str, User.objects.filter(email=email)))
-
         if len(test) != 0:
-            raise Exception("User already exists")
+            raise Exception("User already exists!")
         else:
             return True
         # removed as regex is handled in input fields
@@ -62,17 +61,17 @@ class UserClass:
     def checkPhone(self, phone):
         num = len(phone)
         if phone is None:
-            raise Exception("Phone Number may not be left blank")
+            raise Exception("Phone number may not be left blank!")
         if len(phone) == 7:
-            raise Exception("Please include your country and area codes")
+            raise Exception("Please include your area code!")
         if len(phone) > 12:
-            raise Exception("Please enter a valid phone number")
+            raise Exception("Please enter a valid phone number!")
         tempDigit = True
         for number in phone:
             if not number.isnumeric() or not "-":
                 tempDigit = False
             if not tempDigit:
-                raise Exception("Phone Number Invalid")
+                raise Exception("Phone number invalid!")
 
         return True
 
@@ -89,9 +88,9 @@ class UserClass:
         # firstName = self.firstName
 
         if len(password) < 12:
-            raise Exception("Password must be at least 12 characters")
+            raise Exception("Password must be at least 12 characters!")
         if not re.search('!|@|#|$|%|^|&|\\*|\\(|\\)|_|\\+|-|=', password):
-            raise Exception("Password must contain a symbol")
+            raise Exception("Password must contain a symbol!")
         tempUpper = False
         tempLower = False
         tempDigit = False
@@ -103,32 +102,19 @@ class UserClass:
             if letter.isdigit():
                 tempDigit = True
         if not tempUpper:
-            raise Exception("Password must contain an uppercase letter")
+            raise Exception("Password must contain an uppercase letter!")
         if not tempLower:
-            raise Exception("Password must contain a lowercase letter")
+            raise Exception("Password must contain a lowercase letter!")
         if not tempDigit:
-            raise Exception("Password must contain a number")
+            raise Exception("Password must contain a number!")
 
         # if firstName in password:
             # raise Exception(
             # "Password may not contain any part of your name")
         if password != confirmPassword:
-            raise Exception("Passwords do not Match")
+            raise Exception("Passwords do not match!")
         return True
 
-
-
-    def login(self, email, password):
-        if self.email.upper() is not email.upper():
-            raise Exception("Email is not valid")
-        if self.password is not hashlib.md5(password):
-            raise Exception("Password is not correct")
-        active = True
-        return True
-
-    def logout(self, request):
-        active = False
-        return True
 
     def editFirstName(self, firstName):
         if self.checkFirstName(self, firstName):
@@ -182,7 +168,7 @@ class UserClass:
             test = list(map(str, User.objects.filter(email=email)))
         except Exception as e:
             print(e)
-            raise Exception("Email is not valid")
+            raise Exception("Email is not valid!")
 
         token = str(uuid.uuid4())
         tempUser = User.objects.get(email=email)
@@ -194,12 +180,11 @@ class UserClass:
 
 
     def change_password(email, password, confirmPassword):
-
         try:
 
             test = list(map(str, User.objects.filter(email=email)))
         except:
-            raise Exception("Email is not valid")
+            raise Exception("Email is not valid!")
 
 
         tempUser = User.objects.get(email=email)

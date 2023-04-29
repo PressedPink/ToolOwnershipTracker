@@ -20,12 +20,8 @@ class ToolType(models.TextChoices):
 
 
 class reportType(models.TextChoices):
-    # insident occured but no noteable damage displayed at this time
-    Report = "R"
     # Tool is damaged in some way
     Damaged = "D"
-    # Injury to someone occurred
-    Injury = "I"
     # Tool has been lost
     Lost = "L"
 
@@ -78,14 +74,10 @@ class Tool(models.Model):
 
 class ToolReport(models.Model):
     id = models.AutoField(primary_key=True)
-    reporter = models.ForeignKey(User, null=False)
+    reporter = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     created = models.DateTimeField(editable=False, auto_now_add=True)
-    # used if injury occurred
-    impactedUsers = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    tool = models.CharField(Tool, null=True)
-    # reports the location at time of incident
-    jobSite = models.CharField(Jobsite)
-    # time incident occurred
-    time = models.DateTimeField(auto_now_add=True)
-    reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
-    description = models.CharField(max_length=350)
+    reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Damaged)
+    tool = models.ForeignKey(Tool, null=False, on_delete=models.CASCADE)
+    toolbox = models.ForeignKey(Toolbox, null=False, on_delete = models.CASCADE)
+    jobsite = models.ForeignKey(Jobsite, null=True, on_delete = models.CASCADE)
+    description = models.CharField(max_length=500)
