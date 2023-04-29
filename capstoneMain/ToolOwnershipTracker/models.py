@@ -19,12 +19,21 @@ class ToolType(models.TextChoices):
     Other = "O"
 
 
+class reportType(models.TextChoices):
+    # insident occured but no noteable damage displayed at this time
+    Report = "R"
+    # Tool is damaged in some way
+    Damaged = "D"
+    # Injury to someone occurred
+    Injury = "I"
+    # Tool has been lost
+    Lost = "L"
+
 
 # defines the user model, which contains the following fields: username, password, accountType, email, address,
 # phone number and active status
 
 # defines a User of any type
-
 class User(models.Model):
     firstName = models.CharField(max_length=20)
     lastName = models.CharField(max_length=20)
@@ -34,7 +43,6 @@ class User(models.Model):
     # set to 32 for size of MD5 Hash
     password = models.CharField(max_length=32)
     address = models.CharField(max_length=300, default="")
-
     phone = models.CharField(max_length=14, default="")
     # records if user is active for security purposes
     active = models.BooleanField
@@ -66,3 +74,18 @@ class Tool(models.Model):
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
     prevToolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, related_name='prevToolbox', null=True)
     checkout_datetime = models.DateTimeField(blank=True, null=True)
+
+
+class ToolReport(models.Model):
+    id = models.AutoField(primary_key=True)
+    reporter = models.ForeignKey(User, null=False)
+    created = models.DateTimeField(editable=False, auto_now_add=True)
+    # used if injury occurred
+    impactedUsers = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    tool = models.CharField(Tool, null=True)
+    # reports the location at time of incident
+    jobSite = models.CharField(Jobsite)
+    # time incident occurred
+    time = models.DateTimeField(auto_now_add=True)
+    reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Report)
+    description = models.CharField(max_length=350)
