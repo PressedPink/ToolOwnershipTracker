@@ -12,7 +12,7 @@
 {% block content %}
 
 
-  <form method="post" id="reportForm" data-toolbox-url="{% url 'ajax_load_toolbox' %}" novalidate>
+  <form method="post" id="reportForm" data-toolbox-url="{% url 'ajax_load_tool' %}" novalidate>
     {% csrf_token %}
     <table class = "table table-responsive">
       {{ form.as_table }}
@@ -26,22 +26,6 @@
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script>
-    $("#id_jobsite").change(function () {
-      var url = $("#ReportForm").attr("data-toolbox-url");  
-      var jobsiteId = $(this).val();  
-
-      $.ajax({                       
-        url: '{% url 'ajax_load_toolbox' %}',                  
-        data: {
-          'jobsite': jobsiteId      
-        },
-        success: function (data) {   
-          $("#id_toolbox").html(data);  
-        }
-      });
-
-    });
-    
     $("#id_toolbox").change(function () { 
       var url = $("#ReportForm").attr("data-toolbox-url");  
       var toolboxId = $(this).val(); 
