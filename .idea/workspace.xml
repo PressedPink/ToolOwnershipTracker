@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Ready for demo!">
-      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsiteInventory.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsiteToolboxes.html" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Created JobsiteToolboxes page and toolbox inventory pages for each jobsite">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -127,7 +124,10 @@
       <workItem from="1681949539706" duration="886000" />
       <workItem from="1682006371833" duration="4787000" />
       <workItem from="1682035509361" duration="3529000" />
-      <workItem from="1682108353016" duration="4568000" />
+      <workItem from="1682108353016" duration="4811000" />
+      <workItem from="1682209133399" duration="458000" />
+      <workItem from="1682209791747" duration="364000" />
+      <workItem from="1682894884021" duration="689000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -283,7 +283,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682038603954</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Created JobsiteToolboxes page and toolbox inventory pages for each jobsite">
+      <created>1682113108691</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1682113108691</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -310,7 +317,8 @@
     <MESSAGE value="COMPLETED User List display as a supervisor and an admin. Jobsites for each user are listed respectively. At the top of the page, the current user is and their owned jobsites are displayed! NEED to implement toolbox view now" />
     <MESSAGE value="Got some stuff working. Still work to be done" />
     <MESSAGE value="Ready for demo!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ready for demo!" />
+    <MESSAGE value="Created JobsiteToolboxes page and toolbox inventory pages for each jobsite" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created JobsiteToolboxes page and toolbox inventory pages for each jobsite" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679520752009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/AcceptanceTests" />

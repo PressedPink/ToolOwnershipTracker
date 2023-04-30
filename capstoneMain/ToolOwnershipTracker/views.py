@@ -4,7 +4,7 @@ from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
 from django.http import HttpResponseBadRequest
 from django.http import request, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from ToolOwnershipTracker.classes.Users import UserClass 
+from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from ToolOwnershipTracker.classes.Tool import ToolClass
 from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
@@ -13,6 +13,8 @@ from .models import User, Jobsite
 from django.views import View
 from django.db import connections
 import logging
+
+
 # Create your views here.
 
 
@@ -52,9 +54,10 @@ class SignUp(View):
 class EditUser(View):
     def get(self, request):
         return render(request, "edituser.html")
+
     def post(self, request):
         email = request.session["username"]
-        user = User.objects.get(email = email)
+        user = User.objects.get(email=email)
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         newPassword = request.POST.get('newPassword')
@@ -70,17 +73,17 @@ class EditUser(View):
                 except Exception as e:
                     return render(request, "edituser.html", {'error_message': str(e)})
             else:
-                return render(request, "edituser.html", {'error_message': "Cannot update password without confirm password field!"})
-
+                return render(request, "edituser.html",
+                              {'error_message': "Cannot update password without confirm password field!"})
 
         return redirect("/profile/")
-        
+
 
 class Profile(View):
     def get(self, request):
 
-       # if helpers.redirectIfNotLoggedIn(request):
-       #     return redirect("/")
+        # if helpers.redirectIfNotLoggedIn(request):
+        #     return redirect("/")
 
         a = request.session["username"]
         b = User.objects.get(email=a)
@@ -95,7 +98,7 @@ class Profile(View):
 
 class Login(View):
     def get(self, request):
-        #print(UserClass.hashPass("alexf"))
+        # print(UserClass.hashPass("alexf"))
         return render(request, "LoginHTML.html")
 
     def post(self, request):
@@ -108,7 +111,7 @@ class Login(View):
         badPassword = False
 
         try:
-            
+
             email = request.POST['InputUsername']
             user = User.objects.get(email=email)
             password = request.POST['InputPassword']
@@ -145,7 +148,6 @@ class PasswordReset(View):
 
 class PasswordResetSent(View):
     def get(self, request):
-
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
 
 
@@ -170,9 +172,11 @@ class PasswordResetForm(View):
             if UserClass.change_password(email, password, confirm_password):
                 return redirect("/password_reset_done/")
         except Exception as e:
-            return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': str(e), 'token': token})
+            return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                          {'error_message': str(e), 'token': token})
 
-        return render(request, 'ForgotPasswordTemplates/password_reset_form.html', {'error_message': 'Failed to reset password.', 'token': token})
+        return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
+                      {'error_message': 'Failed to reset password.', 'token': token})
 
 
 class PasswordResetDone(View):
@@ -182,12 +186,14 @@ class PasswordResetDone(View):
     def post(self, request):
         return redirect("")
 
+
 class editUsers(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
 
         return render(request, "edituser.html")
+
 
 class Jobsites(View):
     def get(self, request):
@@ -197,6 +203,7 @@ class Jobsites(View):
         assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
         return render(request, "jobsites.html", {'jobsites': allJobsites})
 
+
 class createJobsite(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
@@ -205,6 +212,7 @@ class createJobsite(View):
         allUsers = User.objects.all()
         allUserEmails = [user.email for user in allUsers]
         return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
+
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
@@ -221,7 +229,8 @@ class createJobsite(View):
         except Exception as e:
             allJobsites = Jobsite.objects.all()
             return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
-        
+
+
 class editJobsite(View):
     def get(self, request, jobsite_id):
         if helpers.redirectIfNotLoggedIn(request):
@@ -233,15 +242,17 @@ class editJobsite(View):
             assignedUsers = jobsite.assigned.all()
         except Exception as e:
             return render(request, 'createJobsites.html', {'error_message': str(e)})
-        
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers})
+
+        return render(request, 'editJobsite.html',
+                      {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers})
+
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
         try:
-            if(len(title) != 0):
+            if (len(title) != 0):
                 JobsiteClass.assignTitle(self, jobsite_id, title)
-            if(len(email) != 0):
+            if (len(email) != 0):
                 JobsiteClass.assignOwner(self, jobsite_id, email)
             email_list = request.POST.get('email_list', '').split(',')
             remove_email_list = request.POST.get('remove_email_list', '').split(',')
@@ -259,9 +270,11 @@ class editJobsite(View):
         except Exception as e:
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
-            jobsite = Jobsite.objects.get(id = jobsite_id)
-            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
-    
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            return render(request, 'editJobsite.html',
+                          {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
+
+
 class removeJobsite(View):
     def post(self, request, jobsite_id):
         try:
@@ -272,7 +285,8 @@ class removeJobsite(View):
             return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
         allJobsites = Jobsite.objects.all()
         return redirect("/jobsites/")
-    
+
+
 class createTool(View):
     def get(self, request):
         jobsites = Jobsite.objects.all()
@@ -282,53 +296,56 @@ class createTool(View):
 
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
         return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
     def post(self, request):
         name = request.POST.get('name')
         owner = request.POST.get('toolboxOwner')
         jobsiteName = request.POST.get('jobsiteName')
         toolbox_type = request.POST.get('toolboxType')
         tool_type = request.POST.get('toolType')
-        if(tool_type == "Handtool"):
+        if (tool_type == "Handtool"):
             type = "H"
-        if(tool_type == "Powertool"):
+        if (tool_type == "Powertool"):
             type = "P"
-        if(tool_type == "Operatable"):
+        if (tool_type == "Operatable"):
             type = "D"
-        if(tool_type == "Other"):
+        if (tool_type == "Other"):
             type = "O"
 
-
-        if(toolbox_type == "JobsiteToolbox"):
-            if(len(jobsiteName) != 0):
-                test = list(map(str, Jobsite.objects.filter(title = jobsiteName)))
+        if (toolbox_type == "JobsiteToolbox"):
+            if (len(jobsiteName) != 0):
+                test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
                 if len(test) != 0:
                     try:
                         ToolClass.createTool(self, name, type)
-                        tool = Tool.objects.get(name = name)
-                        jobsite = Jobsite.objects.get(title = jobsiteName)
-                        toolbox = Toolbox.objects.get(jobsite = jobsite)
+                        tool = Tool.objects.get(name=name)
+                        jobsite = Jobsite.objects.get(title=jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite=jobsite)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
                         return render(request, 'createTool.html')
                     except Exception as e:
                         return render(request, 'createTool.html', {'errror_message': str(e)})
                 else:
-                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
+                    return render(request, 'createTool.html',
+                                  {'error_message': 'Please input a valid jobsite to assign tool to!'})
             else:
-                return render(request, 'createTool.html', {'error_message': 'Please input a jobsite to assign tool to!'})
-        elif(toolbox_type == "UserToolbox"):
-            if(len(owner) != 0):
-                test = list(map(str, User.objects.filter(email = owner)))
+                return render(request, 'createTool.html',
+                              {'error_message': 'Please input a jobsite to assign tool to!'})
+        elif (toolbox_type == "UserToolbox"):
+            if (len(owner) != 0):
+                test = list(map(str, User.objects.filter(email=owner)))
                 if len(test) != 0:
                     try:
                         ToolClass.createTool(self, name, type)
-                        tool = Tool.objects.get(name = name)
-                        toolbox = Toolbox.objects.get(owner = owner, jobsite = None)
+                        tool = Tool.objects.get(name=name)
+                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
                         return render(request, 'createTool.html')
                     except Exception as e:
                         return render(request, 'createTool.html', {'errror_message': str(e)})
                 else:
-                    return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
+                    return render(request, 'createTool.html',
+                                  {'error_message': 'Please input a valid user to assign tool to'})
             else:
                 return render(request, 'createTool.html', {'error_message': 'Please input an owner to assign tool to!'})
         else:
@@ -337,7 +354,249 @@ class createTool(View):
                 return render(request, 'createTool.html')
             except Exception as e:
                 return render(request, 'createTool.html', {'errror_message': str(e)})
-            
 
 
+class UserToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
 
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == 'S':  # only show users at supervisor's jobsites
+            listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
+            all = User.objects.all()
+            allU = []
+            for site in listOfSites:
+                for i in all:
+                    if JobsiteClass.containsUser(self, site.id, i.email):
+                        allU.append(i)
+            allUsers = {}
+            for person in allU:
+                assignedSites = ""
+                added = False
+                for site in listOfSites:
+                    if JobsiteClass.containsUser(self, site.id, person.email):
+                        if added:
+                            assignedSites = assignedSites + ", " + str(site.id)
+                        else:
+                            assignedSites = str(site.id)
+                        added = True
+                allUsers.update({person: assignedSites})
+        elif userRole == 'A':  # show all users
+            allU = User.objects.all()
+            allUsers = {}
+            allSites = Jobsite.objects.all()
+            for person in allU:
+                if person.role == "U":
+                    assignedSites = ""
+                    added = False
+                    for site in allSites:
+                        if JobsiteClass.containsUser(self, site.id, person.email):
+                            if added:
+                                assignedSites = assignedSites + ", " + str(site.id)
+                            else:
+                                assignedSites = str(site.id)
+                            added = True
+                    if not added:
+                        assignedSites = "Not Assigned"
+                    allUsers.update({person: assignedSites})
+                elif person.role == "S":
+                    ownedSites = ""
+                    added = False
+                    for site in allSites:
+                        if site.owner == person:
+                            if added:
+                                ownedSites = ownedSites + ", " + str(site.id)
+                            else:
+                                ownedSites = str(site.id)
+                            added = True
+                    if not added:
+                        ownedSites = "Not Assigned"
+                    allUsers.update({person: ownedSites})
+        if user.role == "A":
+            listOfSites = ""
+            added = False
+            for site in allSites:
+                if site.owner == user:
+                    if added:
+                        listOfSites = listOfSites + ", " + str(site.id)
+                    else:
+                        listOfSites = str(site.id)
+                    added = True
+            if not added:
+                listOfSites = "None"
+        elif user.role == "S":
+            newListOfSites = ""
+            listOfSites = Jobsite.objects.filter(owner=user)
+            added = False
+            for site in listOfSites:
+                if added:
+                    newListOfSites = newListOfSites + ", " + str(site.id)
+                else:
+                    newListOfSites = str(site.id)
+                added = True
+            if not added:
+                newListOfSites = "None"
+            listOfSites = newListOfSites
+        return render(request, "userToolboxes.html", {'users': allUsers, 'currentUser': user, 'sites': listOfSites})
+
+
+class viewToolbox(View):
+    def get(self, request, user_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        user = User.objects.get(email=user_id)  # user retrieved from user display page
+        try:
+            toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
+            toolsInBox = []
+            tools = Tool.objects.all()
+            for i in tools:
+                if (i.toolbox == toolbox):
+                    toolsInBox.append(i)
+        except Exception as e:
+            a = request.session["username"]
+            user = User.objects.get(email=a)
+            userRole = user.role
+            if userRole == 'S':  # only show users at supervisor's jobsites
+                listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
+                all = User.objects.all()
+                allU = []
+                for site in listOfSites:
+                    for i in all:
+                        if JobsiteClass.containsUser(self, site.id, i.email):
+                            allU.append(i)
+                allUsers = {}
+                for person in allU:
+                    assignedSites = ""
+                    added = False
+                    for site in listOfSites:
+                        if JobsiteClass.containsUser(self, site.id, person.email):
+                            if added:
+                                assignedSites = assignedSites + ", " + str(site.id)
+                            else:
+                                assignedSites = str(site.id)
+                            added = True
+                    allUsers.update({person: assignedSites})
+            elif userRole == 'A':  # show all users
+                allU = User.objects.all()
+                allUsers = {}
+                allSites = Jobsite.objects.all()
+                for person in allU:
+                    if person.role == "U":
+                        assignedSites = ""
+                        added = False
+                        for site in allSites:
+                            if JobsiteClass.containsUser(self, site.id, person.email):
+                                if added:
+                                    assignedSites = assignedSites + ", " + str(site.id)
+                                else:
+                                    assignedSites = str(site.id)
+                                added = True
+                        if not added:
+                            assignedSites = "Not Assigned"
+                        allUsers.update({person: assignedSites})
+                    elif person.role == "S":
+                        ownedSites = ""
+                        added = False
+                        for site in allSites:
+                            if site.owner == person:
+                                if added:
+                                    ownedSites = ownedSites + ", " + str(site.id)
+                                else:
+                                    ownedSites = str(site.id)
+                                added = True
+                        if not added:
+                            ownedSites = "Not Assigned"
+                        allUsers.update({person: ownedSites})
+            if user.role == "A":
+                listOfSites = ""
+                added = False
+                for site in allSites:
+                    if site.owner == user:
+                        if added:
+                            listOfSites = listOfSites + ", " + str(site.id)
+                        else:
+                            listOfSites = str(site.id)
+                        added = True
+                if not added:
+                    listOfSites = "None"
+            elif user.role == "S":
+                newListOfSites = ""
+                listOfSites = Jobsite.objects.filter(owner=user)
+                added = False
+                for site in listOfSites:
+                    if added:
+                        newListOfSites = newListOfSites + ", " + str(site.id)
+                    else:
+                        newListOfSites = str(site.id)
+                    added = True
+                if not added:
+                    newListOfSites = "None"
+                listOfSites = newListOfSites
+            return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers,
+                                                          'currentUser': user, 'sites': listOfSites})
+
+        return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolsInBox})
+
+
+class myToolbox(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        # add condition that prevents admins from seeing their toolbox cuz it doesn't exist
+        toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
+        toolsInBox = []
+        tools = Tool.objects.all()
+        for i in tools:
+            if i.toolbox == toolbox:
+                toolsInBox.append(i)
+
+        return render(request, 'currentUserToolbox.html', {"user": user, "tools": toolsInBox})
+
+
+class jobsiteToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == "A":
+            allJobsites = Jobsite.objects.all()
+        elif userRole == "S":
+            allJobsites = Jobsite.objects.filter(owner=user)
+
+        return render(request, 'jobsiteToolboxes.html', {"sites": allJobsites})
+
+
+class jobsiteInventory(View):
+    def get(self, request, jobsite_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        try:
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            toolbox = Toolbox.objects.get(jobsite=jobsite)
+            toolsInBox = []
+            tools = Tool.objects.all()
+            for i in tools:
+                if i.toolbox == toolbox:
+                    toolsInBox.append(i)
+
+        except Exception as e:
+            a = request.session["username"]
+            user = User.objects.get(email=a)
+            userRole = user.role
+            if userRole == "A":
+                allJobsites = Jobsite.objects.all()
+            elif userRole == "S":
+                allJobsites = Jobsite.objects.filter(owner=user)
+
+            return render(request, 'jobsiteToolboxes.html', {'error_message': str(e), "sites": allJobsites})
+
+        return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox})
