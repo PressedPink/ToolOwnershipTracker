@@ -4,8 +4,9 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm,PasswordResetDone, SignUp, Jobsites,\
-    createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes,viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, unassignedTools, editTool
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport
+
+    
 
 urlpatterns = [
     path('', include('pwa.urls')),
@@ -30,7 +31,11 @@ urlpatterns = [
     path('currentUserToolbox/', myToolbox.as_view(), name='myToolbox'),
     path('jobsiteToolboxes/', jobsiteToolboxes.as_view(), name='jobsiteToolboxes'),
     path('jobsiteInventory/<int:jobsite_id>', jobsiteInventory.as_view(), name='jobsiteInventory'),
-    path('unassignedTools/', unassignedTools.as_view(), name='unassignedTools'),
-    path('editTool/<int:tool_id>', editTool.as_view(), name='editTool'),
     path('', Login.as_view(), name='LoginHTML'),
+    path('barcodeTest/', barCodeTest.as_view(), name="barcodeTest"),
+    path('process_image/', process_image, name='process_image'),
+    path('barcodeScanToUser/', ScanToUserToolbox.as_view(), name="scanUser"),
+    path('barcodeScanToJobsite/', ScanToJobsiteToolbox.as_view(), name="scanJobsite"),
+    path('process_image_to_tool/', process_image_to_tool, name='process_image'),
+    path('fileToolReport/', fileToolReport.as_view(), name="fileToolReport"),
 ]

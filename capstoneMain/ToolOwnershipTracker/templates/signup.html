@@ -15,7 +15,10 @@
       <section class="mx-auto my-5" style="max-width: 23rem;">
         <div class="pages card-body rounded-top">
           {% if error_message %}
-            <div class="alert alert-danger">{{ error_message }}</div>
+            <div class="alert alert-danger text-center">{{ error_message }}</div>
+          {% endif %}
+          {% if success_message %}
+            <div class = "alert alert-success text-center">{{ success_message }}</div>
           {% endif %}
           <form action= "{% url 'signup'%}" method="post" class="text-center" autocomplete="off">
             {%  csrf_token %}
@@ -46,6 +49,14 @@
             <div class="form-group">
                 <label for="address">Address:</label>
                 <input type="text" class="form-control" id="address" name="address" aria-describedby="address" placeholder="1111 North Maple St." required>
+            </div>
+            <div class="form-group">
+              <label for="address">User Type:</label>
+              <select class="form-control pages card-body rounded-top rounded-bottom text-center" id="userTypeDropdown" name="userTypeDropdown">
+                  <option value="U">User</option>
+                  <option value="S">Supervisor</option>
+                  <option value="A">Admin</option>
+              </select>
             </div>
             <br>
             <button type="submit"class="btn btn-primary">Submit</button>

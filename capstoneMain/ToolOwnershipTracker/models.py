@@ -19,6 +19,13 @@ class ToolType(models.TextChoices):
     Other = "O"
 
 
+class reportType(models.TextChoices):
+    # Tool is damaged in some way
+    Damaged = "D"
+    # Tool has been lost
+    Lost = "L"
+
+
 # defines the user model, which contains the following fields: username, password, accountType, email, address,
 # phone number and active status
 
@@ -57,7 +64,20 @@ class Toolbox(models.Model):
 class Tool(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300, unique=True)
+    
     toolType = models.CharField(
         max_length=1, choices=ToolType.choices, default=ToolType.Other)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
+    prevToolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, related_name='prevToolbox', null=True)
     checkout_datetime = models.DateTimeField(blank=True, null=True)
+
+
+class ToolReport(models.Model):
+    id = models.AutoField(primary_key=True)
+    reporter = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    created = models.DateTimeField(editable=False, auto_now_add=True)
+    reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Damaged)
+    tool = models.ForeignKey(Tool, null=False, on_delete=models.CASCADE)
+    toolbox = models.ForeignKey(Toolbox, null=False, on_delete = models.CASCADE)
+    jobsite = models.ForeignKey(Jobsite, null=True, on_delete = models.CASCADE)
+    description = models.CharField(max_length=500)

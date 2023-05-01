@@ -31,7 +31,10 @@
             <section class="mx-auto my-5" style="max-width: 23rem;">
                 <div class="pages card-body rounded-top">
                 {% if error_message %}
-                    <div class="alert alert-danger">{{ error_message }}</div>
+                    <div class="alert alert-danger text-center">{{ error_message }}</div>
+                {% endif %}
+                {% if success_message %}
+                    <div class = "alert alert-success text-center">{{ success_message }}</div>
                 {% endif %}
                 <form action="{% url 'createTool'%}" method="post" class="text-center" autocomplete="off">
                     {% csrf_token %}
@@ -139,6 +142,13 @@
             for(var i = 0; i < jobsiteDropdown.options.length; i++) {
                 jobsiteOptions.push(jobsiteDropdown.options[i].text.toLowerCase());
             }
+
+            document.addEventListener("click", function(event) {
+                    if (!userSearch.contains(event.target) && !userDropdown.contains(event.target) && !jobsiteSearch.contains(event.target) && !jobsiteDropdown.contains(event.target)) {
+                    userDropdownMenu.style.display = "none";
+                    jobsiteDropdownMenu.style.display = "none";
+                    }
+            });
 
             userSearch.addEventListener("keyup", function() {
                 var value = userSearch.value.toLowerCase();

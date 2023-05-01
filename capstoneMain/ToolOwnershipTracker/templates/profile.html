@@ -4,7 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <title>Signup</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
@@ -39,14 +39,16 @@
             <div class="col-sm-4"><strong>Phone:</strong></div>
             <div class="col-sm-8">{{currentUser.phone}}</div>
           </div>
-          <div class="row">
-            <div class="col-sm-4"><strong>Jobsites:</strong></div>
-            <div class="col-sm-8">
-              {% for jobsite in assignedSites %}
-                {{jobsite}}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
+          {% if role != "A" %}
+            <div class="row">
+              <div class="col-sm-4"><strong>Jobsites:</strong></div>
+              <div class="col-sm-8">
+                {% for jobsite in assignedSites %}
+                  {{jobsite}}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </div>
             </div>
-          </div>
+          {% endif %}
         </div>
       </div>
     </section>
