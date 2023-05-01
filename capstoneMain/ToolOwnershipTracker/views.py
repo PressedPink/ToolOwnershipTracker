@@ -871,6 +871,7 @@ class fileToolReport(View):
         try:
             ToolReportClass.createToolReport(self, currentUserEmail, toolID, toolboxID, reportType, description, jobsiteID)
             toolToReport.toolbox = None
+            toolToReport.checkout_datetime = None
             toolToReport.save()
             allJobsites = Jobsite.objects.all()
             allTools = Tool.objects.all()
@@ -1021,3 +1022,14 @@ class ScanToJobsiteToolbox(View):
         
         
         return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, 'role': currentUserRole})
+
+
+class viewToolReports(View):
+    def get(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allReports = ToolReport.objects.all()
+        return render(request, 'toolReports.html', {"user": user, 'role': currentUserRole, 'reports': allReports})
+    def post(self, request):
+        pass

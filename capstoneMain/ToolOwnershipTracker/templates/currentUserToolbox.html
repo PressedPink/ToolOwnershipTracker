@@ -125,6 +125,7 @@
 
         tradeButton.addEventListener("click", () => {
             event.preventDefault();
+            tradeButton.disabled = true;
             const newFormGroup = document.createElement("div");
             formGroupDiv = document.getElementById("selectionDiv");
             const newLabel = document.createElement("label");
