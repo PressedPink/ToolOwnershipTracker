@@ -31,7 +31,10 @@ class helpers():
 
 class SignUp(View):
     def get(self, request):
-        return render(request, "signup.html")
+        # currentEmail = request.session["username"]
+        # currentUser = User.objects.get(email=currentEmail)
+        # currentRole = currentUser.role
+        return render(request, "signup.html")  # , {'role': currentRole})
 
     def post(self, request):
 
@@ -41,14 +44,18 @@ class SignUp(View):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirmPassword = request.POST.get('confirmPassword')
-        # Role = str(request.P0ST['User Type'])
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
+        role = request.POST.get('userTypeDropdown')
+        # currentEmail = request.session["username"]
+        # currentUser = User.objects.get(email=currentEmail)
+        # currentRole = currentUser.role
         try:
-            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone)
-            return redirect('/')
+            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
+            return render(request, "signup.html",
+                          {"success_message": "User successfully created!"})  # , 'role': currentRole})
         except Exception as e:
-            return render(request, "signup.html", {'error_message': str(e)})
+            return render(request, "signup.html", {'error_message': str(e)})  # , 'role': currentRole})
 
 
 class EditUser(View):
@@ -600,3 +607,24 @@ class jobsiteInventory(View):
             return render(request, 'jobsiteToolboxes.html', {'error_message': str(e), "sites": allJobsites})
 
         return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox})
+
+
+class unassignedTools(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        allTools = Tool.objects.all()
+        tools = []
+        for tool in allTools:
+            if tool.toolbox is None:
+                tools.append(tool)
+
+        return render(request, 'unassignedTools.html', {"tools": tools})
+
+
+class editTool(View):
+    def get(self, request, tool_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        tool = Tool.objects.get(id=tool_id)
+        return render(request, 'editTool.html', {"tool": tool})

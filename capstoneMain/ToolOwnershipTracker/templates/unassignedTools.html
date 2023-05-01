@@ -14,7 +14,7 @@
 
   <body>
     <div class="text-center align-middle">
-        <h1>{{user.firstName}} {{user.lastName}}'s Toolbox</h1>
+        <h1>Unassigned Tools</h1>
     </div>
 
     <div class="row justify-content-center" >
@@ -25,7 +25,9 @@
                 <tr class="text-left">
                     <th>Tool</th>
                     <th>Type</th>
+                    <th>Toolbox</th>
                     <th>Checkout Date</th>
+                    <th>Tool ID</th>
                 </tr>
             </thead>
 
@@ -35,7 +37,9 @@
                     <tr class="text-left">
                         <td>{{ row.name }}</td>
                         <td>{{ row.toolType }}</td>
+                        <td>{{ row.toolbox }}</td>
                         <td>{{ row.checkout_datetime }}</td>
+                        <td><a href="{% url 'editTool' row.id %}">{{ row.id }}</a></td>
                     </tr>
                 {% endfor %}
 

@@ -12,7 +12,7 @@ from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
 
 class UserClass:
     # if role does not work, change 'U' to UserType.User
-    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone):
+    def createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role):
         if UserClass.checkEmail(self, email):
             if UserClass.checkFirstName(self, firstName):
                 if UserClass.checkLastName(self, lastName):
@@ -22,7 +22,7 @@ class UserClass:
                                 if not UserClass.verifyEmailExists(self, email):
                                     hashPass = UserClass.hashPass(password)
                                     # U = basic user, S = Supervisor A = Admin
-                                    newUser = User(firstName=firstName, lastName=lastName, email=email, role='U', password=hashPass, address=address, phone=phone, forget_password_token = hashPass)
+                                    newUser = User(firstName=firstName, lastName=lastName, email=email, role=role, password=hashPass, address=address, phone=phone, forget_password_token = hashPass)
                                     newUser.save()
                                     ToolboxClass.createUserToolbox(self, email)
             
