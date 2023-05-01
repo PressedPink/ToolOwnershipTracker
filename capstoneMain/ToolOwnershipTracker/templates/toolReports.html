@@ -36,16 +36,18 @@
                         <th>Reporter</th>
                         <th>Date</th>
                         <th>Tool</th>
+                        <th>Location</th>
                         <th>Report Type</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for report in reports %}
                         <tr class="text-left">
-                            <td>{{ report.id }}</td>
+                            <td><a href="{% url 'toolReportDetails' report.id %}">{{ report.id }}</a></td>
                             <td>{{ report.reporter.firstName }}</td>
                             <td>{{ report.created }}</td>
                             <td>{{ report.tool.name }}</td>
+                            <td>{{ report.jobsite.title}}</td>
                             <td>{{ report.reportType }}</td>
                         </tr>
                     {% endfor %}

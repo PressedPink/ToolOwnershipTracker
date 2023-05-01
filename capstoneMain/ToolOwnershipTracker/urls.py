@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, removeJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails
 
     
 
@@ -23,7 +23,6 @@ urlpatterns = [
     path('jobsites/', Jobsites.as_view(), name='jobsites'),
     path('createJobsite/', createJobsite.as_view(), name='createJobsite'),
     path('editJobsite/<int:jobsite_id>/', editJobsite.as_view(), name='editJobsite'),
-    path('removeJobsite/<int:jobsite_id>/', removeJobsite.as_view(), name='removeJobsite'),
     path('edituser/', EditUser.as_view(), name="edituser"),
     path('createTool/', createTool.as_view(), name="createTool"),
     path('userToolboxes/', UserToolboxes.as_view(), name='userToolboxes'),
@@ -39,4 +38,5 @@ urlpatterns = [
     path('process_image_to_tool/', process_image_to_tool, name='process_image'),
     path('fileToolReport/', fileToolReport.as_view(), name="fileToolReport"),
     path('viewToolReports/', viewToolReports.as_view(), name="viewToolReports"),
+    path('toolReportDetails/<int:toolreport_id>', toolReportDetails.as_view(), name="toolReportDetails"),
 ]

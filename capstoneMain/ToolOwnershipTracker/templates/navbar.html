@@ -16,6 +16,7 @@
             <a class="dropdown-item" href="/signup/">Signup</a>
           {% endif %}
           <a class="dropdown-item" href="/edituser/">Edit User</a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/barcodeScanToUser/" >Scan Tool to My Toolbox</a>
         </div>
       </li>
@@ -26,11 +27,11 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           {% if role == "A" %}
             <a class="dropdown-item" href="/createTool/">Create Tool</a>
+          {% endif %}
+            <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
+          {% if role == "A" %}
             <a class="dropdown-item" href="/viewToolReports/">View Tool Reports</a>
           {% endif %}
-          <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">n/a</a>
         </div>
       </li>
       {% if role == "A" %}

@@ -23,35 +23,35 @@
           <form action= "{% url 'signup'%}" method="post" class="text-center" autocomplete="off">
             {%  csrf_token %}
             <div>
-              <label for="firstName">First Name:</label><br>
+              <label for="firstName">First Name</label><br>
               <input pattern="[a-zA-Z]+" class="form-control" id="firstName" type="firstName" name="firstName" aria-describedby="firstname" placeholder="First Name" required>
             </div>
             <div>
-                <label for="lastName">Last Name:</label><br>
+                <label for="lastName">Last Name</label><br>
                 <input pattern="[a-zA-Z]+" class="form-control" id="lastName" type="lastName" name="lastName" aria-describedby="lastname" placeholder="Last Name" required>
             </div>
             <div class="form-group" autocomplete="off">
-              <label for="email">Email Address:</label>
+              <label for="email">Email Address</label>
               <input type="text" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" aria-describedby="password" placeholder="Password" required>
             </div>
             <div class="form-group">
-                <label for="confirmPassword">Confirm Password:</label>
+                <label for="confirmPassword">Confirm Password</label>
                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" aria-describedby="confirm password" placeholder="Confirm Password" required>
             </div>
             <div class="form-group">
-                <label for="phone">Phone Number:</label>
+                <label for="phone">Phone Number</label>
                 <input type="tel" class="form-control" pattern="[0-9]{10}" id="phone" name="phone" aria-describedby="telephone number" placeholder="###-###-#####" required>
             </div>
             <div class="form-group">
-                <label for="address">Address:</label>
+                <label for="address">Address</label>
                 <input type="text" class="form-control" id="address" name="address" aria-describedby="address" placeholder="1111 North Maple St." required>
             </div>
             <div class="form-group">
-              <label for="address">User Type:</label>
+              <label for="address">User Type</label>
               <select class="form-control pages card-body rounded-top rounded-bottom text-center" id="userTypeDropdown" name="userTypeDropdown">
                   <option value="U">User</option>
                   <option value="S">Supervisor</option>

@@ -369,7 +369,7 @@ class editJobsite(View):
                 if user.role == "S":
                     possibleOwnersEmails.append(user.email)
         except Exception as e:
-            return render(request, 'createJobsites.html', {'error_message': str(e), 'role': currentUserRole})
+            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole})
         
         return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails, 'role': currentUserRole})
     def post(self, request, jobsite_id):
@@ -378,51 +378,51 @@ class editJobsite(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email = currentUserEmail)
         currentUserRole = currentUser.role
-        try:
-            if (len(title) != 0):
-                JobsiteClass.assignTitle(self, jobsite_id, title)
-            if (len(email) != 0):
-                JobsiteClass.assignOwner(self, jobsite_id, email)
+        if 'deleteJobsite' in request.POST:
+            try:
+                JobsiteClass.removeJobsite(self, jobsite_id)
+                return redirect("/jobsites/")
+            except Exception as e:
+                allUsers = User.objects.all()
+                allUserEmails = [user.email for user in allUsers]
                 jobsite = Jobsite.objects.get(id = jobsite_id)
-                toolbox = Toolbox.objects.get(jobsite = jobsite)
-                owner = User.objects.get(email = email)
-                toolbox.owner = owner
-                toolbox.save()
-            email_list = request.POST.get('email_list', '').split(',')
-            remove_email_list = request.POST.get('remove_email_list', '').split(',')
-            if email_list:
-                for email in email_list:
-                    if len(email) != 0:
-                        JobsiteClass.addUser(self, jobsite_id, email)
+                possibleOwnersEmails = []
+                for user in allUsers:
+                    if user.role == "S":
+                        possibleOwnersEmails.append(user.email)
+                return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e), 'role': currentUserRole})
+        else:
+            try:
+                if (len(title) != 0):
+                    JobsiteClass.assignTitle(self, jobsite_id, title)
+                if (len(email) != 0):
+                    JobsiteClass.assignOwner(self, jobsite_id, email)
+                    jobsite = Jobsite.objects.get(id = jobsite_id)
+                    toolbox = Toolbox.objects.get(jobsite = jobsite)
+                    owner = User.objects.get(email = email)
+                    toolbox.owner = owner
+                    toolbox.save()
+                email_list = request.POST.get('email_list', '').split(',')
+                remove_email_list = request.POST.get('remove_email_list', '').split(',')
+                if email_list:
+                    for email in email_list:
+                        if len(email) != 0:
+                            JobsiteClass.addUser(self, jobsite_id, email)
 
-            if remove_email_list:
-                for email in remove_email_list:
-                    if len(email) != 0:
-                        JobsiteClass.removeUser(self, jobsite_id, email)
-            allJobsites = Jobsite.objects.all()
-            return render(request, "jobsites.html", {'jobsites': allJobsites, 'role': currentUserRole})
-        except Exception as e:
-            allUsers = User.objects.all()
-            allUserEmails = [user.email for user in allUsers]
-            jobsite = Jobsite.objects.get(id = jobsite_id)
-            possibleOwnersEmails = []
-            for user in allUsers:
-                if user.role == "S":
-                    possibleOwnersEmails.append(user.email)
-            return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e), 'role': currentUserRole})
-    
-class removeJobsite(View):
-    def post(self, request, jobsite_id):
-        currentUserEmail = request.session["username"]
-        currentUser = User.objects.get(email = currentUserEmail)
-        currentUserRole = currentUser.role
-        try:
-            JobsiteClass.removeJobsite(self, jobsite_id)
-        except Exception as e:
-            allJobsites = Jobsite.objects.all()
-            return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites, 'role': currentUserRole})
-        allJobsites = Jobsite.objects.all()
-        return redirect("/jobsites/")
+                if remove_email_list:
+                    for email in remove_email_list:
+                        if len(email) != 0:
+                            JobsiteClass.removeUser(self, jobsite_id, email)
+                return redirect("/jobsites/")
+            except Exception as e:
+                allUsers = User.objects.all()
+                allUserEmails = [user.email for user in allUsers]
+                jobsite = Jobsite.objects.get(id = jobsite_id)
+                possibleOwnersEmails = []
+                for user in allUsers:
+                    if user.role == "S":
+                        possibleOwnersEmails.append(user.email)
+                return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e), 'role': currentUserRole})
 
 
 class createTool(View):
@@ -1030,6 +1030,20 @@ class viewToolReports(View):
         user = User.objects.get(email=a)
         currentUserRole = user.role
         allReports = ToolReport.objects.all()
-        return render(request, 'toolReports.html', {"user": user, 'role': currentUserRole, 'reports': allReports})
-    def post(self, request):
-        pass
+        return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
+
+class toolReportDetails(View):
+    def get(self, request, toolreport_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        toolReport = ToolReport.objects.get(id = toolreport_id)
+        return render(request, 'individualToolReport.html', {'role': currentUserRole, 'report': toolReport})
+    def post(self, request, toolreport_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        toolReport = ToolReport.objects.get(id = toolreport_id)
+        toolReport.delete()
+        allReports = ToolReport.objects.all()
+        return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
