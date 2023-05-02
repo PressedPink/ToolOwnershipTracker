@@ -70,9 +70,21 @@ class editUserInfo(TestCase):
         self.assertRaises(Exception,Users.editAddress(tempUser,""))
 
     def changeAddressSuccess(self):
-        self.assertTrue(Exception,Users.editAddress(tempUser,"1234 Mitchell Ave"))
+        self.assertTrue(Users.editAddress(tempUser,"1234 Mitchell Ave"))
+
+    def changeFirstNameFail(self):
+        #cannot be blank
+        self.assertRaises(Exception,Users.editFirstName(tempUser,""))
+
+    def changeFirstNameSuccess(self):
+        self.assertTrue(Users.editFirstName(tempUser,"Claire"))
+
+    def changeLastNameFail(self):
+        #cannot be blank
+        self.assertRaises(Exception,Users.editLastName(tempUser,""))
+
+    def changeLastNameSuccess(self):
+        self.assertTrue(Users.editLastName(tempUser,"Jones"))
 
 
-    def changeNameFail(self):
 
-    def changeNameSuccess(self):
