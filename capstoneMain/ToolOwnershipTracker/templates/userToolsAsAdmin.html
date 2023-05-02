@@ -24,8 +24,9 @@
             <thead class="thead-light">
                 <tr class="text-left">
                     <th>Tool</th>
+                    <th>ID</th>
                     <th>Type</th>
-                    <!--<th>Checkout Date</th>-->
+                    <th>Checkout Date</th>
                 </tr>
             </thead>
 
@@ -34,8 +35,9 @@
                 {% for row in tools %}
                     <tr class="text-left">
                         <td>{{ row.name }}</td>
+                        <td><a href="{% url 'editTool' row.id %}">{{ row.id }}</a></td>
                         <td>{{ row.toolType }}</td>
-                        <!--<td>{{ row.checkout_datetime }}</td>-->
+                        <td>{{ row.checkout_datetime }}</td>
                     </tr>
                 {% endfor %}
 

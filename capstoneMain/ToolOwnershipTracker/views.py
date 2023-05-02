@@ -1111,5 +1111,8 @@ class editTool(View):
     def get(self, request, tool_id):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
         tool = Tool.objects.get(id=tool_id)
-        return render(request, 'editTool.html', {"tool": tool})
+        return render(request, 'editTool.html', {"tool": tool, "role": userRole})
