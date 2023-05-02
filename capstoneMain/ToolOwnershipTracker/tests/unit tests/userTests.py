@@ -65,13 +65,13 @@ class editUserInfo(TestCase):
     def changePhoneSuccess(self):
         self.assertTrue(Users.editPhone(tempUser, '14145551234'))
 
-    def changeRoleSuccess(self):
-
-    def changeRoleFail(self):
-
     def changeAddressFail(self):
+        #cannot be left blank
+        self.assertRaises(Exception,Users.editAddress(tempUser,""))
 
     def changeAddressSuccess(self):
+        self.assertTrue(Exception,Users.editAddress(tempUser,"1234 Mitchell Ave"))
+
 
     def changeNameFail(self):
 
