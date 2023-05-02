@@ -1,6 +1,5 @@
 from django.db import models
-from django.forms import ModelForm, forms
-from django.contrib import admin
+import datetime
 
 
 # defining three user roles for our app
@@ -53,6 +52,7 @@ class Jobsite(models.Model):
     title = models.CharField(max_length=40, unique=True)
     # dictates users that can view
     assigned = models.ManyToManyField(User, related_name='assigned', blank=True)
+
 
 
 class Toolbox(models.Model):

@@ -20,10 +20,6 @@ from datetime import datetime
 
 # Create your views here.
 
-
-# class Login(View):
-#    email = str(request.POST['Email Address']).strip()
-#    password = str(request.POST['Password'])
 class helpers():
     def redirectIfNotLoggedIn(request):
         if request.session["username"] is None:
@@ -128,7 +124,6 @@ class EditUser(View):
                                    'error_message': "Cannot update password without confirm password field!"})
             return redirect("/profile/")
 
-
 class Profile(View):
     def get(self, request):
         # if helpers.redirectIfNotLoggedIn(request):
@@ -184,7 +179,6 @@ class Login(View):
             # request.session["name"] = user.name
             return redirect("/profile/")
 
-
 class PasswordReset(View):
     def get(self, request):
 
@@ -200,11 +194,9 @@ class PasswordReset(View):
 
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
-
 class PasswordResetSent(View):
     def get(self, request):
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
-
 
 class PasswordResetForm(View):
     def get(self, request, token):
@@ -233,7 +225,6 @@ class PasswordResetForm(View):
 
         return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
                       {'error_message': 'Failed to reset password.', 'token': token})
-
 
 class PasswordResetDone(View):
     def get(self, request):

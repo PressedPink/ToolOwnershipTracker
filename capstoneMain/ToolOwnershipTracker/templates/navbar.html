@@ -1,5 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Tool Ownership Tracker DEMO BAR</a>
+
+{% load static %}
+<head>
+<link rel="stylesheet" href="{% static 'customcss/navbar.css' %}">
+</head>
+
+<nav class="navbar navbar-expand-lg">
+  <a class="navbar-brand" href="#"><img class ="logo" src ="{% static 'images\logo.png'%}"></img><span id="logotext">Tool Ownership Tracker</span></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -8,7 +14,7 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          User
+          <img id = "icon" src="{% static 'images/user.png' %}"></img>User
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/profile/">Profile</a>
@@ -22,7 +28,7 @@
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Tool
+          <img id = "icon" src="{% static 'images/tool.png' %}"></img>Tool
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           {% if role == "A" %}
@@ -38,7 +44,7 @@
       {% if role == "A" %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Jobsite
+            <img id = "icon" src="{% static 'images/jobsite.png' %}"></img>Jobsite
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/jobsites/">Jobsites</a>
@@ -68,5 +74,4 @@
     </ul>
     
   </div>
-
 </nav>

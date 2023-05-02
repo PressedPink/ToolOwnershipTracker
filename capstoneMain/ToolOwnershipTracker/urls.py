@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.urls import include
+from django.views.generic import RedirectView
 
 import base
 from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, unassignedTools, editTool
