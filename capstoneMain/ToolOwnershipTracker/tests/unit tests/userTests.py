@@ -51,8 +51,19 @@ class editUserInfo(TestCase):
 
 
     def changePhoneFail(self):
+        #cannot be empty
+        self.assertRaises(Exception,Users.editPhone(tempUser,''))
+        #no country code
+        self.assertRaises(Exception, Users.editPhone(tempUser, '4145551234'))
+        #no country code or area code
+        self.assertRaises(Exception, Users.editPhone(tempUser, '5551234'))
+        #too many numbers
+        self.assertRaises(Exception, Users.editPhone(tempUser, '141455551234'))
+        #not a phone number
+        self.assertRaises(Exception, Users.editPhone(tempUser, 'potato'))
 
     def changePhoneSuccess(self):
+        self.assertTrue(Users.editPhone(tempUser, '14145551234'))
 
     def changeRoleSuccess(self):
 
