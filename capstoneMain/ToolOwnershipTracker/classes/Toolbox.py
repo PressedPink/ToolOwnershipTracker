@@ -49,9 +49,9 @@ class ToolboxClass:
     def checkJobsiteToolboxDoesNotExist(jobsiteID):
         test = list(map(str, Toolbox.objects.filter(id = jobsiteID)))
         if len(test) != 0:
-            return True
+            return False
         else:
-           return False
+           return True
 
     
     def verifyEmailExists(self, email):

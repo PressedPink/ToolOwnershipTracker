@@ -28,7 +28,7 @@
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img id = "icon" src="{% static 'images\logo.png'%}"></img>Tool
+          <img id = "icon" src="{% static 'images/tool.png'%}"></img>Tool
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           {% if role == "A" %}
@@ -37,7 +37,6 @@
             <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
           {% if role == "A" %}
             <a class="dropdown-item" href="/viewToolReports/">View Tool Reports</a>
-            <a class="dropdown-item" href="/unassignedTools/">View Unassigned Tools</a>
           {% endif %}
         </div>
       </li>
@@ -50,26 +49,27 @@
             <a class="dropdown-item" href="/jobsites/">Jobsites</a>
             <a class="dropdown-item" href="/createJobsite/">Create Jobsite</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/barcodeScanToJobsite/">Scan Tool to Site</a>
+            <a class="dropdown-item" href="/barcodeScanToJobsite/">Scan Tool to Jobsite</a>
           </div>
         </li>
       {% endif %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Toolbox
+          <img id = "icon" src="{% static 'images/toolbox.png' %}"></img>Toobox
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/currentUserToolbox/">My Toolbox</a>
           {% if role != "U" %}
             <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
             <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>
+            <a class="dropdown-item" href="/unassignedTools/">Unassigned Toolbox</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">n/a</a>
           {% endif %}
         </div>
       </li>
-      <li class="nav-item">
-        <a class = "nav-link" href ="">Logout</a>
+      <li class="nav-item dropdown">
+        <a class = "nav-link" id="navbarDropdown" href ="">Logout</a>
       </li>
     </ul>
     

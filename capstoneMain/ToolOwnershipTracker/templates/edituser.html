@@ -64,6 +64,9 @@
             {% endif %}
             <br>
             <button type="submit"class="btn btn-primary">Submit</button>
+            {% if role == "A" %}
+            <button type="submit"class="btn btn-danger" name="deleteUser">Delete</button>
+            {% endif %}
           </form>
         </div>
       </section>

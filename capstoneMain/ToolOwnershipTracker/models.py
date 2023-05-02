@@ -78,6 +78,6 @@ class ToolReport(models.Model):
     created = models.DateTimeField(editable=False, auto_now_add=True)
     reportType = models.CharField(max_length=1, choices=reportType.choices, default=reportType.Damaged)
     tool = models.ForeignKey(Tool, null=False, on_delete=models.CASCADE)
-    toolbox = models.ForeignKey(Toolbox, null=False, on_delete = models.CASCADE)
+    toolbox = models.ForeignKey(Toolbox, null=True, on_delete = models.CASCADE)
     jobsite = models.ForeignKey(Jobsite, null=True, on_delete = models.CASCADE)
     description = models.CharField(max_length=500)

@@ -30,10 +30,10 @@ class helpers():
 
 class SignUp(View):
     def get(self, request):
-        currentEmail = request.session["username"]
-        currentUser = User.objects.get(email=currentEmail)
-        currentRole = currentUser.role
-        return render(request, "signup.html", {'role': currentRole})
+        #currentEmail = request.session["username"]
+        #currentUser = User.objects.get(email=currentEmail)
+        #currentRole = currentUser.role
+        return render(request, "signup.html")#, {'role': currentRole})
 
     def post(self, request):
 
@@ -46,15 +46,15 @@ class SignUp(View):
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
         role = request.POST.get('userTypeDropdown')
-        currentEmail = request.session["username"]
-        currentUser = User.objects.get(email=currentEmail)
-        currentRole = currentUser.role
+        #currentEmail = request.session["username"]
+        #currentUser = User.objects.get(email=currentEmail)
+        #currentRole = currentUser.role
         try:
             UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
             return render(request, "signup.html",
-                          {'success_message': "User successfully created!", 'role': currentRole})
+                          {'success_message': "User successfully created!"})#, 'role': currentRole})
         except Exception as e:
-            return render(request, "signup.html", {'error_message': str(e), 'role': currentRole})
+            return render(request, "signup.html", {'error_message': str(e)})#, 'role': currentRole})
 
 
 class EditUser(View):
@@ -86,25 +86,58 @@ class EditUser(View):
         userToEditEmail = request.POST.get('userEmail')
         if userToEditEmail:
             userToEdit = User.objects.get(email=userToEditEmail)
-            userToEdit.role = role
-            userToEdit.save()
-            if len(phone) != 0:
-                UserClass.editPhone(userToEdit, phone)
-            if len(address) != 0:
-                UserClass.editAddress(userToEdit, address)
-            if len(newPassword) != 0:
-                if len(confirmPassword) != 0:
-                    try:
-                        UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
-                    except Exception as e:
+
+            if 'deleteUser' in request.POST:
+                toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
+                tools = Tool.objects.all()
+                jobsites = Jobsite.objects.all()
+                reports = ToolReport.objects.all()
+                if userToEdit.role == "U":
+                    for jobsite in jobsites:
+                        if jobsite.assigned.filter(email = userToEditEmail).exists():
+                            jobsite.assigned.remove(userToEdit)
+                            jobsite.save()
+                if userToEdit.role == "S":
+                    for jobsite in jobsites:
+                        if jobsite.owner == userToEdit:
+                            jobsite.owner = currentUser
+                            toolbox = Toolbox.objects.get(owner = userToEdit, jobsite=jobsite)
+                            toolbox.owner = currentUser
+                            toolbox.save()
+                            jobsite.save()
+                for report in reports:
+                    if report.reporter == userToEdit:
+                        report.reporter = currentUser
+                        report.toolbox = None
+                        report.save()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        tool.toolbox = None
+                        tool.prevToolbox = None
+                        tool.save()
+                userToEdit.delete()
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                                                            'success_message': "User successfully deleted!"})
+            else:
+                userToEdit.role = role
+                userToEdit.save()
+                if len(phone) != 0:
+                    UserClass.editPhone(userToEdit, phone)
+                if len(address) != 0:
+                    UserClass.editAddress(userToEdit, address)
+                if len(newPassword) != 0:
+                    if len(confirmPassword) != 0:
+                        try:
+                            UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
+                        except Exception as e:
+                            return render(request, "editUser.html",
+                                            {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                    else:
                         return render(request, "editUser.html",
-                                      {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
-                else:
-                    return render(request, "editUser.html",
-                                  {'role': currentUserRole, 'users': allUserEmails,
-                                   'error_message': "Cannot update password without confirm password field!"})
-            return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
-                                                     'success_message': "User information successfully edited!"})
+                                        {'role': currentUserRole, 'users': allUserEmails,
+                                        'error_message': "Cannot update password without confirm password field!"})
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                                                            'success_message': "User information successfully edited!"})
 
         else:
             if len(phone) != 0:
@@ -504,6 +537,7 @@ class createTool(View):
                         tool.save()
                         tool.prevToolbox = None
                         toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
+                        print(toolbox)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
                         jobsites = Jobsite.objects.all()
                         allJobsiteNames = [jobsite.title for jobsite in jobsites]
