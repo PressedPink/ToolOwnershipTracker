@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, unassignedTools, editTool
 
     
 
@@ -39,4 +39,6 @@ urlpatterns = [
     path('fileToolReport/', fileToolReport.as_view(), name="fileToolReport"),
     path('viewToolReports/', viewToolReports.as_view(), name="viewToolReports"),
     path('toolReportDetails/<int:toolreport_id>', toolReportDetails.as_view(), name="toolReportDetails"),
+    path('unassignedTools/', unassignedTools.as_view(), name='unassignedTools'),
+    path('editTool/<int:tool_id>', editTool.as_view(), name='editTool'),
 ]

@@ -14,35 +14,37 @@
 
   <body>
     <div class="text-center align-middle">
-        <h1>{{ site.title }}'s Toolbox</h1>
+        <h1>Unassigned Tools</h1>
     </div>
 
     <div class="row justify-content-center" >
 
     <div class="col-auto">
         <table class = "table table-responsive">
+            <br>
+            <p class ="text-center">Click on a tool's ID to edit that tool </p>
+            <br>
             <thead class="thead-light">
                 <tr class="text-left">
                     <th>Tool</th>
-                    <th>ID</th>
+                    <th>Tool ID</th>
                     <th>Type</th>
+                    <th>Toolbox</th>
                     <th>Checkout Date</th>
+                    <th>Status</th>
                 </tr>
             </thead>
 
 
             <tbody>
-                {% for row in tools %}
+                {% for key, value in tools.items %}
                     <tr class="text-left">
-                        <td>{{ row.name }}</td>
-                        {% if role == "A" %}
-                            <td><a href="{% url 'editTool' row.id %}">{{ row.id }}</a></td>
-                        {% endif %}
-                        {% if role != "A" %}
-                            <td>{{ row.id }}</td>
-                        {% endif %}
-                        <td>{{ row.toolType }}</td>
-                        <td>{{ row.checkout_datetime }}</td>
+                        <td>{{ key.name }}</td>
+                        <td><a href="{% url 'editTool' key.id %}">{{ key.id }}</a></td>
+                        <td>{{ key.toolType }}</td>
+                        <td>{{ key.toolbox }}</td>
+                        <td>{{ key.checkout_datetime }}</td>
+                        <td>{{ value }}</td>
                     </tr>
                 {% endfor %}
 
