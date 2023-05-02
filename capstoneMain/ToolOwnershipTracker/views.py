@@ -1051,7 +1051,7 @@ class ScanToJobsiteToolbox(View):
         user = User.objects.get(email=a)
         userRole = user.role
 
-        jobsiteList = Jobsite.objects.get(owner=user)
+        jobsiteList = Jobsite.objects.all()
         toolsInBox = []
         message = ""
 
