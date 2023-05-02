@@ -182,10 +182,10 @@ class viewJobsitesSuperAdmin(View):
 class ReportListView(ListView):
     def get(self, request):
         toolreport = ToolReport.objects.all()
-        user = request.session["email"]
-        role = request.session["role"]
-        #user = "a@a.com"
-        #role = "A"
+        #user = request.session["email"]
+        #role = request.session["role"]
+        user = "a@a.com"
+        role = "A"
         return render(request, "toolReport.html", {'user': user, 'report': toolreport, "role": role})
 
 class ReportCreateView(CreateView):
@@ -195,8 +195,8 @@ class ReportCreateView(CreateView):
     success_url = reverse_lazy('report_changelist')
 
     def get_form_kwargs(self):
-        #user = User.objects.get(email="a@a.com")
-        user = User.objects.get(email=self.request.session["email"])
+        user = User.objects.get(email="a@a.com")
+        #user = User.objects.get(email=self.request.session["email"])
         toolbox = Toolbox.objects.get(owner=user)
 
         kwargs = super(ReportCreateView, self).get_form_kwargs()
@@ -211,8 +211,8 @@ class ReportUpdateView(UpdateView):
     success_url = reverse_lazy('report_changelist')
 
     def get_form_kwargs(self):
-        #user = User.objects.get(email="a@a.com")
-        user = User.objects.get(email=self.request.session["email"])
+        user = User.objects.get(email="a@a.com")
+        #user = User.objects.get(email=self.request.session["email"])
         toolbox = Toolbox.objects.get(owner=user)
 
         kwargs = super(ReportUpdateView, self).get_form_kwargs()
