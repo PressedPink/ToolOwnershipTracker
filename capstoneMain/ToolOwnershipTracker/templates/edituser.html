@@ -20,6 +20,8 @@
           {% if success_message %}
             <div class = "alert alert-success text-center">{{ success_message }}</div>
           {% endif %}
+          <h1 class = text-center>Edit User</h1>
+          <br>
           <form action= "{% url 'edituser'%}" method="post" class="text-center" autocomplete="off">
             {%  csrf_token %}
             {% if role == "A" %}

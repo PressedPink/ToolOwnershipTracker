@@ -14,41 +14,34 @@
   {% include  "navbar.html" %}
 
   <body>
-    <div class="text-center align-middle">
-        <h1>Jobsites</h1>
-    </div>
     <div class="container">
         <section class="mx-auto my-5" style="max-width: 23rem;">
             <div class="pages card-body rounded-top">
                 {% if error_message %}
                     <div class="alert alert-danger text-center">{{ error_message }}</div>
                 {% endif %}
+                <h1 class="text-center">Jobsites</h1>
+                <br>
+                <div class="row justify-content-center" >
+                    <table class = "table table-responsive">
+                        <thead class="thead-light">
+                            <tr class="text-left">
+                                <th>Title</th>
+                                <th>Owner</th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in sites %}
+                                <tr class="text-left">
+                                    <td><a href="{% url 'jobsiteInventory' row.id %}">{{ row.title }}</a></td>
+                                    <td>{{ row.owner.firstName }} {{ row.owner.lastName }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
-
-    </div>
-    <div class="row justify-content-center" >
-        <div class="col-auto">
-            <table class = "table table-responsive">
-                <thead class="thead-light">
-                    <tr class="text-left">
-                        <th>ID</th>
-                        <th>Owner</th>
-                        <th>Title</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in sites %}
-                        <tr class="text-left">
-                            <td><a href="{% url 'jobsiteInventory' row.id %}">{{ row.id }}</a></td>
-                            <td>{{ row.owner.firstName }} {{ row.owner.lastName }}</td>
-                            <td>{{ row.title }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            </div>
-        </div>
   </body>
 </html>

@@ -32,6 +32,8 @@
                 {% if success_message %}
                     <div class="alert alert-success text-center">{{ success_message }}</div>
                 {% endif %}
+                <h1 class = text-center>Tool Report Form</h1>
+                <br>
                 <form action="{% url 'fileToolReport'%}" method="post" class="text-center" autocomplete="off">
                     {% csrf_token %}
                     <div class="form-group">

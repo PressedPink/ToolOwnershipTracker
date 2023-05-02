@@ -13,41 +13,33 @@
   {% include  "navbar.html" %}
 
   <body>
-    <div class="text-center align-middle">
-        <h1>{{user.firstName}} {{user.lastName}}'s Toolbox</h1>
+    <div class="container">
+        <section class="mx-auto my-5" style="max-width: 23rem;">
+            <div class="pages card-body rounded-top">
+                <h1 class="text-center">{{user.firstName}} {{user.lastName}}'s Toolbox</h1>
+                <br>
+                <div class="row justify-content-center" >  
+                    <table class = "table table-responsive">
+                        <thead class="thead-light">
+                            <tr class="text-left">
+                                <th>Tool</th>
+                                <th>Type</th>
+                                <th>Checkout Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in tools %}
+                                <tr class="text-left">
+                                    <td><a href="{% url 'editTool' row.id %}">{{ row.name }}</a></td>
+                                    <td>{{ row.toolType }}</td>
+                                    <td>{{ row.checkout_datetime }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
-    
-    <div class="row justify-content-center" >
-        
-    <div class="col-auto">
-        <table class = "table table-responsive">
-            <thead class="thead-light">
-                <tr class="text-left">
-                    <th>Tool</th>
-                    <th>ID</th>
-                    <th>Type</th>
-                    <th>Checkout Date</th>
-                </tr>
-            </thead>
-
-
-            <tbody>
-                {% for row in tools %}
-                    <tr class="text-left">
-                        <td>{{ row.name }}</td>
-                        <td><a href="{% url 'editTool' row.id %}">{{ row.id }}</a></td>
-                        <td>{{ row.toolType }}</td>
-                        <td>{{ row.checkout_datetime }}</td>
-                    </tr>
-                {% endfor %}
-
-            </tbody>
-
-
-
-        </table>
-        </div>
-    </div>
-      
   </body>
 </html>

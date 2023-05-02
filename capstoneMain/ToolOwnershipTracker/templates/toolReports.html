@@ -12,48 +12,43 @@
  
   {% include  "navbar.html" %}
 
-  <body>
-    <div class="text-center align-middle">
-        <h1>Tool Reports</h1>
-    </div>
+<body>
     <div class="container">
         <section class="mx-auto my-5" style="max-width: 23rem;">
             <div class="pages card-body rounded-top">
                 {% if error_message %}
                     <div class="alert alert-danger text-center">{{ error_message }}</div>
                 {% endif %}
+                <h1 class = "text-center">Tool Reports</h1>
+                <br>
+                <div class="row justify-content-center">
+                    <table class = "table table-responsive">
+                        <thead class="thead-light">
+                            <tr class="text-left">
+                                <th>ID</th>
+                                <th>Reporter</th>
+                                <th>Date</th>
+                                <th>Tool</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                                <tr class="text-left">
+                                    <td><a href="{% url 'toolReportDetails' report.id %}">{{ report.id }}</a></td>
+                                    <td>{{ report.reporter.firstName }}</td>
+                                    <td>{{ report.created }}</td>
+                                    <td>{{ report.tool.name }}</td>
+                                    <td>{{ report.jobsite.title}}</td>
+                                    <td>{{ report.reportType }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
-            
-    </div>
-    <div class="row justify-content-center" >
-        <div class="col-auto">
-            <table class = "table table-responsive">
-                <thead class="thead-light">
-                    <tr class="text-left">
-                        <th>ID</th>
-                        <th>Reporter</th>
-                        <th>Date</th>
-                        <th>Tool</th>
-                        <th>Location</th>
-                        <th>Report Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for report in reports %}
-                        <tr class="text-left">
-                            <td><a href="{% url 'toolReportDetails' report.id %}">{{ report.id }}</a></td>
-                            <td>{{ report.reporter.firstName }}</td>
-                            <td>{{ report.created }}</td>
-                            <td>{{ report.tool.name }}</td>
-                            <td>{{ report.jobsite.title}}</td>
-                            <td>{{ report.reportType }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            </div>
-        </div>
-  </body>
+</body>
 </html>

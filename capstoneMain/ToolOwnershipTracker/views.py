@@ -373,9 +373,8 @@ class editJobsite(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-
+        jobsite = Jobsite.objects.get(id=jobsite_id)
         try:
-            jobsite = Jobsite.objects.get(id=jobsite_id)
             allUsers = User.objects.all()
             allUserEmails = [user.email for user in allUsers]
             assignedUsers = jobsite.assigned.all()
@@ -384,7 +383,7 @@ class editJobsite(View):
                 if user.role == "S":
                     possibleOwnersEmails.append(user.email)
         except Exception as e:
-            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole})
+            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite})
         
         return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails, 'role': currentUserRole})
     def post(self, request, jobsite_id):
@@ -1119,8 +1118,6 @@ class unassignedTools(View):
                     if report.tool == tool:
                         status = str(report.reportType)
                 ToolDict.update({tool: status})
-        print("ToolDict = ")
-        print(ToolDict)
 
         return render(request, 'unassignedTools.html', {"tools": ToolDict, "user": user, "role": userRole})
 
@@ -1129,8 +1126,151 @@ class editTool(View):
     def get(self, request, tool_id):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        tool = Tool.objects.get(id = tool_id)
+        return render(request, 'editTool.html',
+                      {'users': allUserEmails, 'jobsites': allJobsiteNames, 'role': currentUserRole, 'tool': tool})
+
+    def post(self, request, tool_id):
         a = request.session["username"]
         user = User.objects.get(email=a)
-        userRole = user.role
+        currentUserRole = user.role
         tool = Tool.objects.get(id=tool_id)
-        return render(request, 'editTool.html', {"tool": tool, "role": userRole})
+
+        name = request.POST.get('name')
+        owner = request.POST.get('toolboxOwner')
+        jobsiteName = request.POST.get('jobsiteName')
+        toolbox_type = request.POST.get('toolboxType')
+        tool_type = request.POST.get('toolType')
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+
+        if (tool_type == "Handtool"):
+            type = "H"
+        if (tool_type == "Powertool"):
+            type = "P"
+        if (tool_type == "Operatable"):
+            type = "D"
+        if (tool_type == "Other"):
+            type = "O"
+
+        if (toolbox_type == "JobsiteToolbox"):
+            if (len(jobsiteName) != 0):
+                test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
+                if len(test) != 0:
+                    try:
+                        if(len(name)!= 0):
+                            tool.name = name
+                            tool.save()
+                        if (tool_type != "doNothing"):
+                            tool.toolType = type
+                        tool.checkout_datetime = datetime.now()
+                        tool.prevToolbox = None
+                        jobsite = Jobsite.objects.get(title=jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite=jobsite)
+                        tool.toolbox = toolbox
+                        tool.save()
+
+                        jobsites = Jobsite.objects.all()
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        allUsers = User.objects.all()
+                        allUserEmails = [user.email for user in allUsers]
+
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
+                                                                'success_message': "Tool successfully edited!",
+                                                                'role': currentUserRole, 'tool': tool})
+
+                    except Exception as e:
+                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+                else:
+                    return render(request, 'editTool.html',
+                                  {'error_message': 'Please input a valid jobsite to assign tool to!',
+                                   'role': currentUserRole, 'tool': tool})
+            else:
+                return render(request, 'editTool.html',
+                              {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'tool': tool})
+        elif (toolbox_type == "UserToolbox"):
+            if (len(owner) != 0):
+                test = list(map(str, User.objects.filter(email=owner)))
+                if len(test) != 0:
+                    try:
+                        if(len(name)!= 0):
+                            tool.name = name
+                            tool.save()
+                        if (tool_type != "doNothing"):
+                            tool.toolType = type
+                        tool.checkout_datetime = datetime.now()
+                        tool.prevToolbox = None
+                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
+                        tool.toolbox = toolbox
+                        tool.save()
+
+                        jobsites = Jobsite.objects.all()
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        allUsers = User.objects.all()
+                        allUserEmails = [user.email for user in allUsers]
+
+                        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                        return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
+                                                                   'success_message': "Tool successfully edited!",
+                                                                   'role': currentUserRole, 'tool': tool})
+
+                    except Exception as e:
+                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+                else:
+                    return render(request, 'editTool.html',
+                                  {'error_message': 'Please input a valid user to assign tool to',
+                                   'role': currentUserRole, 'tool': tool})
+            else:
+                return render(request, 'editTool.html',
+                              {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole, 'tool': tool})
+        elif(toolbox_type == "Unassigned"):
+            try:
+                if(len(name)!= 0):
+                    tool.name = name
+                    tool.save()
+                if (tool_type != "doNothing"):
+                    tool.toolType = type
+                tool.toolbox = None
+
+                jobsites = Jobsite.objects.all()
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                allUsers = User.objects.all()
+                allUserEmails = [user.email for user in allUsers]
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
+                                                           'success_message': "Tool successfully edited!",
+                                                           'role': currentUserRole, 'tool': tool})
+
+            except Exception as e:
+                return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+        else:
+            try:
+                if(len(name)!= 0):
+                    tool.name = name
+                    tool.save()
+                if (tool_type != "doNothing"):
+                    tool.toolType = type
+                jobsites = Jobsite.objects.all()
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+                allUsers = User.objects.all()
+                allUserEmails = [user.email for user in allUsers]
+                allJobsiteNames = [jobsite.title for jobsite in jobsites]
+
+                print(tool.name)
+                return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
+                                                           'success_message': "Tool successfully edited!",
+                                                           'role': currentUserRole, 'tool': tool})
+            except Exception as e:
+                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+            

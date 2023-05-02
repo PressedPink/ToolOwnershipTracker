@@ -22,6 +22,8 @@
           {% if success_message %}
             <div class = "alert alert-success text-center">{{ success_message }}</div>
           {% endif %}
+          <h1 class = text-center>Create Jobsite</h1>
+          <br>
           <form action="{% url 'createJobsite'%}" method="post" class="text-center" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
@@ -54,7 +56,7 @@
             <div class="container">
               <div class="row justify-content-center" >
                 <div class="col-auto">
-                  <table class = "table table-responsive" id="selected-emails">
+                  <table class = "table table-responsive" id="selected-emails" hidden>
                     <thead class="thead-light">
                       <tr class="text-left">
                         <th class="text-left">Added User(s)</th>
@@ -77,19 +79,17 @@
           <table class = "table table-responsive">
               <thead class="thead-light">
                   <tr class="text-left">
-                      <th>ID</th>
-                      <th>Owner</th>
-                      <th>Title</th>
-                      <th>Assigned To</th>
+                    <th>Title</th>
+                    <th>Owner</th>
+                    <th>Assigned To</th>
                   </tr>
               </thead>
               <tbody>
                   {% for row in jobsites %}
 
                       <tr class="text-left">
-                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
+                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.title }}</a></td>
                         <td>{{ row.owner.firstName }}</td>
-                        <td>{{ row.title }}</td>
                         <td>
                           {% if row.assigned.all %}
                               {% for user in row.assigned.all %}
@@ -203,6 +203,7 @@
 
       function updateEmailList() {
         var emailTable = document.getElementById("selected-emails");
+        emailTable.hidden = false;
         for (var i = emailTable.rows.length - 1; i > 0; i--) {
           emailTable.deleteRow(i);
         }
@@ -213,13 +214,19 @@
           var emailText = document.createTextNode(emails[i]);
           var removeButton = document.createElement("button");
           removeButton.textContent = "Remove";
-          removeButton.classList.add("btn", "btn-link", "p-0", "m-0");
+          removeButton.classList.add("btn", "btn-danger");
           removeButton.addEventListener("click", function(event) {
             var emailToRemove = event.target.parentNode.parentNode.cells[0].textContent;
             emails = emails.filter(function(email) {
               return email !== emailToRemove;
             });
-            updateEmailList();
+            if (emails.length -1 > 0 ) {
+                updateEmailList();
+              }
+              else {
+                emailTable.hidden = true;
+                event.preventDefault();
+              }
           });
           emailCell.appendChild(emailText);
           removeCell.appendChild(removeButton);
