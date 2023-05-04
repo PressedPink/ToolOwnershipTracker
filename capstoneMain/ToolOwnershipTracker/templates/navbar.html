@@ -55,16 +55,14 @@
       {% endif %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img id = "icon" src="{% static 'images/toolbox.png' %}"></img>Toobox
+          <img id = "icon" src="{% static 'images/toolbox.png' %}"></img>Toolbox
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/currentUserToolbox/">My Toolbox</a>
           {% if role != "U" %}
             <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
             <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>
-            <a class="dropdown-item" href="/unassignedTools/">Unassigned Toolbox</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">n/a</a>
+            <a class="dropdown-item" href="/allTools/">Global Toolbox</a>
           {% endif %}
         </div>
       </li>

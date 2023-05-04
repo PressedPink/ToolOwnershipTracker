@@ -25,7 +25,8 @@ class UserClass:
                                     # U = basic user, S = Supervisor A = Admin
                                     newUser = User(firstName=firstName, lastName=lastName, email=email, role=role, password=hashPass, address=address, phone=phone, forget_password_token = hashPass)
                                     newUser.save()
-                                    ToolboxClass.createUserToolbox(self, email)
+                                    if(role != "A"):
+                                        ToolboxClass.createUserToolbox(self, email)
             
     def checkAddress(self, address):
         if address is None:

@@ -14,13 +14,10 @@ class ToolboxClass:
         
     def createJobsiteToolbox(self, email, jobsiteID):
         if ToolboxClass.isValidJobsite(self, jobsiteID):
-            if ToolboxClass.checkJobsiteToolboxDoesNotExist(jobsiteID):
-                jobsiteOwner = User.objects.get(email = email)
-                jobsite = Jobsite.objects.get(id = jobsiteID)
-                newToolbox = Toolbox(owner = jobsiteOwner, jobsite = jobsite)
-                newToolbox.save()
-            else:
-                raise Exception("Jobsite toolbox already exists!")
+            jobsiteOwner = User.objects.get(email = email)
+            jobsite = Jobsite.objects.get(id = jobsiteID)
+            newToolbox = Toolbox(owner = jobsiteOwner, jobsite = jobsite)
+            newToolbox.save()
         else:
             raise Exception("Jobsite does not exist!")
 
@@ -45,14 +42,6 @@ class ToolboxClass:
             return True
         else:
             return False
-
-    def checkJobsiteToolboxDoesNotExist(jobsiteID):
-        test = list(map(str, Toolbox.objects.filter(id = jobsiteID)))
-        if len(test) != 0:
-            return False
-        else:
-           return True
-
     
     def verifyEmailExists(self, email):
         test = list(map(str, User.objects.filter(email=email)))
