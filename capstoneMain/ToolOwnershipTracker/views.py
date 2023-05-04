@@ -94,14 +94,14 @@ class EditUser(View):
                 reports = ToolReport.objects.all()
                 if userToEdit.role == "U":
                     for jobsite in jobsites:
-                        if jobsite.assigned.filter(email = userToEditEmail).exists():
+                        if jobsite.assigned.filter(email=userToEditEmail).exists():
                             jobsite.assigned.remove(userToEdit)
                             jobsite.save()
                 if userToEdit.role == "S":
                     for jobsite in jobsites:
                         if jobsite.owner == userToEdit:
                             jobsite.owner = currentUser
-                            toolbox = Toolbox.objects.get(owner = userToEdit, jobsite=jobsite)
+                            toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=jobsite)
                             toolbox.owner = currentUser
                             toolbox.save()
                             jobsite.save()
@@ -117,7 +117,7 @@ class EditUser(View):
                         tool.save()
                 userToEdit.delete()
                 return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
-                                                            'success_message': "User successfully deleted!"})
+                                                         'success_message': "User successfully deleted!"})
             else:
                 userToEdit.role = role
                 userToEdit.save()
@@ -131,13 +131,13 @@ class EditUser(View):
                             UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
                         except Exception as e:
                             return render(request, "editUser.html",
-                                            {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                          {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
                     else:
                         return render(request, "editUser.html",
-                                        {'role': currentUserRole, 'users': allUserEmails,
-                                        'error_message': "Cannot update password without confirm password field!"})
+                                      {'role': currentUserRole, 'users': allUserEmails,
+                                       'error_message': "Cannot update password without confirm password field!"})
                 return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
-                                                            'success_message': "User information successfully edited!"})
+                                                         'success_message': "User information successfully edited!"})
 
         else:
             if len(phone) != 0:
@@ -156,6 +156,7 @@ class EditUser(View):
                                   {'role': currentUserRole, 'users': allUserEmails,
                                    'error_message': "Cannot update password without confirm password field!"})
             return redirect("/profile/")
+
 
 class Profile(View):
     def get(self, request):
@@ -212,6 +213,7 @@ class Login(View):
             # request.session["name"] = user.name
             return redirect("/profile/")
 
+
 class PasswordReset(View):
     def get(self, request):
 
@@ -227,9 +229,11 @@ class PasswordReset(View):
 
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
+
 class PasswordResetSent(View):
     def get(self, request):
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
+
 
 class PasswordResetForm(View):
     def get(self, request, token):
@@ -258,6 +262,7 @@ class PasswordResetForm(View):
 
         return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
                       {'error_message': 'Failed to reset password.', 'token': token})
+
 
 class PasswordResetDone(View):
     def get(self, request):
@@ -447,9 +452,9 @@ class editJobsite(View):
                     JobsiteClass.assignTitle(self, jobsite_id, title)
                 if (len(email) != 0):
                     JobsiteClass.assignOwner(self, jobsite_id, email)
-                    jobsite = Jobsite.objects.get(id = jobsite_id)
-                    toolbox = Toolbox.objects.get(jobsite = jobsite)
-                    owner = User.objects.get(email = email)
+                    jobsite = Jobsite.objects.get(id=jobsite_id)
+                    toolbox = Toolbox.objects.get(jobsite=jobsite)
+                    owner = User.objects.get(email=email)
                     toolbox.owner = owner
                     toolbox.save()
                 email_list = request.POST.get('email_list', '').split(',')
@@ -1116,18 +1121,20 @@ class viewToolReports(View):
         allReports = ToolReport.objects.all()
         return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
 
+
 class toolReportDetails(View):
     def get(self, request, toolreport_id):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        toolReport = ToolReport.objects.get(id = toolreport_id)
+        toolReport = ToolReport.objects.get(id=toolreport_id)
         return render(request, 'individualToolReport.html', {'role': currentUserRole, 'report': toolReport})
+
     def post(self, request, toolreport_id):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        toolReport = ToolReport.objects.get(id = toolreport_id)
+        toolReport = ToolReport.objects.get(id=toolreport_id)
         toolReport.delete()
         allReports = ToolReport.objects.all()
         return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
@@ -1190,7 +1197,7 @@ class editTool(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-        tool = Tool.objects.get(id = tool_id)
+        tool = Tool.objects.get(id=tool_id)
         return render(request, 'editTool.html',
                       {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames, 'role': currentUserRole, 'tool': tool})
 
@@ -1233,7 +1240,7 @@ class editTool(View):
                 test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
                 if len(test) != 0:
                     try:
-                        if(len(name)!= 0):
+                        if (len(name) != 0):
                             tool.name = name
                             tool.save()
                         if (tool_type != "doNothing"):
@@ -1262,7 +1269,7 @@ class editTool(View):
                 test = list(map(str, User.objects.filter(email=owner)))
                 if len(test) != 0:
                     try:
-                        if(len(name)!= 0):
+                        if (len(name) != 0):
                             tool.name = name
                             tool.save()
                         if (tool_type != "doNothing"):
@@ -1287,7 +1294,7 @@ class editTool(View):
                               {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif(toolbox_type == "Unassigned"):
             try:
-                if(len(name)!= 0):
+                if (len(name) != 0):
                     tool.name = name
                     tool.save()
                 if (tool_type != "doNothing"):
@@ -1300,7 +1307,7 @@ class editTool(View):
                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         else:
             try:
-                if(len(name)!= 0):
+                if (len(name) != 0):
                     tool.name = name
                     tool.save()
                 if (tool_type != "doNothing"):

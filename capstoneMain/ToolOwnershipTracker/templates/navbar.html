@@ -58,7 +58,9 @@
           <img id = "icon" src="{% static 'images/toolbox.png' %}"></img>Toolbox
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          {% if role != "A" %}
           <a class="dropdown-item" href="/currentUserToolbox/">My Toolbox</a>
+          {% endif %}
           {% if role != "U" %}
             <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
             <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>

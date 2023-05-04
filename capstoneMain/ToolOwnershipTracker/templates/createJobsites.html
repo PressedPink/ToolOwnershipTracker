@@ -73,6 +73,10 @@
         </div>
       </section>
     </div>
+    <br>
+    {% if role == "A" %}
+    <p class ="text-center">Click on a jobsite to edit it</p>
+    {% endif %}
     <div class="container">
       <div class="row justify-content-center" >
         <div class="col-auto">
@@ -88,7 +92,12 @@
                   {% for row in jobsites %}
 
                       <tr class="text-left">
+                        {% if role == "A" %}
                         <td><a href="{% url 'editJobsite' row.id %}">{{ row.title }}</a></td>
+                        {% endif %}
+                        {% if role != "A" %}
+                        <td>{{ row.title }}</td>
+                        {% endif %}
                         <td>{{ row.owner.firstName }}</td>
                         <td>
                           {% if row.assigned.all %}
