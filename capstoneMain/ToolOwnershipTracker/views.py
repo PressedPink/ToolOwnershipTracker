@@ -30,10 +30,10 @@ class helpers():
 
 class SignUp(View):
     def get(self, request):
-        #currentEmail = request.session["username"]
-        #currentUser = User.objects.get(email=currentEmail)
-        #currentRole = currentUser.role
-        return render(request, "signup.html")#, {'role': currentRole})
+        # currentEmail = request.session["username"]
+        # currentUser = User.objects.get(email=currentEmail)
+        # currentRole = currentUser.role
+        return render(request, "signup.html")  # , {'role': currentRole})
 
     def post(self, request):
 
@@ -46,15 +46,15 @@ class SignUp(View):
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
         role = request.POST.get('userTypeDropdown')
-        #currentEmail = request.session["username"]
-        #currentUser = User.objects.get(email=currentEmail)
-        #currentRole = currentUser.role
+        # currentEmail = request.session["username"]
+        # currentUser = User.objects.get(email=currentEmail)
+        # currentRole = currentUser.role
         try:
             UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
             return render(request, "signup.html",
-                          {'success_message': "User successfully created!"})#, 'role': currentRole})
+                          {'success_message': "User successfully created!"})  # , 'role': currentRole})
         except Exception as e:
-            return render(request, "signup.html", {'error_message': str(e)})#, 'role': currentRole})
+            return render(request, "signup.html", {'error_message': str(e)})  # , 'role': currentRole})
 
 
 class EditUser(View):
@@ -94,14 +94,14 @@ class EditUser(View):
                 reports = ToolReport.objects.all()
                 if userToEdit.role == "U":
                     for jobsite in jobsites:
-                        if jobsite.assigned.filter(email = userToEditEmail).exists():
+                        if jobsite.assigned.filter(email=userToEditEmail).exists():
                             jobsite.assigned.remove(userToEdit)
                             jobsite.save()
                 if userToEdit.role == "S":
                     for jobsite in jobsites:
                         if jobsite.owner == userToEdit:
                             jobsite.owner = currentUser
-                            toolbox = Toolbox.objects.get(owner = userToEdit, jobsite=jobsite)
+                            toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=jobsite)
                             toolbox.owner = currentUser
                             toolbox.save()
                             jobsite.save()
@@ -117,7 +117,7 @@ class EditUser(View):
                         tool.save()
                 userToEdit.delete()
                 return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
-                                                            'success_message': "User successfully deleted!"})
+                                                         'success_message': "User successfully deleted!"})
             else:
                 userToEdit.role = role
                 userToEdit.save()
@@ -131,13 +131,13 @@ class EditUser(View):
                             UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
                         except Exception as e:
                             return render(request, "editUser.html",
-                                            {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                          {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
                     else:
                         return render(request, "editUser.html",
-                                        {'role': currentUserRole, 'users': allUserEmails,
-                                        'error_message': "Cannot update password without confirm password field!"})
+                                      {'role': currentUserRole, 'users': allUserEmails,
+                                       'error_message': "Cannot update password without confirm password field!"})
                 return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
-                                                            'success_message': "User information successfully edited!"})
+                                                         'success_message': "User information successfully edited!"})
 
         else:
             if len(phone) != 0:
@@ -156,6 +156,7 @@ class EditUser(View):
                                   {'role': currentUserRole, 'users': allUserEmails,
                                    'error_message': "Cannot update password without confirm password field!"})
             return redirect("/profile/")
+
 
 class Profile(View):
     def get(self, request):
@@ -212,6 +213,7 @@ class Login(View):
             # request.session["name"] = user.name
             return redirect("/profile/")
 
+
 class PasswordReset(View):
     def get(self, request):
 
@@ -227,9 +229,11 @@ class PasswordReset(View):
 
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
+
 class PasswordResetSent(View):
     def get(self, request):
         return render(request, 'ForgotPasswordTemplates/password_reset_sent.html')
+
 
 class PasswordResetForm(View):
     def get(self, request, token):
@@ -258,6 +262,7 @@ class PasswordResetForm(View):
 
         return render(request, 'ForgotPasswordTemplates/password_reset_form.html',
                       {'error_message': 'Failed to reset password.', 'token': token})
+
 
 class PasswordResetDone(View):
     def get(self, request):
@@ -407,9 +412,13 @@ class editJobsite(View):
                 if user.role == "S":
                     possibleOwnersEmails.append(user.email)
         except Exception as e:
-            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite})
-        
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails, 'role': currentUserRole})
+            return render(request, 'editJobsite.html',
+                          {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite})
+
+        return render(request, 'editJobsite.html',
+                      {'jobsite': jobsite, 'users': allUserEmails, 'assingedUsers': assignedUsers,
+                       'owners': possibleOwnersEmails, 'role': currentUserRole})
+
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
@@ -423,21 +432,23 @@ class editJobsite(View):
             except Exception as e:
                 allUsers = User.objects.all()
                 allUserEmails = [user.email for user in allUsers]
-                jobsite = Jobsite.objects.get(id = jobsite_id)
+                jobsite = Jobsite.objects.get(id=jobsite_id)
                 possibleOwnersEmails = []
                 for user in allUsers:
                     if user.role == "S":
                         possibleOwnersEmails.append(user.email)
-                return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e), 'role': currentUserRole})
+                return render(request, 'editJobsite.html',
+                              {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails,
+                               'error_message': str(e), 'role': currentUserRole})
         else:
             try:
                 if (len(title) != 0):
                     JobsiteClass.assignTitle(self, jobsite_id, title)
                 if (len(email) != 0):
                     JobsiteClass.assignOwner(self, jobsite_id, email)
-                    jobsite = Jobsite.objects.get(id = jobsite_id)
-                    toolbox = Toolbox.objects.get(jobsite = jobsite)
-                    owner = User.objects.get(email = email)
+                    jobsite = Jobsite.objects.get(id=jobsite_id)
+                    toolbox = Toolbox.objects.get(jobsite=jobsite)
+                    owner = User.objects.get(email=email)
                     toolbox.owner = owner
                     toolbox.save()
                 email_list = request.POST.get('email_list', '').split(',')
@@ -455,12 +466,14 @@ class editJobsite(View):
             except Exception as e:
                 allUsers = User.objects.all()
                 allUserEmails = [user.email for user in allUsers]
-                jobsite = Jobsite.objects.get(id = jobsite_id)
+                jobsite = Jobsite.objects.get(id=jobsite_id)
                 possibleOwnersEmails = []
                 for user in allUsers:
                     if user.role == "S":
                         possibleOwnersEmails.append(user.email)
-                return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails, 'error_message': str(e), 'role': currentUserRole})
+                return render(request, 'editJobsite.html',
+                              {'jobsite': jobsite, 'users': allUserEmails, 'owners': possibleOwnersEmails,
+                               'error_message': str(e), 'role': currentUserRole})
 
 
 class createTool(View):
@@ -1109,21 +1122,24 @@ class viewToolReports(View):
         allReports = ToolReport.objects.all()
         return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
 
+
 class toolReportDetails(View):
     def get(self, request, toolreport_id):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        toolReport = ToolReport.objects.get(id = toolreport_id)
+        toolReport = ToolReport.objects.get(id=toolreport_id)
         return render(request, 'individualToolReport.html', {'role': currentUserRole, 'report': toolReport})
+
     def post(self, request, toolreport_id):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        toolReport = ToolReport.objects.get(id = toolreport_id)
+        toolReport = ToolReport.objects.get(id=toolreport_id)
         toolReport.delete()
         allReports = ToolReport.objects.all()
         return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
+
 
 class unassignedTools(View):
     def get(self, request):
@@ -1159,7 +1175,7 @@ class editTool(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-        tool = Tool.objects.get(id = tool_id)
+        tool = Tool.objects.get(id=tool_id)
         return render(request, 'editTool.html',
                       {'users': allUserEmails, 'jobsites': allJobsiteNames, 'role': currentUserRole, 'tool': tool})
 
@@ -1193,7 +1209,7 @@ class editTool(View):
                 test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
                 if len(test) != 0:
                     try:
-                        if(len(name)!= 0):
+                        if (len(name) != 0):
                             tool.name = name
                             tool.save()
                         if (tool_type != "doNothing"):
@@ -1212,24 +1228,26 @@ class editTool(View):
 
                         allJobsiteNames = [jobsite.title for jobsite in jobsites]
                         return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
-                                                                'success_message': "Tool successfully edited!",
-                                                                'role': currentUserRole, 'tool': tool})
+                                                                 'success_message': "Tool successfully edited!",
+                                                                 'role': currentUserRole, 'tool': tool})
 
                     except Exception as e:
-                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+                        return render(request, 'editTool.html',
+                                      {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
                 else:
                     return render(request, 'editTool.html',
                                   {'error_message': 'Please input a valid jobsite to assign tool to!',
                                    'role': currentUserRole, 'tool': tool})
             else:
                 return render(request, 'editTool.html',
-                              {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'tool': tool})
+                              {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole,
+                               'tool': tool})
         elif (toolbox_type == "UserToolbox"):
             if (len(owner) != 0):
                 test = list(map(str, User.objects.filter(email=owner)))
                 if len(test) != 0:
                     try:
-                        if(len(name)!= 0):
+                        if (len(name) != 0):
                             tool.name = name
                             tool.save()
                         if (tool_type != "doNothing"):
@@ -1247,21 +1265,23 @@ class editTool(View):
 
                         allJobsiteNames = [jobsite.title for jobsite in jobsites]
                         return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
-                                                                   'success_message': "Tool successfully edited!",
-                                                                   'role': currentUserRole, 'tool': tool})
+                                                                 'success_message': "Tool successfully edited!",
+                                                                 'role': currentUserRole, 'tool': tool})
 
                     except Exception as e:
-                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+                        return render(request, 'editTool.html',
+                                      {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
                 else:
                     return render(request, 'editTool.html',
                                   {'error_message': 'Please input a valid user to assign tool to',
                                    'role': currentUserRole, 'tool': tool})
             else:
                 return render(request, 'editTool.html',
-                              {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole, 'tool': tool})
-        elif(toolbox_type == "Unassigned"):
+                              {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole,
+                               'tool': tool})
+        elif (toolbox_type == "Unassigned"):
             try:
-                if(len(name)!= 0):
+                if (len(name) != 0):
                     tool.name = name
                     tool.save()
                 if (tool_type != "doNothing"):
@@ -1274,14 +1294,15 @@ class editTool(View):
                 allUserEmails = [user.email for user in allUsers]
                 allJobsiteNames = [jobsite.title for jobsite in jobsites]
                 return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
-                                                           'success_message': "Tool successfully edited!",
-                                                           'role': currentUserRole, 'tool': tool})
+                                                         'success_message': "Tool successfully edited!",
+                                                         'role': currentUserRole, 'tool': tool})
 
             except Exception as e:
-                return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
+                return render(request, 'editTool.html',
+                              {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
         else:
             try:
-                if(len(name)!= 0):
+                if (len(name) != 0):
                     tool.name = name
                     tool.save()
                 if (tool_type != "doNothing"):
@@ -1294,8 +1315,8 @@ class editTool(View):
 
                 print(tool.name)
                 return render(request, 'editTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames,
-                                                           'success_message': "Tool successfully edited!",
-                                                           'role': currentUserRole, 'tool': tool})
+                                                         'success_message': "Tool successfully edited!",
+                                                         'role': currentUserRole, 'tool': tool})
             except Exception as e:
-                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
-            
+                return render(request, 'editTool.html',
+                              {'error_message': str(e), 'role': currentUserRole, 'tool': tool})
