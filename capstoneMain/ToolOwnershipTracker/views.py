@@ -894,13 +894,16 @@ class fileToolReport(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-
-        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
         toolsInPersonalToolbox = []
-        tools = Tool.objects.all()
-        for tool in tools:
-            if tool.toolbox == toolbox:
-                toolsInPersonalToolbox.append(tool)
+
+        if currentUserRole != "A":
+            toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+            tools = Tool.objects.all()
+            for tool in tools:
+                if tool.toolbox == toolbox:
+                    toolsInPersonalToolbox.append(tool)
+        else:
+            toolsInPersonalToolbox = Tool.objects.all()
 
         allJobsites = Jobsite.objects.all()
         allTools = Tool.objects.all()
@@ -938,18 +941,22 @@ class fileToolReport(View):
         toolToReport = Tool.objects.get(name=toolName)
         toolID = toolToReport.id
         toolbox = toolToReport.toolbox
-        toolboxID = toolbox.id
+        if toolbox == None:
+            toolboxID = None
+        else:
+            toolboxID = toolbox.id
         jobsiteID = None
 
-        if toolbox.jobsite is None:
-            # user toolbox
-            if toolToReport.prevToolbox is None:
-                jobsiteID = None
+        if toolbox != None:
+            if toolbox.jobsite is None:
+                # user toolbox
+                if toolToReport.prevToolbox is None:
+                    jobsiteID = None
+                else:
+                    jobsiteID = toolToReport.prevToolbox.jobsite.id
             else:
-                jobsiteID = toolToReport.prevToolbox.jobsite.id
-        else:
-            # jobsite toolbox
-            jobsiteID = toolbox.jobsite.id
+                # jobsite toolbox
+                jobsiteID = toolbox.jobsite.id
 
         try:
             ToolReportClass.createToolReport(self, currentUserEmail, toolID, toolboxID, reportType, description,

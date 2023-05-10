@@ -39,18 +39,27 @@
                     <div class="form-group">
                         <label for="address">Tool To Report</label>
                         <select class="form-control pages card-body rounded-top rounded-bottom text-center" id="toolDropdown" name="toolDropdown">
-                            <optgroup label="Personal Tools">
-                                {% for tool in tools %}
-                                    <option value="{{ tool.name }}">{{ tool.name }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            {% for jobsite, tools in jobsiteToolDictionary.items %}
-                                <optgroup label="{{ jobsite.title }} Tools">
+                            {% if role != 'A' %}
+                                <optgroup label="Personal Tools">
                                     {% for tool in tools %}
                                         <option value="{{ tool.name }}">{{ tool.name }}</option>
                                     {% endfor %}
                                 </optgroup>
-                            {% endfor %}
+                                {% for jobsite, tools in jobsiteToolDictionary.items %}
+                                    <optgroup label="{{ jobsite.title }} Tools">
+                                        {% for tool in tools %}
+                                            <option value="{{ tool.name }}">{{ tool.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            {% else %}
+                                <optgroup label="All Tools">
+                                    {% for tool in tools %}
+                                        <option value="{{ tool.name }}">{{ tool.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endif %}
+                            
                         </select>
                     </div>
                     <div class="form-group">
