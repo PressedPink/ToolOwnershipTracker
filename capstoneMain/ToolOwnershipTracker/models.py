@@ -61,7 +61,7 @@ class Tool(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300, unique=True)
     
-    #toolType = models.CharField(
-        #max_length=1, choices=ToolType.choices, default=ToolType.Other)
+    toolType = models.CharField(
+        max_length=1, choices=ToolType.choices, default=ToolType.Other)
     toolbox = models.ForeignKey(Toolbox, on_delete=models.CASCADE, null=True)
     #checkout_datetime = models.DateTimeField(blank=True, null=True)

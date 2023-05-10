@@ -33,7 +33,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 
 ]
-ALLOWED_HOSTS = ["192.168.0.210", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 GRAPH_MODELS = {
     'all_applications': True,
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'pwa',
     'sslserver',
+    'django_extensions',
     'ToolOwnershipTracker'
 ]
 

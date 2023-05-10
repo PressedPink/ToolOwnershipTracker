@@ -114,7 +114,7 @@ class Login(View):
         return render(request, "LoginHTML.html")
 
     def post(self, request):
-
+        print(UserClass.hashPass("alexf"))
         if 'forgot_password' in request.POST:
             return redirect("/password_reset/")
 
@@ -282,14 +282,14 @@ class createJobsite(View):
         allJobsites = Jobsite.objects.all()
         allUsers = User.objects.all()
         allUserEmails = [user.email for user in allUsers]
-        assigned_users = Jobsite.assigned.all()
+        #assigned_users = Jobsite.assigned.all()
         
-        alexuser = User.objects.filter(email="alex_fuller@ymail.com")
+        #alexuser = User.objects.filter(email="alex_fuller@ymail.com")
         #jobsite.assigned.add(alexuser)
         
-        print(assigned_users)
-        print(len(assigned_users))
-        print("done")
+        #print(assigned_users)
+        #print(len(assigned_users))
+        #print("done")
         
         return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
     def post(self, request):
@@ -368,10 +368,70 @@ class removeJobsite(View):
 
 class createTool(View):
     def get(self, request):
-        return render(request, 'createTool.html')
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
 
-    def post():
-        pass
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
+    def post(self, request):
+        name = request.POST.get('name')
+        owner = request.POST.get('toolboxOwner')
+        jobsiteName = request.POST.get('jobsiteName')
+        toolbox_type = request.POST.get('toolboxType')
+        tool_type = request.POST.get('toolType')
+        if (tool_type == "Handtool"):
+            type = "H"
+        if (tool_type == "Powertool"):
+            type = "P"
+        if (tool_type == "Operatable"):
+            type = "D"
+        if (tool_type == "Other"):
+            type = "O"
+
+        if (toolbox_type == "JobsiteToolbox"):
+            if (len(jobsiteName) != 0):
+                test = list(
+                    map(str, Jobsite.objects.filter(title=jobsiteName)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name=name)
+                        jobsite = Jobsite.objects.get(title=jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite=jobsite)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input a jobsite to assign tool to!'})
+        elif (toolbox_type == "UserToolbox"):
+            if (len(owner) != 0):
+                test = list(map(str, User.objects.filter(email=owner)))
+                if len(test) != 0:
+                    try:
+                        ToolClass.createTool(self, name, type)
+                        tool = Tool.objects.get(name=name)
+                        toolbox = Toolbox.objects.get(
+                            owner=owner, jobsite=None)
+                        ToolClass.addToToolbox(self, tool.id, toolbox.id)
+                        return render(request, 'createTool.html')
+                    except Exception as e:
+                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                else:
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
+            else:
+                return render(request, 'createTool.html', {'error_message': 'Please input an owner to assign tool to!'})
+        else:
+            try:
+                ToolClass.createTool(self, name, type)
+                return render(request, 'createTool.html')
+            except Exception as e:
+                return render(request, 'createTool.html', {'errror_message': str(e)})
 
 
 class UserToolboxes(View):

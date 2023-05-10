@@ -33,7 +33,7 @@
                 {% if error_message %}
                     <div class="alert alert-danger">{{ error_message }}</div>
                 {% endif %}
-                <form action="{% url 'createTool'%}" method="post" class="text-center" autocomplete="off">
+                <form action="/createTool/" method="post" class="text-center" autocomplete="off">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="name">Name</label>
