@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+
 <html>
   <head>
       <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +10,7 @@
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   </head>
- 
+
   {% include  "navbar.html" %}
 
   <body>
@@ -19,40 +20,22 @@
                 {% if error_message %}
                     <div class="alert alert-danger text-center">{{ error_message }}</div>
                 {% endif %}
-                <h1 class = "text-center">Jobsites</h1>
+                <h1 class="text-center">Jobsites</h1>
                 <br>
-                {% if role == "A" %}
-                <p class ="text-center">Click on a jobsite title to edit the jobsite</p>
-                <br>
-                {% endif %}
-                <div class="row justify-content-center">
+                <p>Click on a jobsite title to view the jobsite's toolbox</p>
+                <div class="row justify-content-center" >
                     <table class = "table table-responsive">
                         <thead class="thead-light">
                             <tr class="text-left">
                                 <th>Title</th>
-                                <th>Owner</th>
-                                <th>Assigned To</th>
+                                <th>Owner</th>   
                             </tr>
                         </thead>
                         <tbody>
-                            {% for row in jobsites %}
+                            {% for row in sites %}
                                 <tr class="text-left">
-                                    {% if role == "A" %}
-                                    <td><a href="{% url 'editJobsite' row.id %}">{{ row.title }}</a></td>
-                                    {% endif %}
-                                    {% if role != "A" %}
-                                    <td>{{ row.title }}</td>
-                                    {% endif %}
-                                    <td>{{ row.owner.firstName }}</td>
-                                    <td>
-                                        {% if row.assigned.all %}
-                                            {% for user in row.assigned.all %}
-                                                {{user.firstName}}{% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
-                                        {% else %}
-                                            No users assigned
-                                        {% endif %}
-                                    </td>
+                                    <td><a href="{% url 'jobsiteInventory' row.id %}">{{ row.title }}</a></td>
+                                    <td>{{ row.owner.firstName }} {{ row.owner.lastName }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

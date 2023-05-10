@@ -17,8 +17,13 @@
       <section class="mx-auto my-5" style="max-width: 23rem;">
         <div class="pages card-body rounded-top">
           {% if error_message %}
-            <div class="alert alert-danger">{{ error_message }}</div>
+            <div class="alert alert-danger text-center">{{ error_message }}</div>
           {% endif %}
+          {% if success_message %}
+            <div class = "alert alert-success text-center">{{ success_message }}</div>
+          {% endif %}
+          <h1 class = text-center>Create Jobsite</h1>
+          <br>
           <form action="{% url 'createJobsite'%}" method="post" class="text-center" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
@@ -27,10 +32,17 @@
             </div>
             <div class="form-group">
               <label for="owner">Owner</label>
-              <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="Owner" required>
+              <div class="input-group">
+                <input type="text" class="form-control" id="owner" name="owner" aria-describedby="owner" placeholder="Owner" required>
+              </div>
+              <select hidden id ="ownerDropdown">
+                {% for owner in owners %}
+                  <option value = "{{ owner }}">{{ owner }}</option>
+                {% endfor %}
+              </select>
             </div>
             <div class="form-group">
-              <label for="title">Add User(s)</label>
+              <label for="addUsers">Add User(s)</label>
               <div class="input-group">
                 <input type="text" class="form-control" id="search" name="search" aria-describedby="search" placeholder="Search Users...">
               </div>
@@ -44,7 +56,7 @@
             <div class="container">
               <div class="row justify-content-center" >
                 <div class="col-auto">
-                  <table class = "table table-responsive" id="selected-emails">
+                  <table class = "table table-responsive" id="selected-emails" hidden>
                     <thead class="thead-light">
                       <tr class="text-left">
                         <th class="text-left">Added User(s)</th>
@@ -61,25 +73,32 @@
         </div>
       </section>
     </div>
+    <br>
+    {% if role == "A" %}
+    <p class ="text-center">Click on a jobsite title to edit the jobsite</p>
+    {% endif %}
     <div class="container">
       <div class="row justify-content-center" >
         <div class="col-auto">
           <table class = "table table-responsive">
               <thead class="thead-light">
                   <tr class="text-left">
-                      <th>ID</th>
-                      <th>Owner</th>
-                      <th>Title</th>
-                      <th>Assigned To</th>
+                    <th>Title</th>
+                    <th>Owner</th>
+                    <th>Assigned To</th>
                   </tr>
               </thead>
               <tbody>
                   {% for row in jobsites %}
 
                       <tr class="text-left">
-                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.id }}</a></td>
-                        <td>{{ row.owner.firstName }}</td>
+                        {% if role == "A" %}
+                        <td><a href="{% url 'editJobsite' row.id %}">{{ row.title }}</a></td>
+                        {% endif %}
+                        {% if role != "A" %}
                         <td>{{ row.title }}</td>
+                        {% endif %}
+                        <td>{{ row.owner.firstName }}</td>
                         <td>
                           {% if row.assigned.all %}
                               {% for user in row.assigned.all %}
@@ -101,18 +120,27 @@
       document.addEventListener("DOMContentLoaded", function() {
       var searchInput = document.getElementById("search");
       var dropdown = document.getElementById("dropdown");
+      var ownerInput = document.getElementById("owner");
+      var ownerDropdown = document.getElementById("ownerDropdown");
       var dropdownMenu = document.createElement("div");
+      var ownerDropdownMenu = document.createElement("div");
+      ownerDropdownMenu.classList.add("dropdown-menu");
       dropdownMenu.classList.add("dropdown-menu");
       dropdown.parentNode.insertBefore(dropdownMenu, dropdown.nextSibling);
+      ownerDropdown.parentNode.insertBefore(ownerDropdownMenu, ownerDropdown.nextSibling);
 
       var options = [];
       for (var i = 0; i < dropdown.options.length; i++) {
           options.push(dropdown.options[i].text.toLowerCase());
       }
+      var ownerOptions = [];
+      for (var i = 0; i < ownerDropdown.options.length; i++) {
+        ownerOptions.push(ownerDropdown.options[i].text.toLowerCase());
+      }
 
       var emails = []; // Initialize an empty array to store selected emails
 
-      searchInput.addEventListener("input", function() {
+      searchInput.addEventListener("keyup", function() {
           var value = searchInput.value.toLowerCase();
           var matchingOptions = [];
 
@@ -144,14 +172,47 @@
           }
       });
 
+      ownerInput.addEventListener("keyup", function() {
+        var value = ownerInput.value.toLowerCase();
+        var matchingOptions = [];
+
+        for (var i = 0; i < ownerOptions.length; i++) {
+          if(ownerOptions[i].indexOf(value) > -1) {
+            matchingOptions.push(ownerDropdown.options[i].text);
+          }
+        }
+
+        if (matchingOptions.length > 0) {
+          ownerDropdownMenu.innerHTML = "";
+          for (var i = 0; i < matchingOptions.length; i++) {
+            var dropdownOption = document.createElement("div");
+            dropdownOption.classList.add("dropdown-option");
+            dropdownOption.textContent = matchingOptions[i];
+            dropdownOption.addEventListener("click", function(event) {
+              var jobsiteOwner = event.target.textContent;
+              ownerInput.value = jobsiteOwner;
+              ownerDropdownMenu.innerHTML = "";
+              ownerDropdownMenu.style.display = "none";
+            });
+            ownerDropdownMenu.appendChild(dropdownOption);
+          }
+          ownerDropdownMenu.style.display = "block";
+        } else {
+          ownerDropdownMenu.innerHTML = "";
+          ownerDropdownMenu.style.display = "none";
+        }
+      });
+
       document.addEventListener("click", function(event) {
-          if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          if (!searchInput.contains(event.target) && !dropdownMenu.contains(event.target) && !ownerInput.contains(event.target) && !ownerDropdownMenu.contains(event.target)) {
           dropdownMenu.style.display = "none";
+          ownerDropdownMenu.style.display = "none";
           }
       });
 
       function updateEmailList() {
         var emailTable = document.getElementById("selected-emails");
+        emailTable.hidden = false;
         for (var i = emailTable.rows.length - 1; i > 0; i--) {
           emailTable.deleteRow(i);
         }
@@ -162,13 +223,19 @@
           var emailText = document.createTextNode(emails[i]);
           var removeButton = document.createElement("button");
           removeButton.textContent = "Remove";
-          removeButton.classList.add("btn", "btn-link", "p-0", "m-0");
+          removeButton.classList.add("btn", "btn-danger");
           removeButton.addEventListener("click", function(event) {
             var emailToRemove = event.target.parentNode.parentNode.cells[0].textContent;
             emails = emails.filter(function(email) {
               return email !== emailToRemove;
             });
-            updateEmailList();
+            if (emails.length -1 > 0 ) {
+                updateEmailList();
+              }
+              else {
+                emailTable.hidden = true;
+                event.preventDefault();
+              }
           });
           emailCell.appendChild(emailText);
           removeCell.appendChild(removeButton);

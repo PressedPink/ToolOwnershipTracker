@@ -1,5 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Tool Ownership Tracker DEMO BAR</a>
+
+{% load static %}
+<head>
+<link rel="stylesheet" href="{% static 'customcss/navbar.css' %}">
+</head>
+
+<nav class="navbar navbar-expand-lg">
+  <img class ="logo" src ="{% static 'images\logo.png'%}"></img><span id="logotext">Tool Ownership Tracker</span>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -8,55 +14,64 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          User
+          <img id = "icon" src="{% static 'images/user.png' %}"></img>User
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/profile/">Profile</a>
-          <a class="dropdown-item" href="/signup/">Signup</a>
+          {% if role == "A" %}
+            <a class="dropdown-item" href="/signup/">Signup</a>
+          {% endif %}
           <a class="dropdown-item" href="/edituser/">Edit User</a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/barcodeScanToUser/" >Scan Tool to My Toolbox</a>
         </div>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Tool
+          <img id = "icon" src="{% static 'images/tool.png'%}"></img>Tool
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">n/a</a>
-          <a class="dropdown-item" href="/createTool/">Create Tool</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">n/a</a>
+          {% if role == "A" %}
+            <a class="dropdown-item" href="/createTool/">Create Tool</a>
+          {% endif %}
+            <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
+          {% if role == "A" %}
+            <a class="dropdown-item" href="/viewToolReports/">View Tool Reports</a>
+          {% endif %}
         </div>
       </li>
+      {% if role == "A" %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img id = "icon" src="{% static 'images/jobsite.png' %}"></img>Jobsite
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/jobsites/">Jobsites</a>
+            <a class="dropdown-item" href="/createJobsite/">Create Jobsite</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/barcodeScanToJobsite/">Scan Tool to Jobsite</a>
+          </div>
+        </li>
+      {% endif %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Jobsite
+          <img id = "icon" src="{% static 'images/toolbox.png' %}"></img>Toolbox
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/jobsites/">Jobsites</a>
-          <a class="dropdown-item" href="/createJobsite/">Create Jobsite</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/barcodeScanToJobsite/">Scan Tool to Site</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Toolbox
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          {% if role != "A" %}
           <a class="dropdown-item" href="/currentUserToolbox/">My Toolbox</a>
-          <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
-          <a class="dropdown-item" href="#">Jobsite Toolboxes</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">n/a</a>
+          {% endif %}
+          {% if role != "U" %}
+            <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
+            <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>
+            <a class="dropdown-item" href="/allTools/">Global Toolbox</a>
+          {% endif %}
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
+      <li class="nav-item dropdown">
+        <a class = "nav-link" id="navbarDropdown" href ="">Logout</a>
       </li>
     </ul>
     
   </div>
-
-
 </nav>

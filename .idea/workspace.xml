@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Got some stuff working. Still work to be done">
-      <change afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/currentUserToolbox.html" afterDir="false" />
+    <list default="true" id="4c9abc34-c6e9-43e8-8145-85f62565528d" name="Changes" comment="Made edit tool page accessable for admins through tool display pages">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/createJobsites.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/createJobsites.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsiteInventory.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsiteInventory.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsUser.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/templates/userToolsAsAdmin.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,10 +29,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/ToolReport.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/classes/Users.py" root0="SKIP_INSPECTION" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2MA3EoMKt82RLS7nmJKikDX1Pwi" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -52,8 +57,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="JavaScript Debug.userToolboxes.html">
+  <component name="RunManager" selected="JavaScript Debug.currentUserToolbox.html">
     <configuration name="LoginHTML.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/LoginHTML.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="currentUserToolbox.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/currentUserToolbox.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <configuration name="jobsites.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/ToolOwnershipTracker/capstoneMain/ToolOwnershipTracker/templates/jobsites.html" useBuiltInWebServerPort="true">
@@ -77,73 +85,13 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ToolOwnershipTracker" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testEditUser.TestEditUserSuccess.test_edit_user_phone&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ToolOwnershipTracker" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;ToolOwnershipTracker.AcceptanceTests.testLogin.TestLoginSuccess&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests in AcceptanceTests" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ToolOwnershipTracker" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests in testLogin.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ToolOwnershipTracker" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/ToolOwnershipTracker/AcceptanceTests/testLogin.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.currentUserToolbox.html" />
         <item itemvalue="JavaScript Debug.userToolboxes.html" />
         <item itemvalue="JavaScript Debug.jobsites.html" />
         <item itemvalue="JavaScript Debug.LoginHTML.html" />
         <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess" />
-        <item itemvalue="Python tests.Python tests for EditUserTests.TestEditUserSuccess.test_edit_user_phone" />
       </list>
     </recent_temporary>
   </component>
@@ -173,7 +121,10 @@
       <workItem from="1681751455140" duration="4364000" />
       <workItem from="1681949539706" duration="886000" />
       <workItem from="1682006371833" duration="4787000" />
-      <workItem from="1682035509361" duration="2854000" />
+      <workItem from="1682035509361" duration="3529000" />
+      <workItem from="1682108353016" duration="4568000" />
+      <workItem from="1682986330431" duration="2663000" />
+      <workItem from="1683153959822" duration="7638000" />
     </task>
     <task id="LOCAL-00001" summary="Created EditUserTests and almost done with LogoutTests">
       <created>1677198429356</created>
@@ -259,33 +210,33 @@
       <option name="project" value="LOCAL" />
       <updated>1680826024364</updated>
     </task>
-    <task id="LOCAL-00013" summary="edit 5. Ready for demo! I hope">
-      <created>1680826857558</created>
+    <task id="LOCAL-00013" summary="added create report test">
+      <created>1681225813880</created>
       <option name="number" value="00013" />
       <option name="presentableId" value="LOCAL-00013" />
       <option name="project" value="LOCAL" />
-      <updated>1680826857558</updated>
+      <updated>1681225813880</updated>
     </task>
-    <task id="LOCAL-00014" summary="edit 6. Almost ready">
-      <created>1680827231067</created>
+    <task id="LOCAL-00014" summary="added remove report test">
+      <created>1681226138338</created>
       <option name="number" value="00014" />
       <option name="presentableId" value="LOCAL-00014" />
       <option name="project" value="LOCAL" />
-      <updated>1680827231067</updated>
+      <updated>1681226138338</updated>
     </task>
-    <task id="LOCAL-00015" summary="edit 7. Getting there">
-      <created>1680827812671</created>
+    <task id="LOCAL-00015" summary="Partial completion of unassignedTools.html page that displays all unassigned tools. Need to implement tool deletion functionality. Need to implement edit tool page.">
+      <created>1682975249257</created>
       <option name="number" value="00015" />
       <option name="presentableId" value="LOCAL-00015" />
       <option name="project" value="LOCAL" />
-      <updated>1680827812671</updated>
+      <updated>1682975249257</updated>
     </task>
-    <task id="LOCAL-00016" summary="edit 8. Done yay!">
-      <created>1680828124921</created>
+    <task id="LOCAL-00016" summary="Made edit tool page accessable for admins through tool display pages">
+      <created>1682988388777</created>
       <option name="number" value="00016" />
       <option name="presentableId" value="LOCAL-00016" />
       <option name="project" value="LOCAL" />
-      <updated>1680828124921</updated>
+      <updated>1682988388777</updated>
     </task>
     <task id="LOCAL-00017" summary="edit made to Jobsite.py containsUser. Work in progress">
       <created>1681402590862</created>
@@ -322,7 +273,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682035533857</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Ready for demo!">
+      <created>1682038603954</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1682038603954</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,7 +317,10 @@
     <MESSAGE value="User list functionality" />
     <MESSAGE value="COMPLETED User List display as a supervisor and an admin. Jobsites for each user are listed respectively. At the top of the page, the current user is and their owned jobsites are displayed! NEED to implement toolbox view now" />
     <MESSAGE value="Got some stuff working. Still work to be done" />
-    <option name="LAST_COMMIT_MESSAGE" value="Got some stuff working. Still work to be done" />
+    <MESSAGE value="Ready for demo!" />
+    <MESSAGE value="Partial completion of unassignedTools.html page that displays all unassigned tools. Need to implement tool deletion functionality. Need to implement edit tool page." />
+    <MESSAGE value="Made edit tool page accessable for admins through tool display pages" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made edit tool page accessable for admins through tool display pages" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToolOwnershipTracker$.coverage" NAME=" Coverage Results" MODIFIED="1679520752009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/capstoneMain/ToolOwnershipTracker/AcceptanceTests" />

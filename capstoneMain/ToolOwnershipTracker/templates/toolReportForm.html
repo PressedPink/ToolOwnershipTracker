@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="UTF-8">
+      <title>Tool Report Form</title>
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+      <style>
+        .form-check {
+            display: flex;
+            align-items: center;
+        }
+
+        .radiocontainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+      </style>
+  </head>
+  {% include  "navbar.html" %}
+  <body>
+    <div class="container">
+        <section class="mx-auto my-5" style="max-width: 23rem;">
+            <div class="pages card-body rounded-top">
+                {% if error_message %}
+                    <div class="alert alert-danger text-center">{{ error_message }}</div>
+                {% endif %}
+                {% if success_message %}
+                    <div class="alert alert-success text-center">{{ success_message }}</div>
+                {% endif %}
+                <h1 class = text-center>Tool Report Form</h1>
+                <br>
+                <form action="{% url 'fileToolReport'%}" method="post" class="text-center" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="address">Tool To Report</label>
+                        <select class="form-control pages card-body rounded-top rounded-bottom text-center" id="toolDropdown" name="toolDropdown">
+                            {% if role != 'A' %}
+                                <optgroup label="Personal Tools">
+                                    {% for tool in tools %}
+                                        <option value="{{ tool.name }}">{{ tool.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% for jobsite, tools in jobsiteToolDictionary.items %}
+                                    <optgroup label="{{ jobsite.title }} Tools">
+                                        {% for tool in tools %}
+                                            <option value="{{ tool.name }}">{{ tool.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            {% else %}
+                                <optgroup label="All Tools">
+                                    {% for tool in tools %}
+                                        <option value="{{ tool.name }}">{{ tool.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endif %}
+                            
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" rows="5" name="description"></textarea>
+                    </div>
+                    Report Type
+                    <div class="d-flex justify-content-center">
+                        <div class="radiocontainer">
+                            <div class="form-check">
+                                <label class="form-check-label" for="reportType1">
+                                    <input class="form-check-input" type="radio" id="reportType1" name="reportType" value="Damaged" required>
+                                    Damaged
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label" for="reportType2">
+                                    <input class="form-check-input" type="radio" id="reportType2" name="reportType" value="Lost" required>
+                                    Lost
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+        

@@ -1,39 +1,25 @@
 import logging
-from django.views import View
-from .models import User, Jobsite
-from .classes.Jobsite import JobsiteClass
-from . import models
-from django.shortcuts import render
-from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
-from ToolOwnershipTracker.classes.Users import UserClass
-from django.shortcuts import render, get_object_or_404
-from pyzbar.pyzbar import decode
+import json
 from PIL import Image
 import io
 import base64
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-# from classes.profile import Profile
-from ToolOwnershipTracker.models import User, UserType, Toolbox, Tool
-from django.http import HttpResponseBadRequest
-from django.http import request, JsonResponse
-from django.shortcuts import render, get_object_or_404
-from ToolOwnershipTracker.classes.Users import UserClass
-from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
-from ToolOwnershipTracker.classes.Tool import ToolClass
-from . import models
-from .models import User, Jobsite, Toolbox, Tool
 from django.views import View
+from .models import User, Jobsite, Toolbox, Tool, ToolReport
+from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
+from ToolOwnershipTracker.classes.Users import UserClass
+from ToolOwnershipTracker.classes.Tool import ToolClass
+from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
+from ToolOwnershipTracker.classes.ToolReport import ToolReportClass
+from django.shortcuts import render, get_object_or_404, redirect
+from pyzbar.pyzbar import decode
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest, JsonResponse, request
 from django.db import connections
-import logging
-import json
+from datetime import datetime
+
+
 # Create your views here.
 
-
-# class Login(View):
-#    email = str(request.POST['Email Address']).strip()
-#    password = str(request.POST['Password'])
 class helpers():
     def redirectIfNotLoggedIn(request):
         if request.session["username"] is None:
@@ -44,7 +30,10 @@ class helpers():
 
 class SignUp(View):
     def get(self, request):
-        return render(request, "signup.html")
+        currentEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentEmail)
+        currentRole = currentUser.role
+        return render(request, "signup.html", {'role': currentRole})
 
     def post(self, request):
 
@@ -54,42 +43,119 @@ class SignUp(View):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirmPassword = request.POST.get('confirmPassword')
-        # Role = str(request.P0ST['User Type'])
         address = request.POST.get('address')
         phone = str(request.POST.get('phone'))
+        role = request.POST.get('userTypeDropdown')
+        currentEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentEmail)
+        currentRole = currentUser.role
         try:
-            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone)
-            return redirect('/')
+            UserClass.createUser(self, firstName, lastName, email, password, confirmPassword, address, phone, role)
+            return render(request, "signup.html",
+                          {'success_message': "User successfully created!", 'role': currentRole})
         except Exception as e:
-            return render(request, "signup.html", {'error_message': str(e)})
+            return render(request, "signup.html", {'error_message': str(e), 'role': currentRole})
 
 
 class EditUser(View):
     def get(self, request):
-        return render(request, "edituser.html")
+        email = request.session["username"]
+        user = User.objects.get(email=email)
+        role = user.role
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+        return render(request, "editUser.html", {'role': role, 'users': allUserEmails})
 
     def post(self, request):
+
+        # From Session
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+
         email = request.session["username"]
         user = User.objects.get(email=email)
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         newPassword = request.POST.get('newPassword')
         confirmPassword = request.POST.get('confirmPassword')
-        if len(phone) != 0:
-            UserClass.editPhone(user, phone)
-        if len(address) != 0:
-            UserClass.editAddress(user, address)
-        if len(newPassword) != 0:
-            if len(confirmPassword) != 0:
-                try:
-                    UserClass.change_password(email, newPassword, confirmPassword)
-                except Exception as e:
-                    return render(request, "edituser.html", {'error_message': str(e)})
-            else:
-                return render(request, "edituser.html",
-                              {'error_message': "Cannot update password without confirm password field!"})
+        role = request.POST.get('userTypeDropdown')
+        userToEditEmail = request.POST.get('userEmail')
+        if userToEditEmail:
+            userToEdit = User.objects.get(email=userToEditEmail)
 
-        return redirect("/profile/")
+            if 'deleteUser' in request.POST:
+                toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
+                tools = Tool.objects.all()
+                jobsites = Jobsite.objects.all()
+                reports = ToolReport.objects.all()
+                if userToEdit.role == "U":
+                    for jobsite in jobsites:
+                        if jobsite.assigned.filter(email=userToEditEmail).exists():
+                            jobsite.assigned.remove(userToEdit)
+                            jobsite.save()
+                if userToEdit.role == "S":
+                    for jobsite in jobsites:
+                        if jobsite.owner == userToEdit:
+                            jobsite.owner = currentUser
+                            toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=jobsite)
+                            toolbox.owner = currentUser
+                            toolbox.save()
+                            jobsite.save()
+                for report in reports:
+                    if report.reporter == userToEdit:
+                        report.reporter = currentUser
+                        report.toolbox = None
+                        report.save()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        tool.toolbox = None
+                        tool.prevToolbox = None
+                        tool.save()
+                userToEdit.delete()
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                                                         'success_message': "User successfully deleted!"})
+            else:
+                userToEdit.role = role
+                userToEdit.save()
+                if len(phone) != 0:
+                    UserClass.editPhone(userToEdit, phone)
+                if len(address) != 0:
+                    UserClass.editAddress(userToEdit, address)
+                if len(newPassword) != 0:
+                    if len(confirmPassword) != 0:
+                        try:
+                            UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
+                        except Exception as e:
+                            return render(request, "editUser.html",
+                                          {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                    else:
+                        return render(request, "editUser.html",
+                                      {'role': currentUserRole, 'users': allUserEmails,
+                                       'error_message': "Cannot update password without confirm password field!"})
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                                                         'success_message': "User information successfully edited!"})
+
+        else:
+            if len(phone) != 0:
+                UserClass.editPhone(user, phone)
+            if len(address) != 0:
+                UserClass.editAddress(user, address)
+            if len(newPassword) != 0:
+                if len(confirmPassword) != 0:
+                    try:
+                        UserClass.change_password(email, newPassword, confirmPassword)
+                    except Exception as e:
+                        return render(request, "editUser.html",
+                                      {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                else:
+                    return render(request, "editUser.html",
+                                  {'role': currentUserRole, 'users': allUserEmails,
+                                   'error_message': "Cannot update password without confirm password field!"})
+            return redirect("/profile/")
 
 
 class Profile(View):
@@ -99,19 +165,24 @@ class Profile(View):
 
         a = request.session["username"]
         b = User.objects.get(email=a)
+        role = b.role
         allSites = Jobsite.objects.all()
         assignedSites = []
-        for site in allSites:
-            if JobsiteClass.containsUser(self, site.id, b.email):
-                assignedSites.append(site.id)
+        if b.role == "U":
+            for site in allSites:
+                if JobsiteClass.containsUser(self, site.id, b.email):
+                    assignedSites.append(site.id)
+        elif b.role == "S":
+            for site in allSites:
+                if site.owner == b:
+                    assignedSites.append(site.id)
 
-        return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites})
+        return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites, 'role': role})
 
 
 class Login(View):
     def get(self, request):
-        # print(UserClass.hashPass("alexf"))
-        return render(request, "LoginHTML.html")
+        return render(request, "login.html")
 
     def post(self, request):
         print(UserClass.hashPass("alexf"))
@@ -133,10 +204,10 @@ class Login(View):
             noSuchUser = True
 
         if noSuchUser:
-            return render(request, "LoginHTML.html", {"error_message": "No such user exists!"})
+            return render(request, "login.html", {"error_message": "No such user exists!"})
 
         elif badPassword:
-            return render(request, "LoginHTML.html", {"error_message": "Incorrect password!"})
+            return render(request, "login.html", {"error_message": "Incorrect password!"})
         else:
             request.session["username"] = user.email
             # request.session["name"] = user.name
@@ -201,14 +272,6 @@ class PasswordResetDone(View):
         return redirect("")
 
 
-class editUsers(View):
-    def get(self, request):
-        if helpers.redirectIfNotLoggedIn(request):
-            return redirect("/")
-
-        return render(request, "edituser.html")
-
-
 @csrf_exempt
 def process_image(request):
     if request.method == 'POST':
@@ -246,18 +309,12 @@ def process_image_to_tool(request):
         # Process the image using Pyzbar
         decoded_objects = decode(image)
         results = []
-        toolID=""
+        toolID = ""
         for obj in decoded_objects:
             if (obj.data.decode("utf-8")):
                 toolID = obj.data.decode("utf-8")
-                
-        print(toolID)
-        # Return the results as a JSON response
+                # Return the results as a JSON response
         response_data = {"toolID": toolID}
-        
-        
-        
-        
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -267,13 +324,17 @@ class barCodeTest(View):
     def get(self, request):
         return render(request, "barcodeTest.html")
 
+
 class Jobsites(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
         allJobsites = Jobsite.objects.all()
-        assigned_users = [list(jobsite.assigned.all()) for jobsite in allJobsites]
-        return render(request, "jobsites.html", {'jobsites': allJobsites})
+        return render(request, "jobsites.html", {'jobsites': allJobsites, 'role': currentUserRole})
+
 
 class createJobsite(View):
     def get(self, request):
@@ -281,17 +342,21 @@ class createJobsite(View):
             return redirect("/")
         allJobsites = Jobsite.objects.all()
         allUsers = User.objects.all()
-        allUserEmails = [user.email for user in allUsers]
-        #assigned_users = Jobsite.assigned.all()
-        
-        #alexuser = User.objects.filter(email="alex_fuller@ymail.com")
-        #jobsite.assigned.add(alexuser)
-        
-        #print(assigned_users)
-        #print(len(assigned_users))
-        #print("done")
-        
-        return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'users': allUserEmails})
+        possibleOwnersEmails = []
+        possibleUserEmails = []
+        for user in allUsers:
+            if user.role == "S":
+                possibleOwnersEmails.append(user.email)
+            elif user.role == "U":
+                possibleUserEmails.append(user.email)
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        return render(request, 'createJobsites.html',
+                      {'jobsites': allJobsites, 'users': possibleUserEmails, 'owners': possibleOwnersEmails,
+                       'role': currentUserRole})
+
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
@@ -304,10 +369,36 @@ class createJobsite(View):
                 for email in email_list:
                     if len(email) != 0:
                         JobsiteClass.addUser(self, jobsite.id, email)
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites})
+            allUsers = User.objects.all()
+            possibleOwnersEmails = []
+            possibleUserEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
+                elif user.role == "U":
+                    possibleUserEmails.append(user.email)
+            currentUserEmail = request.session["username"]
+            currentUser = User.objects.get(email=currentUserEmail)
+            currentUserRole = currentUser.role
+            return render(request, 'createJobsites.html',
+                          {'jobsites': allJobsites, 'users': possibleUserEmails, 'owners': possibleOwnersEmails,
+                           'success_message': "Jobsite successfully created!", 'role': currentUserRole})
         except Exception as e:
             allJobsites = Jobsite.objects.all()
-            return render(request, 'createJobsites.html', {'jobsites': allJobsites, 'error_message': str(e)})
+            allUsers = User.objects.all()
+            possibleOwnersEmails = []
+            possibleUserEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
+                elif user.role == "U":
+                    possibleUserEmails.append(user.email)
+            currentUserEmail = request.session["username"]
+            currentUser = User.objects.get(email=currentUserEmail)
+            currentUserRole = currentUser.role
+            return render(request, 'createJobsites.html',
+                          {'jobsites': allJobsites, 'users': possibleUserEmails, 'owners': possibleOwnersEmails,
+                           'error_message': str(e), 'role': currentUserRole})
 
 
 class editJobsite(View):
@@ -315,55 +406,81 @@ class editJobsite(View):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
 
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        jobsite = Jobsite.objects.get(id=jobsite_id)
         try:
-            jobsite = Jobsite.objects.get(id=jobsite_id)
             allUsers = User.objects.all()
-            allUserEmails = [user.email for user in allUsers]
             assignedUsers = jobsite.assigned.all()
+            possibleOwnersEmails = []
+            possibleUserEmails = []
+            for user in allUsers:
+                if user.role == "S":
+                    possibleOwnersEmails.append(user.email)
+                elif user.role == "U":
+                    possibleUserEmails.append(user.email)
         except Exception as e:
-            return render(request, 'createJobsites.html', {'error_message': str(e)})
-
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': allUserEmails})
-
+            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
+        
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails, 'role': currentUserRole})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
         email = request.POST.get('owner')
-        try:
-            if (len(title) != 0):
-                JobsiteClass.assignTitle(self, jobsite_id, title)
-            if (len(email) != 0):
-                JobsiteClass.assignOwner(self, jobsite_id, email)
-            email_list = request.POST.get('email_list', '').split(',')
-            remove_email_list = request.POST.get('remove_email_list', '').split(',')
-            if email_list:
-                for email in email_list:
-                    if len(email) != 0:
-                        JobsiteClass.addUser(self, jobsite_id, email)
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        if 'deleteJobsite' in request.POST:
+            try:
+                JobsiteClass.removeJobsite(self, jobsite_id)
+                return redirect("/jobsites/")
+            except Exception as e:
+                allUsers = User.objects.all()
+                jobsite = Jobsite.objects.get(id = jobsite_id)
+                assignedUsers = jobsite.assigned.all()
+                possibleOwnersEmails = []
+                possibleUserEmails = []
+                for user in allUsers:
+                    if user.role == "S":
+                        possibleOwnersEmails.append(user.email)
+                    elif user.role == "U":
+                        possibleUserEmails.append(user.email)
+                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
+        else:
+            try:
+                if (len(title) != 0):
+                    JobsiteClass.assignTitle(self, jobsite_id, title)
+                if (len(email) != 0):
+                    JobsiteClass.assignOwner(self, jobsite_id, email)
+                    jobsite = Jobsite.objects.get(id=jobsite_id)
+                    toolbox = Toolbox.objects.get(jobsite=jobsite)
+                    owner = User.objects.get(email=email)
+                    toolbox.owner = owner
+                    toolbox.save()
+                email_list = request.POST.get('email_list', '').split(',')
+                remove_email_list = request.POST.get('remove_email_list', '').split(',')
+                if email_list:
+                    for email in email_list:
+                        if len(email) != 0:
+                            JobsiteClass.addUser(self, jobsite_id, email)
 
-            if remove_email_list:
-                for email in remove_email_list:
-                    if len(email) != 0:
-                        JobsiteClass.removeUser(self, jobsite_id, email)
-            allJobsites = Jobsite.objects.all()
-            return render(request, "jobsites.html", {'jobsites': allJobsites})
-        except Exception as e:
-            allUsers = User.objects.all()
-            allUserEmails = [user.email for user in allUsers]
-            jobsite = Jobsite.objects.get(id=jobsite_id)
-            return render(request, 'editJobsite.html',
-                          {'jobsite': jobsite, 'users': allUserEmails, 'error_message': str(e)})
-
-
-class removeJobsite(View):
-    def post(self, request, jobsite_id):
-        try:
-            JobsiteClass.removeJobsite(self, jobsite_id)
-        except Exception as e:
-            allJobsites = Jobsite.objects.all()
-            redirect("/jobsites/")
-            return render(request, "jobsites.html", {'error_message': str(e), 'jobsites': allJobsites})
-        allJobsites = Jobsite.objects.all()
-        return redirect("/jobsites/")
+                if remove_email_list:
+                    for email in remove_email_list:
+                        if len(email) != 0:
+                            JobsiteClass.removeUser(self, jobsite_id, email)
+                return redirect("/jobsites/")
+            except Exception as e:
+                allUsers = User.objects.all()
+                jobsite = Jobsite.objects.get(id = jobsite_id)
+                assignedUsers = jobsite.assigned.all()
+                possibleOwnersEmails = []
+                possibleUserEmails = []
+                for user in allUsers:
+                    if user.role == "S":
+                        possibleOwnersEmails.append(user.email)
+                    elif user.role == "U":
+                        possibleUserEmails.append(user.email)
+                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
 
 
 class createTool(View):
@@ -371,10 +488,17 @@ class createTool(View):
         jobsites = Jobsite.objects.all()
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
         allUsers = User.objects.all()
-        allUserEmails = [user.email for user in allUsers]
-
+        possibleUserToolboxes = []
+        for user in allUsers:
+            if user.role != "A":
+                possibleUserToolboxes.append(user.email)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
-        return render(request, 'createTool.html', {'users': allUserEmails, 'jobsites': allJobsiteNames})
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        return render(request, 'createTool.html',
+                      {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames, 'role': currentUserRole})
 
     def post(self, request):
         name = request.POST.get('name')
@@ -382,6 +506,20 @@ class createTool(View):
         jobsiteName = request.POST.get('jobsiteName')
         toolbox_type = request.POST.get('toolboxType')
         tool_type = request.POST.get('toolType')
+
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        possibleUserToolboxes = []
+        for user in allUsers:
+            if user.role != "A":
+                possibleUserToolboxes.append(user.email)
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+
         if (tool_type == "Handtool"):
             type = "H"
         if (tool_type == "Powertool"):
@@ -393,22 +531,26 @@ class createTool(View):
 
         if (toolbox_type == "JobsiteToolbox"):
             if (len(jobsiteName) != 0):
-                test = list(
-                    map(str, Jobsite.objects.filter(title=jobsiteName)))
+                test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
                 if len(test) != 0:
                     try:
                         ToolClass.createTool(self, name, type)
                         tool = Tool.objects.get(name=name)
+                        tool.prevToolbox = None
                         jobsite = Jobsite.objects.get(title=jobsiteName)
                         toolbox = Toolbox.objects.get(jobsite=jobsite)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
-                        return render(request, 'createTool.html')
+                        return render(request, 'createTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                                   'success_message': "Tool successfully created!",
+                                                                   'role': currentUserRole})
+
                     except Exception as e:
-                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                        return render(request, 'createTool.html', {'error_message': str(e), 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
                 else:
-                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!'})
+                    return render(request, 'createTool.html', {'error_message': 'Please input a valid jobsite to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
             else:
-                return render(request, 'createTool.html', {'error_message': 'Please input a jobsite to assign tool to!'})
+                return render(request, 'createTool.html',
+                              {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif (toolbox_type == "UserToolbox"):
             if (len(owner) != 0):
                 test = list(map(str, User.objects.filter(email=owner)))
@@ -416,22 +558,32 @@ class createTool(View):
                     try:
                         ToolClass.createTool(self, name, type)
                         tool = Tool.objects.get(name=name)
-                        toolbox = Toolbox.objects.get(
-                            owner=owner, jobsite=None)
+                        tool.checkout_datetime = datetime.now()
+                        tool.save()
+                        tool.prevToolbox = None
+                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
-                        return render(request, 'createTool.html')
+                        return render(request, 'createTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                                   'success_message': "Tool successfully created!",
+                                                                   'role': currentUserRole})
+
                     except Exception as e:
-                        return render(request, 'createTool.html', {'errror_message': str(e)})
+                        return render(request, 'createTool.html', {'error_message': str(e), 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
                 else:
-                    return render(request, 'createTool.html', {'error_message': 'Please input a valid user to assign tool to'})
+                    return render(request, 'createTool.html',
+                                  {'error_message': 'Please input a valid user to assign tool to',
+                                   'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
             else:
-                return render(request, 'createTool.html', {'error_message': 'Please input an owner to assign tool to!'})
+                return render(request, 'createTool.html',
+                              {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         else:
             try:
                 ToolClass.createTool(self, name, type)
-                return render(request, 'createTool.html')
+                return render(request, 'createTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                           'success_message': "Tool successfully created!",
+                                                           'role': currentUserRole})
             except Exception as e:
-                return render(request, 'createTool.html', {'errror_message': str(e)})
+                return render(request, 'createTool.html', {'error_message': str(e), 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
 
 
 class UserToolboxes(View):
@@ -496,6 +648,7 @@ class UserToolboxes(View):
         if user.role == "A":
             listOfSites = ""
             added = False
+            allSites = Jobsite.objects.all()
             for site in allSites:
                 if site.owner == user:
                     if added:
@@ -518,26 +671,31 @@ class UserToolboxes(View):
             if not added:
                 newListOfSites = "None"
             listOfSites = newListOfSites
-        return render(request, "userToolboxes.html", {'users': allUsers, 'currentUser': user, 'sites': listOfSites})
+        return render(request, "userToolboxes.html",
+                      {'users': allUsers, 'currentUser': user, 'sites': listOfSites, 'role': userRole})
 
 
 class viewToolbox(View):
     def get(self, request, user_id):
         if helpers.redirectIfNotLoggedIn(request):
             return redirect("/")
-
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
         user = User.objects.get(email=user_id)  # user retrieved from user display page
+        userRole = user.role
+
+        AllJobsites = Jobsite.objects.all()
+        allJobsiteTitles = [jobsite.title for jobsite in AllJobsites]
+
         try:
-            toolbox = Toolbox.objects.get(owner=user, jobsite=None) # ask alex about jobsite=None !!!!
+            toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
             toolsInBox = []
             tools = Tool.objects.all()
             for i in tools:
                 if (i.toolbox == toolbox):
                     toolsInBox.append(i)
         except Exception as e:
-            a = request.session["username"]
-            user = User.objects.get(email=a)
-            userRole = user.role
             if userRole == 'S':  # only show users at supervisor's jobsites
                 listOfSites = Jobsite.objects.filter(owner=user)  # filter out the jobsites that are owned by the user
                 all = User.objects.all()
@@ -592,6 +750,7 @@ class viewToolbox(View):
             if user.role == "A":
                 listOfSites = ""
                 added = False
+                allSites = Jobsite.objects.all()
                 for site in allSites:
                     if site.owner == user:
                         if added:
@@ -615,9 +774,10 @@ class viewToolbox(View):
                     newListOfSites = "None"
                 listOfSites = newListOfSites
             return render(request, 'userToolboxes.html', {'error_message': str(e), "users": allUsers,
-                                                          'currentUser': user, 'sites': listOfSites})
+                                                          'currentUser': user, 'sites': listOfSites,
+                                                          'role': currentUserRole})
 
-        return render(request, 'userToolsAsUser.html', {"user": user, "tools": toolsInBox})
+        return render(request, 'userToolsAsAdmin.html', {"user": user, "tools": toolsInBox, 'role': currentUserRole})
 
 
 class myToolbox(View):
@@ -626,16 +786,261 @@ class myToolbox(View):
             return redirect("/")
         a = request.session["username"]
         user = User.objects.get(email=a)
-        userRole = user.role
-        toolbox = Toolbox.objects.get(owner=user, jobsite=None)  # ask alex about jobsite=None !!!!
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+        currentUserRole = user.role
+        toolbox = Toolbox.objects.get(owner=user, jobsite=None)
         toolsInBox = []
         tools = Tool.objects.all()
         for i in tools:
-            if (i.toolbox == toolbox):
+            if i.toolbox == toolbox:
                 toolsInBox.append(i)
 
-        return render(request, 'currentUserToolbox.html', {"user": user, "tools": toolsInBox})
-    
+        return render(request, 'currentUserToolbox.html',
+                      {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails})
+
+    def post(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allUsers = User.objects.all()
+        allUserEmails = [user.email for user in allUsers]
+
+        if 'return' in request.POST:
+            checked_tools = request.POST.getlist('tools')
+            if len(checked_tools) != 0:
+                for toolID in checked_tools:
+                    currentTool = Tool.objects.get(id=toolID)
+                    if currentTool.prevToolbox == None:
+                        currentTool.toolbox = None
+                        currentTool.save()
+                    else:
+                        currentTool.toolbox = currentTool.prevToolbox
+                        currentTool.prevToolbox = None
+                        currentTool.save()
+                toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                toolsInBox = []
+                tools = Tool.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        toolsInBox.append(tool)
+                return render(request, 'currentUserToolbox.html',
+                              {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails})
+            else:
+                toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                toolsInBox = []
+                tools = Tool.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        toolsInBox.append(tool)
+                return render(request, 'currentUserToolbox.html',
+                              {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails,
+                               'error_message': "Please select tool(s) to return!"})
+        if 'sendTrade' in request.POST:
+            checked_tools = request.POST.getlist('tools')
+            userToTrade = request.POST.get('userToTrade')
+            if len(checked_tools) != 0:
+                if len(userToTrade) != 0:
+                    if User.objects.filter(email=userToTrade).exists():
+                        for toolID in checked_tools:
+                            currentTool = Tool.objects.get(id=toolID)
+                        toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                        toolsInBox = []
+                        tools = Tool.objects.all()
+                        for tool in tools:
+                            if tool.toolbox == toolbox:
+                                toolsInBox.append(tool)
+                        return render(request, 'currentUserToolbox.html',
+                                      {"user": user, "tools": toolsInBox, 'role': currentUserRole,
+                                       'users': allUserEmails})
+                    else:
+                        toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                        toolsInBox = []
+                        tools = Tool.objects.all()
+                        for tool in tools:
+                            if tool.toolbox == toolbox:
+                                toolsInBox.append(tool)
+                        return render(request, 'currentUserToolbox.html',
+                                      {"user": user, "tools": toolsInBox, 'role': currentUserRole,
+                                       'users': allUserEmails,
+                                       'error_message': "Please input a valid user to trade with!"})
+                else:
+                    toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                    toolsInBox = []
+                    tools = Tool.objects.all()
+                    for tool in tools:
+                        if tool.toolbox == toolbox:
+                            toolsInBox.append(tool)
+                    return render(request, 'currentUserToolbox.html',
+                                  {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails,
+                                   'error_message': "Please input a user to trade with!"})
+            else:
+                toolbox = Toolbox.objects.get(owner=user, jobsite=None)
+                toolsInBox = []
+                tools = Tool.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        toolsInBox.append(tool)
+                return render(request, 'currentUserToolbox.html',
+                              {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': allUserEmails,
+                               'error_message': "Please select tool(s) to trade!"})
+
+
+class fileToolReport(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        toolsInPersonalToolbox = []
+
+        if currentUserRole != "A":
+            toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+            tools = Tool.objects.all()
+            for tool in tools:
+                if tool.toolbox == toolbox:
+                    toolsInPersonalToolbox.append(tool)
+        else:
+            toolsInPersonalToolbox = Tool.objects.all()
+
+        allJobsites = Jobsite.objects.all()
+        allTools = Tool.objects.all()
+        jobsiteToolDictionary = {}
+        for jobsite in allJobsites:
+            if jobsite.owner == currentUser:
+                currentSiteTools = []
+                for tool in allTools:
+                    if tool.toolbox != None:
+                        if tool.toolbox.jobsite != None:
+                            if tool.toolbox.jobsite == jobsite:
+                                currentSiteTools.append(tool)
+                jobsiteToolDictionary.update({jobsite: currentSiteTools})
+
+        return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInPersonalToolbox,
+                                                       'jobsiteToolDictionary': jobsiteToolDictionary})
+
+    def post(self, request):
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+
+        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+        toolsInBox = []
+        tools = Tool.objects.all()
+        for tool in tools:
+            if tool.toolbox == toolbox:
+                toolsInBox.append(tool)
+
+        toolName = request.POST.get('toolDropdown')
+        description = request.POST.get('description')
+        reportType = request.POST.get('reportType')
+
+        toolToReport = Tool.objects.get(name=toolName)
+        toolID = toolToReport.id
+        toolbox = toolToReport.toolbox
+        if toolbox == None:
+            toolboxID = None
+        else:
+            toolboxID = toolbox.id
+        jobsiteID = None
+
+        if toolbox != None:
+            if toolbox.jobsite is None:
+                # user toolbox
+                if toolToReport.prevToolbox is None:
+                    jobsiteID = None
+                else:
+                    jobsiteID = toolToReport.prevToolbox.jobsite.id
+            else:
+                # jobsite toolbox
+                jobsiteID = toolbox.jobsite.id
+
+        try:
+            ToolReportClass.createToolReport(self, currentUserEmail, toolID, toolboxID, reportType, description,
+                                             jobsiteID)
+            toolToReport.toolbox = None
+            toolToReport.checkout_datetime = None
+            toolToReport.save()
+            allJobsites = Jobsite.objects.all()
+            allTools = Tool.objects.all()
+            jobsiteToolDictionary = {}
+            for jobsite in allJobsites:
+                if jobsite.owner == currentUser:
+                    currentSiteTools = []
+                    for tool in allTools:
+                        if tool.toolbox != None:
+                            if tool.toolbox.jobsite != None:
+                                if tool.toolbox.jobsite == jobsite:
+                                    currentSiteTools.append(tool)
+                    jobsiteToolDictionary.update({jobsite: currentSiteTools})
+            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox,
+                                                           'success_message': "Tool report successfully created!",
+                                                           'jobsiteToolDictionary': jobsiteToolDictionary})
+        except Exception as e:
+            allJobsites = Jobsite.objects.all()
+            allTools = Tool.objects.all()
+            jobsiteToolDictionary = {}
+            for jobsite in allJobsites:
+                if jobsite.owner == currentUser:
+                    currentSiteTools = []
+                    for tool in allTools:
+                        if tool.toolbox != None:
+                            if tool.toolbox.jobsite != None:
+                                if tool.toolbox.jobsite == jobsite:
+                                    currentSiteTools.append(tool)
+                    jobsiteToolDictionary.update({jobsite: currentSiteTools})
+            return render(request, 'toolReportForm.html',
+                          {'role': currentUserRole, 'tools': toolsInBox, 'error_message': str(e),
+                           'jobsiteToolDictionary': jobsiteToolDictionary})
+
+
+class jobsiteToolboxes(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        if userRole == "A":
+            allJobsites = Jobsite.objects.all()
+        elif userRole == "S":
+            allJobsites = Jobsite.objects.filter(owner=user)
+
+        return render(request, 'jobsiteToolboxes.html', {"sites": allJobsites, 'role': userRole})
+
+
+class jobsiteInventory(View):
+    def get(self, request, jobsite_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        try:
+            jobsite = Jobsite.objects.get(id=jobsite_id)
+            toolbox = Toolbox.objects.get(jobsite=jobsite)
+            toolsInBox = []
+            tools = Tool.objects.all()
+            for i in tools:
+                if i.toolbox == toolbox:
+                    toolsInBox.append(i)
+
+        except Exception as e:
+
+            if userRole == "A":
+                allJobsites = Jobsite.objects.all()
+            elif userRole == "S":
+                allJobsites = Jobsite.objects.filter(owner=user)
+
+            return render(request, 'jobsiteToolboxes.html',
+                          {'error_message': str(e), "sites": allJobsites, 'role': userRole})
+
+        return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox, 'role': userRole})
+
+
 class ScanToUserToolbox(View):
     def get(self, request):
         if helpers.redirectIfNotLoggedIn(request):
@@ -646,55 +1051,50 @@ class ScanToUserToolbox(View):
         message = ""
         jobsiteList = Jobsite.objects.filter(assigned=a)
 
-        print(jobsiteList)
-        print("done!")
-        
-        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message,"jobsiteList": jobsiteList})
-    
+        return render(request, 'barcodeScanToUser.html',
+                      {"user": user, "message": message, "jobsiteList": jobsiteList, 'role': userRole})
+
     def post(self, request):
         a = request.session["username"]
         user = User.objects.get(email=a)
-        
+        currentUserRole = user.role
         jobsiteList = Jobsite.objects.filter(assigned=a)
-        
+
         message = ""
         toolID = "base"
         result = request.POST.get('result')
         siteSelection = request.POST.get('userSites').split('|')[0].strip()
-        print(siteSelection)
         try:
-            
+
             dict = json.loads(result)
-            print(dict)
-            print("in post")
             toolID = dict["toolID"]
-            
-        
+
+
         except:
             message = message + "bad barcode read"
-            
+
         try:
             sysTool = Tool.objects.get(id=toolID)
-            
+
         except:
-            message = message +  "tool does not exist in system"
-            
+            message = message + "tool does not exist in system"
+
         try:
             userToolbox = Toolbox.objects.get(
                 owner=user, jobsite=siteSelection)
             if (ToolClass.containedInAnyToolbox(sysTool.id)):
-
                 ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
 
             ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
 
         except:
             message = message + "tool was not moved properly"
-        
-        message =  siteSelection 
 
-    
-        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, "jobsiteList": jobsiteList})
+        message = siteSelection
+
+        return render(request, 'barcodeScanToUser.html',
+                      {"user": user, "message": message, "jobsiteList": jobsiteList, 'role': currentUserRole})
+
 
 class ScanToJobsiteToolbox(View):
     def get(self, request):
@@ -703,18 +1103,225 @@ class ScanToJobsiteToolbox(View):
         a = request.session["username"]
         user = User.objects.get(email=a)
         userRole = user.role
-        
-        jobsiteList = Jobsite.objects.get(owner=user)
+
+        jobsiteList = Jobsite.objects.all()
         toolsInBox = []
         message = ""
-        
-        return render(request, 'barcodeScanToJobsite.html', {"user": user, "jobsites": jobsiteList , "message": message})
-    
-    def post(self,request):
+
+        return render(request, 'barcodeScanToJobsite.html',
+                      {"user": user, "jobsites": jobsiteList, "message": message, 'role': userRole})
+
+    def post(self, request):
         a = request.session["username"]
         user = User.objects.get(email=a)
-        
+        currentUserRole = user.role
         message = "error"
-        
-        
-        return render(request, 'barcodeScanToUser.html', {"user": user,"message": message})
+
+        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, 'role': currentUserRole})
+
+
+class viewToolReports(View):
+    def get(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allReports = ToolReport.objects.all()
+        return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
+
+
+class toolReportDetails(View):
+    def get(self, request, toolreport_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        toolReport = ToolReport.objects.get(id=toolreport_id)
+        return render(request, 'individualToolReport.html', {'role': currentUserRole, 'report': toolReport})
+
+    def post(self, request, toolreport_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        toolReport = ToolReport.objects.get(id=toolreport_id)
+        toolReport.delete()
+        allReports = ToolReport.objects.all()
+        return render(request, 'toolReports.html', {'role': currentUserRole, 'reports': allReports})
+
+class allTools(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        userRole = user.role
+        allTools = Tool.objects.all()
+        allReports = ToolReport.objects.all()
+        statusDict = {}
+        locationDict = {}
+        toolDict = {}
+
+        for tool in allTools:
+            status = "Functional"
+            if tool.toolbox is None:
+                for report in allReports:
+                    if report.tool == tool:
+                        status = str(report.reportType)
+                statusDict.update({tool: status})
+            else:
+                statusDict.update({tool: status})
+        for tool in allTools:
+            location = "Unassigned"
+            if tool.toolbox is not None:
+                if tool.toolbox.jobsite is not None:
+                    locationDict.update({tool: str(tool.toolbox.jobsite.title)})
+                else:
+                    if tool.prevToolbox is not None:
+                        locationDict.update({tool: tool.prevToolbox.jobsite.title})
+                    else:
+                        locationDict.update({tool: location})
+            else:
+                locationDict.update({tool: location})
+                
+
+        for key, value in statusDict.items():
+            locationVal = locationDict[key]
+            toolDict[key] = (value, locationVal)
+
+        return render(request, 'allTools.html', {"tools": toolDict, "user": user, "role": userRole})
+
+
+class editTool(View):
+    def get(self, request, tool_id):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        possibleUserToolboxes = []
+        for user in allUsers:
+            if user.role != "A":
+                possibleUserToolboxes.append(user.email)
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        tool = Tool.objects.get(id=tool_id)
+        return render(request, 'editTool.html',
+                      {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames, 'role': currentUserRole, 'tool': tool})
+
+    def post(self, request, tool_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        tool = Tool.objects.get(id=tool_id)
+
+        name = request.POST.get('name')
+        owner = request.POST.get('toolboxOwner')
+        jobsiteName = request.POST.get('jobsiteName')
+        toolbox_type = request.POST.get('toolboxType')
+        tool_type = request.POST.get('toolType')
+
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+
+        jobsites = Jobsite.objects.all()
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+        allUsers = User.objects.all()
+        possibleUserToolboxes = []
+        for user in allUsers:
+            if user.role != "A":
+                possibleUserToolboxes.append(user.email)
+        allJobsiteNames = [jobsite.title for jobsite in jobsites]
+
+        if (tool_type == "Handtool"):
+            type = "H"
+        if (tool_type == "Powertool"):
+            type = "P"
+        if (tool_type == "Operatable"):
+            type = "D"
+        if (tool_type == "Other"):
+            type = "O"
+
+        if (toolbox_type == "JobsiteToolbox"):
+            if (len(jobsiteName) != 0):
+                test = list(map(str, Jobsite.objects.filter(title=jobsiteName)))
+                if len(test) != 0:
+                    try:
+                        if (len(name) != 0):
+                            tool.name = name
+                            tool.save()
+                        if (tool_type != "doNothing"):
+                            tool.toolType = type
+                        tool.checkout_datetime = datetime.now()
+                        tool.prevToolbox = None
+                        jobsite = Jobsite.objects.get(title=jobsiteName)
+                        toolbox = Toolbox.objects.get(jobsite=jobsite)
+                        tool.toolbox = toolbox
+                        tool.save()
+                        return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                                'success_message': "Tool successfully edited!",
+                                                                'role': currentUserRole, 'tool': tool})
+
+                    except Exception as e:
+                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+                else:
+                    return render(request, 'editTool.html',
+                                  {'error_message': 'Please input a valid jobsite to assign tool to!',
+                                   'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+            else:
+                return render(request, 'editTool.html',
+                              {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+        elif (toolbox_type == "UserToolbox"):
+            if (len(owner) != 0):
+                test = list(map(str, User.objects.filter(email=owner)))
+                if len(test) != 0:
+                    try:
+                        if (len(name) != 0):
+                            tool.name = name
+                            tool.save()
+                        if (tool_type != "doNothing"):
+                            tool.toolType = type
+                        tool.checkout_datetime = datetime.now()
+                        tool.prevToolbox = None
+                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
+                        tool.toolbox = toolbox
+                        tool.save()
+                        return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                                   'success_message': "Tool successfully edited!",
+                                                                   'role': currentUserRole, 'tool': tool})
+
+                    except Exception as e:
+                        return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+                else:
+                    return render(request, 'editTool.html',
+                                  {'error_message': 'Please input a valid user to assign tool to',
+                                   'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+            else:
+                return render(request, 'editTool.html',
+                              {'error_message': 'Please input an owner to assign tool to!', 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+        elif(toolbox_type == "Unassigned"):
+            try:
+                if (len(name) != 0):
+                    tool.name = name
+                    tool.save()
+                if (tool_type != "doNothing"):
+                    tool.toolType = type
+                tool.toolbox = None
+                return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                           'success_message': "Tool successfully edited!",
+                                                           'role': currentUserRole, 'tool': tool})
+            except Exception as e:
+                return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+        else:
+            try:
+                if (len(name) != 0):
+                    tool.name = name
+                    tool.save()
+                if (tool_type != "doNothing"):
+                    tool.toolType = type
+                return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
+                                                           'success_message': "Tool successfully edited!",
+                                                           'role': currentUserRole, 'tool': tool})
+            except Exception as e:
+                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
+            
