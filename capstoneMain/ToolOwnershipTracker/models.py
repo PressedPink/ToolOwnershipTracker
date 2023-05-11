@@ -81,3 +81,9 @@ class ToolReport(models.Model):
     toolbox = models.ForeignKey(Toolbox, null=True, on_delete = models.CASCADE)
     jobsite = models.ForeignKey(Jobsite, null=True, on_delete = models.CASCADE)
     description = models.CharField(max_length=500)
+
+class ToolTrade(models.Model):
+    id = models.AutoField(primary_key=True)
+    sendUser = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='sendUser')
+    receiveUser = models.ForeignKey(User, null=False, on_delete=models.CASCADE,related_name='receiveUser')
+    tool = models.ForeignKey(Tool, null=False, on_delete=models.CASCADE)

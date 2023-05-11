@@ -5,7 +5,7 @@ from django.urls import include
 from django.views.generic import RedirectView
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, allTools, editTool
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, allTools, editTool, logout, toolTrades
 
     
 
@@ -42,4 +42,6 @@ urlpatterns = [
     path('toolReportDetails/<int:toolreport_id>', toolReportDetails.as_view(), name="toolReportDetails"),
     path('allTools/', allTools.as_view(), name='allTools'),
     path('editTool/<int:tool_id>', editTool.as_view(), name='editTool'),
+    path('logout/', logout, name='logout'),
+    path('toolTrades/', toolTrades.as_view(), name='toolTrades'),
 ]

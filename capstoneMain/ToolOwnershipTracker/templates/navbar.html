@@ -35,6 +35,9 @@
             <a class="dropdown-item" href="/createTool/">Create Tool</a>
           {% endif %}
             <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
+          {% if role != "A" %}
+            <a class="dropdown-item" href="/toolTrades/">Pending Tool Trades</a>
+          {% endif %}
           {% if role == "A" %}
             <a class="dropdown-item" href="/viewToolReports/">View Tool Reports</a>
           {% endif %}
@@ -64,12 +67,14 @@
           {% if role != "U" %}
             <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
             <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>
+          {% endif %}
+          {% if role == "A" %}
             <a class="dropdown-item" href="/allTools/">Global Toolbox</a>
           {% endif %}
         </div>
       </li>
       <li class="nav-item dropdown">
-        <a class = "nav-link" id="navbarDropdown" href ="">Logout</a>
+        <a class = "nav-link" id="navbarDropdown" href ="/logout/">Logout</a>
       </li>
     </ul>
     

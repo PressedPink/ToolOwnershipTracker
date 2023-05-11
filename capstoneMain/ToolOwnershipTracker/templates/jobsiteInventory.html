@@ -21,6 +21,10 @@
                     <h1 class = text-center style="color: #004346;">{{ site.title }}'s Toolbox</h1>
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+                    <form method="post" style="text-align: center;" action="{% url 'jobsiteInventory' site.id %}" autocomplete="off" id="form">
+                        {% csrf_token %}
+                        <button type="submit" name="scanTools" class="btn btn-primary" style="max-width: 15rem;">Checkout Tool(s)</button>
+                    </form>
                     <div class="row justify-content-center" >
                         <table class = "table table-responsive" style = "border-color: #09bc8a;">
                             <thead class="thead-light">

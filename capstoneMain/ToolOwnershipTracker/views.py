@@ -4,7 +4,7 @@ from PIL import Image
 import io
 import base64
 from django.views import View
-from .models import User, Jobsite, Toolbox, Tool, ToolReport
+from .models import User, Jobsite, Toolbox, Tool, ToolReport, ToolTrade
 from ToolOwnershipTracker.classes.Jobsite import JobsiteClass
 from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Tool import ToolClass
@@ -16,12 +16,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseBadRequest, JsonResponse, request
 from django.db import connections
 from datetime import datetime
+from django.views.decorators.cache import cache_control
 
 
 # Create your views here.
 
 class helpers():
     def redirectIfNotLoggedIn(request):
+        if len(request.session.items()) == 0:
+            return True
         if request.session["username"] is None:
             return True
         else:
@@ -160,8 +163,8 @@ class EditUser(View):
 
 class Profile(View):
     def get(self, request):
-        # if helpers.redirectIfNotLoggedIn(request):
-        #     return redirect("/")
+        if helpers.redirectIfNotLoggedIn(request):
+             return redirect("/")
 
         a = request.session["username"]
         b = User.objects.get(email=a)
@@ -181,6 +184,7 @@ class Profile(View):
 
 
 class Login(View):
+
     def get(self, request):
         return render(request, "login.html")
 
@@ -225,8 +229,6 @@ class PasswordReset(View):
             UserClass.forget_password(tempEmail)
             return redirect("/password_reset_sent/")
         except Exception as e:
-            print(e)
-
             return render(request, 'ForgotPasswordTemplates/password_reset.html', {'error_message': str(e)})
 
 
@@ -790,6 +792,7 @@ class myToolbox(View):
         usersJobsites = []
         allUsers = User.objects.all()
         tradeableUsers = []
+
         if user.role == "S":
             for jobsite in jobsites:
                 if jobsite.owner == user:
@@ -801,6 +804,11 @@ class myToolbox(View):
                         elif searchUser.role == "S":
                             if searchUser != user:
                                 tradeableUsers.append(searchUser.email)
+            for searchUser in allUsers:
+                if searchUser.role == "S":
+                    if searchUser != user:
+                        tradeableUsers.append(searchUser.email)
+
         elif user.role == "U":
             for jobsite in jobsites:
                 if jobsite.assigned.filter(email = user.email).exists():
@@ -812,7 +820,6 @@ class myToolbox(View):
                                     tradeableUsers.append(searchUser.email)
                         elif searchUser.role == "S" and user is not searchUser:
                             tradeableUsers.append(searchUser.email)
-
         currentUserRole = user.role
         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
         toolsInBox = []
@@ -878,8 +885,11 @@ class myToolbox(View):
             if len(checked_tools) != 0:
                 if len(userToTrade) != 0:
                     if User.objects.filter(email=userToTrade).exists():
+                        userToTrade = User.objects.get(email = userToTrade)
                         for toolID in checked_tools:
                             currentTool = Tool.objects.get(id=toolID)
+                            tradeRequest = ToolTrade(sendUser = user, receiveUser = userToTrade, tool = currentTool)
+                            tradeRequest.save()
                         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                         toolsInBox = []
                         tools = Tool.objects.all()
@@ -1075,6 +1085,8 @@ class jobsiteInventory(View):
                           {'error_message': str(e), "sites": allJobsites, 'role': userRole})
 
         return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox, 'role': userRole})
+    def post(self, request, jobsite_id):
+        pass
 
 
 class ScanToUserToolbox(View):
@@ -1361,3 +1373,61 @@ class editTool(View):
             except Exception as e:
                  return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
             
+class toolTrades(View):
+    def get(self, request):
+        if helpers.redirectIfNotLoggedIn(request):
+            return redirect("/")
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        allTrades = ToolTrade.objects.all()
+        userTrades = []
+        for trade in allTrades:
+            if trade.receiveUser == currentUser:
+                userTrades.append(trade)
+
+        return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+
+    def post(self, request):
+        currentUserEmail = request.session["username"]
+        currentUser = User.objects.get(email=currentUserEmail)
+        currentUserRole = currentUser.role
+        if 'accept' in request.POST:
+            checked_tools = request.POST.getlist('tools')
+            if len(checked_tools) != 0:
+                for toolID in checked_tools:
+                    currentTool = Tool.objects.get(id=toolID)
+                    tradeRequest = ToolTrade.objects.get(tool = currentTool)
+                    newToolbox = Toolbox.objects.get(owner = currentUser, jobsite = None)
+                    currentTool.toolbox = newToolbox
+                    currentTool.checkout_datetime = datetime.now()
+                    currentTool.save()
+                    tradeRequest.delete()
+                allTrades = ToolTrade.objects.all()
+                userTrades = []
+                for trade in allTrades:
+                    if trade.receiveUser == currentUser:
+                        userTrades.append(trade)
+
+                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+        if 'decline' in request.POST:
+            checked_tools = request.POST.getlist('tools')
+            if len(checked_tools) != 0:
+                for toolID in checked_tools:
+                    currentTool = Tool.objects.get(id=toolID)
+                    tradeRequest = ToolTrade.objects.get(tool = currentTool)
+                    tradeRequest.delete()
+                allTrades = ToolTrade.objects.all()
+                userTrades = []
+                for trade in allTrades:
+                    if trade.receiveUser == currentUser:
+                        userTrades.append(trade)
+
+                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def logout(request):
+    request.session.flush()
+    return redirect("/")
+
+    
