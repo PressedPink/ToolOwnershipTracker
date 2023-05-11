@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -9,34 +9,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Tool Login</title>
+    <link rel="stylesheet" href="/static/css/custom/backgroundStyle.css">
     <link rel="stylesheet" href="/static/css/bootstrap.css">
   </head>
   <body>
-    <div class="container">
-      <section class="mx-auto my-5" style="max-width: 23rem;">
-        <div class="pages" class="card-body rounded-top">
+      <div class="container">
+        <section class="mx-auto" style="max-width: 30rem;">
+          <br>
           {% if error_message %}
             <div class="alert alert-danger text-center">{{ error_message }}</div>
           {% endif %}
-          <form method="post" class="text-center" style="text-align: center" action="/" autocomplete="off">
-            <div class="page">
-              {% csrf_token %}
-              <div class="form-group">
-                <label for="InputUsername">Email Address</label>
-                <input type="email" class="form-control" name="InputUsername" id="InputUsername" aria-describedby="emailHelp" placeholder="Enter email">
-              </div>
-              <div class="form-group">
-                <label for="InputPassword">Password</label>
-                <input type="password" class="form-control" name="InputPassword" id="InputPassword" placeholder="Password">
-              </div>
-              <br>
-              <button type="submit" name="login" class="btn btn-primary">Submit</button>  
-              <button type="submit" class="btn btn-secondary" name = "forgot_password">Forgot Password?</button>
+          <div class="card rounded-top">
+            <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
+              <h1 class = text-center style="color: #004346;">Login</h1>
             </div>
-          </form>
-        </div>
-      </section>
-    </div>
+            <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+              <form method="post" class="text-center" style="text-align: center" action="/" autocomplete="off">
+                <div class="page">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="InputUsername">Email Address</label>
+                    <input type="email" class="form-control" name="InputUsername" id="InputUsername" aria-describedby="emailHelp" placeholder="Enter email">
+                  </div>
+                  <div class="form-group">
+                    <label for="InputPassword">Password</label>
+                    <input type="password" class="form-control" name="InputPassword" id="InputPassword" placeholder="Password">
+                  </div>
+                  <br>
+                  <button type="submit" name="login" class="btn btn-primary">Submit</button>  
+                  <button type="submit" class="btn btn-secondary" name = "forgot_password">Forgot Password?</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
   </body>
 </html>
 
