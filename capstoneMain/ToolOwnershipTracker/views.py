@@ -1172,6 +1172,8 @@ class ScanToJobsiteToolbox(View):
         currentUserRole = user.role
         message = "error"
 
+        #Needs adjustments to actually do the transfer to the chosen jobsite from front end
+
         return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, 'role': currentUserRole})
 
 
