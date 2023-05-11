@@ -1097,21 +1097,30 @@ class ScanToUserToolbox(View):
         user = User.objects.get(email=a)
         userRole = user.role
         message = ""
-        jobsiteList = Jobsite.objects.filter(assigned=a)
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+
 
         return render(request, 'barcodeScanToUser.html',
-                      {"user": user, "message": message, "jobsiteList": jobsiteList, 'role': userRole})
+                      {"user": user, "message": message, "toolboxList": toolboxList, 'role': userRole})
 
     def post(self, request):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        jobsiteList = Jobsite.objects.filter(assigned=a)
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
 
         message = ""
         toolID = "base"
         result = request.POST.get('result')
-        siteSelection = request.POST.get('userSites').split('|')[0].strip()
+        siteSelection = request.POST.get('userSites').split('|')[0].strip()  #Think this might need adjustment (probably in the front end too so it's pulling the right user toolbox to add to instead of jobsite)
         try:
 
             dict = json.loads(result)
@@ -1119,29 +1128,28 @@ class ScanToUserToolbox(View):
 
 
         except:
-            message = message + "bad barcode read"
+            message = message + "Bad barcode read!"
 
         try:
             sysTool = Tool.objects.get(id=toolID)
 
         except:
-            message = message + "tool does not exist in system"
+            message = message + "Tool does not exist in system!"
 
         try:
-            userToolbox = Toolbox.objects.get(
-                owner=user, jobsite=siteSelection)
+            userToolbox = Toolbox.objects.get(owner=user, jobsite=siteSelection)   #Think this will also need adjustment so that it is adding it to the pulled users toolbox instead of the logged in users toolbox
             if (ToolClass.containedInAnyToolbox(sysTool.id)):
                 ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
 
             ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
 
         except:
-            message = message + "tool was not moved properly"
+            message = message + "Tool was not moved properly!"
 
         message = siteSelection
 
         return render(request, 'barcodeScanToUser.html',
-                      {"user": user, "message": message, "jobsiteList": jobsiteList, 'role': currentUserRole})
+                      {"user": user, "message": message, "toolboxList": toolboxList, 'role': currentUserRole})
 
 
 class ScanToJobsiteToolbox(View):
@@ -1156,8 +1164,7 @@ class ScanToJobsiteToolbox(View):
         toolsInBox = []
         message = ""
 
-        return render(request, 'barcodeScanToJobsite.html',
-                      {"user": user, "jobsites": jobsiteList, "message": message, 'role': userRole})
+        return render(request, 'barcodeScanToJobsite.html', {"user": user, "jobsites": jobsiteList, "message": message, 'role': userRole})
 
     def post(self, request):
         a = request.session["username"]
