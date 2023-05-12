@@ -801,9 +801,6 @@ class myToolbox(View):
                         if searchUser.role == "U":
                             if jobsite.assigned.filter(email = searchUser.email).exists():
                                 tradeableUsers.append(searchUser.email)
-                        elif searchUser.role == "S":
-                            if searchUser != user:
-                                tradeableUsers.append(searchUser.email)
             for searchUser in allUsers:
                 if searchUser.role == "S":
                     if searchUser != user:
@@ -826,7 +823,9 @@ class myToolbox(View):
         tools = Tool.objects.all()
         for i in tools:
             if i.toolbox == toolbox:
-                toolsInBox.append(i)
+                if not ToolTrade.objects.filter(tool = i).exists():
+                    print("made it here")
+                    toolsInBox.append(i)
 
         return render(request, 'currentUserToolbox.html',
                       {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': tradeableUsers})
@@ -839,15 +838,31 @@ class myToolbox(View):
         usersJobsites = []
         allUsers = User.objects.all()
         tradeableUsers = []
-        for jobsite in jobsites:
-            if jobsite.assigned.filter(email = user.email).exists():
-                usersJobsites.append(jobsite)
-                for searchUser in allUsers:
-                    if searchUser.role == "U" and user is not searchUser:
-                        if jobsite.assigned.filter(email = searchUser.email).exists():
-                            tradeableUsers.append(searchUser.email)
+
+        if user.role == "S":
+            for jobsite in jobsites:
+                if jobsite.owner == user:
+                    usersJobsites.append(jobsite)
+                    for searchUser in allUsers:
+                        if searchUser.role == "U":
+                            if jobsite.assigned.filter(email = searchUser.email).exists():
+                                tradeableUsers.append(searchUser.email)
+            for searchUser in allUsers:
+                if searchUser.role == "S":
+                    if searchUser != user:
+                        tradeableUsers.append(searchUser.email)
+
+        elif user.role == "U":
+            for jobsite in jobsites:
+                if jobsite.assigned.filter(email = user.email).exists():
+                    usersJobsites.append(jobsite)
+                    for searchUser in allUsers:
+                        if searchUser.role == "U":
+                            if searchUser != user:
+                                if jobsite.assigned.filter(email = searchUser.email).exists():
+                                    tradeableUsers.append(searchUser.email)
                         elif searchUser.role == "S" and user is not searchUser:
-                            tradeableUsers.append(searchUser)
+                            tradeableUsers.append(searchUser.email)
 
         if 'return' in request.POST:
             checked_tools = request.POST.getlist('tools')
@@ -864,18 +879,20 @@ class myToolbox(View):
                 toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                 toolsInBox = []
                 tools = Tool.objects.all()
-                for tool in tools:
-                    if tool.toolbox == toolbox:
-                        toolsInBox.append(tool)
+                for i in tools:
+                    if i.toolbox == toolbox:
+                        if not ToolTrade.objects.filter(tool = i).exists():
+                            toolsInBox.append(i)
                 return render(request, 'currentUserToolbox.html',
                               {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': tradeableUsers})
             else:
                 toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                 toolsInBox = []
                 tools = Tool.objects.all()
-                for tool in tools:
-                    if tool.toolbox == toolbox:
-                        toolsInBox.append(tool)
+                for i in tools:
+                    if i.toolbox == toolbox:
+                        if not ToolTrade.objects.filter(tool = i).exists():
+                            toolsInBox.append(i)
                 return render(request, 'currentUserToolbox.html',
                               {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': tradeableUsers,
                                'error_message': "Please select tool(s) to return!"})
@@ -893,9 +910,10 @@ class myToolbox(View):
                         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                         toolsInBox = []
                         tools = Tool.objects.all()
-                        for tool in tools:
-                            if tool.toolbox == toolbox:
-                                toolsInBox.append(tool)
+                        for i in tools:
+                            if i.toolbox == toolbox:
+                                if not ToolTrade.objects.filter(tool = i).exists():
+                                    toolsInBox.append(i)
                         return render(request, 'currentUserToolbox.html',
                                       {"user": user, "tools": toolsInBox, 'role': currentUserRole,
                                        'users': tradeableUsers})
@@ -903,9 +921,10 @@ class myToolbox(View):
                         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                         toolsInBox = []
                         tools = Tool.objects.all()
-                        for tool in tools:
-                            if tool.toolbox == toolbox:
-                                toolsInBox.append(tool)
+                        for i in tools:
+                            if i.toolbox == toolbox:
+                                if not ToolTrade.objects.filter(tool = i).exists():
+                                    toolsInBox.append(i)
                         return render(request, 'currentUserToolbox.html',
                                       {"user": user, "tools": toolsInBox, 'role': currentUserRole,
                                        'users': tradeableUsers,
@@ -914,9 +933,10 @@ class myToolbox(View):
                     toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                     toolsInBox = []
                     tools = Tool.objects.all()
-                    for tool in tools:
-                        if tool.toolbox == toolbox:
-                            toolsInBox.append(tool)
+                    for i in tools:
+                        if i.toolbox == toolbox:
+                            if not ToolTrade.objects.filter(tool = i).exists():
+                                toolsInBox.append(i)
                     return render(request, 'currentUserToolbox.html',
                                   {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': tradeableUsers,
                                    'error_message': "Please input a user to trade with!"})
@@ -924,9 +944,10 @@ class myToolbox(View):
                 toolbox = Toolbox.objects.get(owner=user, jobsite=None)
                 toolsInBox = []
                 tools = Tool.objects.all()
-                for tool in tools:
-                    if tool.toolbox == toolbox:
-                        toolsInBox.append(tool)
+                for i in tools:
+                    if i.toolbox == toolbox:
+                        if not ToolTrade.objects.filter(tool = i).exists():
+                            toolsInBox.append(i)
                 return render(request, 'currentUserToolbox.html',
                               {"user": user, "tools": toolsInBox, 'role': currentUserRole, 'users': tradeableUsers,
                                'error_message': "Please select tool(s) to trade!"})
@@ -1390,19 +1411,23 @@ class toolTrades(View):
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
         allTrades = ToolTrade.objects.all()
-        userTrades = []
+        receievedTrades = []
+        sentTrades = []
         for trade in allTrades:
             if trade.receiveUser == currentUser:
-                userTrades.append(trade)
+                receievedTrades.append(trade)
+            elif trade.sendUser == currentUser:
+                sentTrades.append(trade)
 
-        return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+
+        return render(request, 'pendingTrades.html', {'role': currentUserRole, 'receivedTrades': receievedTrades, 'sentTrades': sentTrades})
 
     def post(self, request):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
         if 'accept' in request.POST:
-            checked_tools = request.POST.getlist('tools')
+            checked_tools = request.POST.getlist('toolsReceived')
             if len(checked_tools) != 0:
                 for toolID in checked_tools:
                     currentTool = Tool.objects.get(id=toolID)
@@ -1413,26 +1438,49 @@ class toolTrades(View):
                     currentTool.save()
                     tradeRequest.delete()
                 allTrades = ToolTrade.objects.all()
-                userTrades = []
+                receievedTrades = []
+                sentTrades = []
                 for trade in allTrades:
                     if trade.receiveUser == currentUser:
-                        userTrades.append(trade)
+                        receievedTrades.append(trade)
+                    elif trade.sendUser == currentUser:
+                        sentTrades.append(trade)
 
-                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'receivedTrades': receievedTrades, 'sentTrades': sentTrades})
         if 'decline' in request.POST:
-            checked_tools = request.POST.getlist('tools')
+            checked_tools = request.POST.getlist('toolsReceived')
             if len(checked_tools) != 0:
                 for toolID in checked_tools:
                     currentTool = Tool.objects.get(id=toolID)
                     tradeRequest = ToolTrade.objects.get(tool = currentTool)
                     tradeRequest.delete()
                 allTrades = ToolTrade.objects.all()
-                userTrades = []
+                receievedTrades = []
+                sentTrades = []
                 for trade in allTrades:
                     if trade.receiveUser == currentUser:
-                        userTrades.append(trade)
+                        receievedTrades.append(trade)
+                    elif trade.sendUser == currentUser:
+                        sentTrades.append(trade)
+                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'receivedTrades': receievedTrades, 'sentTrades': sentTrades})
+        if 'delete' in request.POST:
+            checked_tools = request.POST.getlist('toolsSent')
+            if len(checked_tools) != 0:
+                for toolID in checked_tools:
+                    currentTool = Tool.objects.get(id=toolID)
+                    tradeRequest = ToolTrade.objects.get(tool = currentTool)
+                    tradeRequest.delete()
+                allTrades = ToolTrade.objects.all()
+                receievedTrades = []
+                sentTrades = []
+                for trade in allTrades:
+                    if trade.receiveUser == currentUser:
+                        receievedTrades.append(trade)
+                    elif trade.sendUser == currentUser:
+                        sentTrades.append(trade)
+                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'receivedTrades': receievedTrades, 'sentTrades': sentTrades})
 
-                return render(request, 'pendingTrades.html', {'role': currentUserRole, 'trades': userTrades})
+
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout(request):
