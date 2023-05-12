@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <title>User's Inventories</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/css/custom/backgroundStyle.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <style>
+            .tableWrapper {
+                user-select: none;
+            }
+        </style>
+    </head>
+{% include  "navbar.html" %}
+
+    <body>
+        <div class="container">
+            <section class="mx-auto" style="max-width: 30rem;">
+                <br>
+                {% if error_message %}
+                    <div class="alert alert-danger text-center">{{ error_message }}</div>
+                {% endif %}
+                <div class="card rounded-top">
+                    <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
+                        <h1 class = text-center style="color: #004346;">Users</h1>
+                    </div>
+                    <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+                        <div class="row justify-content-center tableWrapper">
+                            <table class="table table-responsive" style = "border-color: #09bc8a;">
+                                <thead class="thead-light">
+                                    <tr class="text left">
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Jobsite(s)</th>
+                                    </tr>
+                                </thead>
+                                {% for key, value in users.items %}
+                                    <tr class="text left">
+                                        <td><a href="{% url 'viewToolbox' key.email%}">{{key.firstName}} {{key.lastName}}</a></td>
+                                        <td>{{key.role}}</td>
+                                        <td>{{value}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
+</html>

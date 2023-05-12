@@ -2,30 +2,128 @@
 {% load static %}
 <html>
   <head>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/custom/backgroundStyle.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   </head>
+  {% include  "navbar.html" %}
   <body>
-    <h1>Edit User</h1>
-    <form action="/edituser/" method="post">
-      {%  csrf_token %}
-      <div class="container">
-          <label for="password1">New Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
-                     id="password1" type="text" name="password1", placeholder="Enter new password"><br>
+    <div class="container">
+      <section class="mx-auto" style="max-width: 30rem;">
+        {% if error_message %}
+            <div class="alert alert-danger text-center">{{ error_message }}</div>
+        {% endif %}
+        {% if success_message %}
+          <div class = "alert alert-success text-center">{{ success_message }}</div>
+        {% endif %}
+        <div class="card rounded-top">
+          <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
+            <h1 class = text-center style="color: #004346;">Edit User</h1>
+          </div>
+          <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+            <form action= "{% url 'edituser'%}" method="post" class="text-center" autocomplete="off">
+              {%  csrf_token %}
+              {% if role == "A" %}
+                <div class="form-group" autocomplete="off">
+                  <label for="name">User To Edit</label>
+                  <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="User To Edit" placeholder="User Email" autocomplete="off" required>
+                  <select hidden id="userDropdown" class="select-dropdown">
+                      {% for user in users %}
+                      <option value="{{ user }}">{{ user }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+              {% endif %}
 
-          <label for="password2">Confirm Password:</label><br>
-              <input required pattern="[a-zA-Z0-9-]+" title="only numbers and alphabetical characters"
-                     id="password2" type="text" name="password2", placeholder="Confirm new password"><br>
+              <div class="form-group" autocomplete="off">
+                  <label for="newPassword">New Password:</label>
+                  <input type="password" class="form-control" id="newPassword" name="newPassword" aria-describedby="new password" placeholder="New Password">
+              </div>
+              <div class="form-group">
+                  <label for="confirmPassword">Confirm Password:</label>
+                  <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" aria-describedby="confirm password" placeholder="Confirm Password">
+              </div>
+              <div class="form-group">
+                  <label for="phone">Phone Number:</label>
+                  <input type="tel" class="form-control" pattern="[0-9]{10}" id="phone" name="phone" aria-describedby="telephone number" placeholder="###-###-#####">
+              </div>
+              <div class="form-group">
+                  <label for="address">Address:</label>
+                  <input type="text" class="form-control" id="address" name="address" aria-describedby="address" placeholder="1111 North Maple St.">
+              </div>
+              {% if role == "A" %}
+                <div class="form-group">
+                  <label for="address">User Type:</label>
+                  <select class="form-control pages rounded-top rounded-bottom text-center" id="userTypeDropdown" name="userTypeDropdown">
+                      <option value="U">User</option>
+                      <option value="S">Supervisor</option>
+                      <option value="A">Admin</option>
+                  </select>
+                </div>
+              {% endif %}
+              <br>
+              <button type="submit"class="btn btn-primary">Submit</button>
+              {% if role == "A" %}
+              <button type="submit"class="btn btn-danger" name="deleteUser">Delete</button>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      const userDropdown = document.getElementById("userDropdown");
+      const userSearch = document.getElementById("userEmail");
 
-          <label for="phone">Phone Number:</label><br>
-              <input required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Only valid phone numbers in the xxx-xxx-xxxx format will be accepted."
-                     id="phone" type="tel" name="phone", placeholder="111-111-1111"><br>
+      var userDropdownMenu = document.createElement("div");
+      userDropdownMenu.classList.add("dropdown-menu");
+      userDropdown.parentNode.insertBefore(userDropdownMenu, userDropdown.nextSibling);
 
-          <label for="address">Address: </label><br>
-              <input required id="address" type="text" name="address", placeholder="1111 North Maple St"><br>
-              
-          <div class="center"><button type="submit">Submit</button></div>
-      </div>
-  </form>
+      var userOptions = []
+      for(var i = 0; i < userDropdown.options.length; i++){
+          userOptions.push(userDropdown.options[i].text.toLowerCase());
+      }
+
+      document.addEventListener("click", function(event) {
+              if (!userSearch.contains(event.target) && !userDropdown.contains(event.target)) {
+              userDropdownMenu.style.display = "none";
+              }
+      });
+
+      userSearch.addEventListener("keyup", function() {
+          var value = userSearch.value.toLowerCase();
+          var matchingOptions = [];
+
+          for(var i = 0; i <userOptions.length; i++) {
+              if(userOptions[i].indexOf(value) > -1) {
+                  matchingOptions.push(userDropdown.options[i].text);
+              }
+          }
+          if (matchingOptions.length > 0) {
+              userDropdownMenu.innerHTML = "";
+              for(var i = 0; i < matchingOptions.length; i++){
+                  var dropdownOption = document.createElement("div");
+                  dropdownOption.classList.add("dropdown-option");
+                  dropdownOption.textContent = matchingOptions[i];
+                  dropdownOption.addEventListener("click", function(event) {
+                      var email = event.target.textContent;
+                      userSearch.value = email;
+                      userDropdownMenu.innerHTML = "";
+                      userDropdownMenu.style.display = "none";
+                  });
+                  userDropdownMenu.appendChild(dropdownOption);
+              }
+              userDropdownMenu.style.display = "block";
+          }
+          else {
+              userDropdownMenu.innerHTML = "";
+              userDropdownMenu.style.display = "none";
+          }
+      });
+  </script>
   </body>
 </html>

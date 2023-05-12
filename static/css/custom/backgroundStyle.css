@@ -1,0 +1,17 @@
+.backgroundImageLogin {
+    background-image: url("/static/images/gear_tools.png");
+    background-size: contain;
+    background-position: center center;
+    height: 30vh;
+    background-repeat: no-repeat;
+}
+
+body{
+    background-image: url("/static/images/backgroundImage.png");
+    background-size: 100%;
+    overflow:hidden;
+}
+
+.card {
+    margin-top: 50px;
+}

@@ -1,59 +1,117 @@
 from ToolOwnershipTracker.classes.Users import UserClass
 from ToolOwnershipTracker.classes.Toolbox import ToolboxClass
-from ToolOwnershipTracker.models import Jobsite
+from ToolOwnershipTracker.models import Jobsite, Toolbox, Tool
 
 
-def Tool():
-    def createTool(self):
-        tool = Tool()
-        tool.save()
+class ToolClass:
+    def createTool(self, name, toolType):
+        if ToolClass.isValidName(self, name):
+            tool = Tool(name = name, toolType = toolType)
+            tool.save()
+            return True
+        else:
+            raise Exception("Name of tool cannot be left empty!")
+
+    def isValidName(self, name):
+        if name is None:
+            return False
         return True
 
-    def deleteTool(self):
-        if isUnassigned():
-            self.remove(self)
+    def assignToolName(self, toolID, name):
+        if ToolClass.isValidName(self, name):
+            if ToolClass.isValidTool(self, toolID):
+                tool = Tool.objects.get(id = toolID)
+                tool.name = name
+                tool.save()
+            else:
+                raise Exception("Tool does not exist!")
+        else:
+            raise Exception("Name of tool cannot be left empty!")
+        
+    def isValidTool(self, toolID):
+        test = list(map(str, Tool.objects.filter(id = toolID)))
+        if len(test) == 0:
+            return False
+        else:
             return True
-        raise Exception("Unable to Remove Tool")
-        return False
 
-    def isUnassigned(self, owner, jobsite):
-        if self.toolbox is None:
+    def isValidToolbox(self, toolboxID):
+        test = list(map(str, Toolbox.objects.filter(id = toolboxID)))
+        if len(test) == 0:
+            return False
+        else:
             return True
-        return False
 
-    def changeUser(self, owner):
-        if UserClass.checkEmail(owner):
-            if UserClass.verifyEmailExists(owner):
-                self.toolbox = owner
-                self.save()
+    def toolAlreadyExists(self, name, toolboxID):
+        toolbox = Tool.objects.get(id = toolboxID)
+        test = list(map(str, Tool.objects.filter(name=name, toolbox = toolbox)))
+        if len(test) == 0:
+            return False
+        else:
+            return True
+
+    def addToToolbox(self, toolID, toolboxID):
+        if ToolClass.isValidTool(self, toolID):
+            if ToolClass.isValidToolbox(self, toolboxID):
+                if not ToolClass.containedInThisToolbox(self, toolID, toolboxID):
+                    if not ToolClass.containedInAnyToolbox(self, toolID):
+                        tool = Tool.objects.get(id = toolID)
+                        toolbox = Toolbox.objects.get(id = toolboxID)
+                        tool.toolbox = toolbox
+                        tool.save()
+                        return True
+                    else:
+                        raise Exception("Tool is already contained in another toolbox!")
+                else:
+                    raise Exception("Tool is already assigned to this toolbox")
+            else:
+                raise Exception("Toolbox does not exist!")
+        else:
+            raise Exception("Tool does not exist!")
+
+    def removeFromToolbox(self, toolID, toolboxID):
+        if ToolClass.isValidTool(self, toolID):
+            if ToolClass.isValidToolbox(self, toolboxID):
+                if ToolClass.containedInThisToolbox(self, toolID, toolboxID):
+                    tool = Tool.objects.get(id = toolID)
+                    tool.toolbox = None
+                    tool.save()
+                    return True
+                else:
+                    raise Exception("Tool is not contained in this toolbox!")
+            else:
+                raise Exception("Toolbox does not exist!")
+        else:
+            raise Exception("Tool does not exist!")
+
+    def containedInThisToolbox(self, toolID, toolboxID):
+        if ToolClass.isValidTool(self, toolID):
+            if ToolClass.isValidToolbox(self, toolboxID):
+                tool = Tool.objects.get(id = toolID)
+                toolbox = Toolbox.objects.get(id = toolboxID)
+                if tool.toolbox == toolbox:
+                    return True
+                else:
+                    return False
+            else:
+                raise Exception("Toolbox does not exist!")
+        else:
+            raise Exception("Tool does not exist!")
+
+    def containedInAnyToolbox(self, toolID):
+        if ToolClass.isValidTool(self, toolID):
+            tool = Tool.objects.get(id = toolID)
+            if tool.toolbox != None:
                 return True
             else:
-                raise Exception("User does not exist")
                 return False
-        elif checkValidAssignment(self, owner):
-            self.toolbox = owner
-            self.save()
         else:
-            raise Exception("User does not exist")
-            return False
+            raise Exception("Tool does not exist!")
 
-    def checkValidAssignment(self, owner):
-        if Jobsite.id.contains(owner):
+    def deleteTool(self, toolID):
+        if not ToolClass.containedInAnyToolbox(self, toolID):
+            tool = Tool.objects.get(id = toolID)
+            tool.delete()
             return True
-        raise Exception("Invalid Jobsite")
-        return False
-
-    def unassignToolUser(self):
-        self.remove.owner()
-        self.save()
-
-    def unassignToolJobsite(self):
-        self.remove.jobsite()
-        self.save()
-
-    def changeLocation(self, owner, jobsite):
-        unassignToolJobsite(self)
-        isUnassigned(self, owner, jobsite)
-        ToolboxClass.isValidJobsite()
-        self.jobsite = jobsite
-        self.save()
+        else:
+            raise Exception("Tool must be returned from toolbox before tool removal!")
