@@ -33,6 +33,7 @@
             <h1 class = text-center style="color: #004346;">Create Jobsite</h1>
           </div>
           <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+            <p class = text-center>Enter a valid user email to assign users directly to a jobsite, leave blank to create without assignments<p>
             <form action="{% url 'createJobsite'%}" method="post" class="text-center" autocomplete="off">
               {% csrf_token %}
               <div class="form-group">
@@ -46,7 +47,7 @@
                 </div>
                 <select hidden id ="ownerDropdown">
                   {% for owner in owners %}
-                    <option value = "{{ owner }}">{{ owner }}</option>
+                    <option value = "{{ owner.email }}">{{ owner.firstName }} {{owner.lastName}} ({{owner.email}})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -58,7 +59,7 @@
                 <input type="hidden" name="email_list" id="email-list-input">
                   <select hidden id="dropdown">
                     {% for user in users %}
-                      <option value="{{ user }}">{{ user }}</option>
+                      <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                     {% endfor %}
                   </select>
               </div>
@@ -76,6 +77,8 @@
               </div>
               <br>
               <button type="submit" class="btn btn-primary">Submit</button>
+              <br>
+              <br>
             </form>
             <div class="row justify-content-center tableWrapper" >
               <div class="col-auto">
@@ -114,6 +117,8 @@
             </div>
           </div>
         </div>
+        <br>
+        <br>
       </section>
     </div>
     <script>

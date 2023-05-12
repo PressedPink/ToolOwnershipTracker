@@ -17,6 +17,7 @@ from django.http import HttpResponseBadRequest, JsonResponse, request
 from django.db import connections
 from datetime import datetime
 from django.views.decorators.cache import cache_control
+import re
 
 
 # Create your views here.
@@ -66,8 +67,7 @@ class EditUser(View):
         user = User.objects.get(email=email)
         role = user.role
         allUsers = User.objects.all()
-        allUserEmails = [user.email for user in allUsers]
-        return render(request, "editUser.html", {'role': role, 'users': allUserEmails})
+        return render(request, "editUser.html", {'role': role, 'users': allUsers})
 
     def post(self, request):
 
@@ -87,8 +87,10 @@ class EditUser(View):
         confirmPassword = request.POST.get('confirmPassword')
         role = request.POST.get('userTypeDropdown')
         userToEditEmail = request.POST.get('userEmail')
-        if userToEditEmail:
-            userToEdit = User.objects.get(email=userToEditEmail)
+        splitEmailRE = re.search(r'\((.*?)\)', userToEditEmail)
+        splitEmail = splitEmailRE.group(1)
+        if splitEmail:
+            userToEdit = User.objects.get(email=splitEmail)
 
             if 'deleteUser' in request.POST:
                 toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
@@ -97,7 +99,7 @@ class EditUser(View):
                 reports = ToolReport.objects.all()
                 if userToEdit.role == "U":
                     for jobsite in jobsites:
-                        if jobsite.assigned.filter(email=userToEditEmail).exists():
+                        if jobsite.assigned.filter(email=splitEmail).exists():
                             jobsite.assigned.remove(userToEdit)
                             jobsite.save()
                 if userToEdit.role == "S":
@@ -131,7 +133,7 @@ class EditUser(View):
                 if len(newPassword) != 0:
                     if len(confirmPassword) != 0:
                         try:
-                            UserClass.change_password(userToEditEmail, newPassword, confirmPassword)
+                            UserClass.change_password(splitEmail, newPassword, confirmPassword)
                         except Exception as e:
                             return render(request, "editUser.html",
                                           {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
@@ -348,9 +350,9 @@ class createJobsite(View):
         possibleUserEmails = []
         for user in allUsers:
             if user.role == "S":
-                possibleOwnersEmails.append(user.email)
+                possibleOwnersEmails.append(user)
             elif user.role == "U":
-                possibleUserEmails.append(user.email)
+                possibleUserEmails.append(user)
 
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
@@ -362,23 +364,27 @@ class createJobsite(View):
     def post(self, request):
         title = request.POST.get('title')
         owner = request.POST.get('owner')
+        splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+        splitOwnerEmail = splitOwnerEmailRE.group(1)
         try:
-            JobsiteClass.createJobsite(self, title, owner)
-            jobsite = Jobsite.objects.get(owner=owner, title=title)
+            JobsiteClass.createJobsite(self, title, splitOwnerEmail)
+            jobsite = Jobsite.objects.get(owner=splitOwnerEmail, title=title)
             allJobsites = Jobsite.objects.all()
             email_list = request.POST.get('email_list', '').split(',')
             if email_list:
                 for email in email_list:
+                    splitUserEmailRE = re.search(r'\((.*?)\)', email)
+                    splitUserEmail = splitUserEmailRE.group(1)
                     if len(email) != 0:
-                        JobsiteClass.addUser(self, jobsite.id, email)
+                        JobsiteClass.addUser(self, jobsite.id, splitUserEmail)
             allUsers = User.objects.all()
             possibleOwnersEmails = []
             possibleUserEmails = []
             for user in allUsers:
                 if user.role == "S":
-                    possibleOwnersEmails.append(user.email)
+                    possibleOwnersEmails.append(user)
                 elif user.role == "U":
-                    possibleUserEmails.append(user.email)
+                    possibleUserEmails.append(user)
             currentUserEmail = request.session["username"]
             currentUser = User.objects.get(email=currentUserEmail)
             currentUserRole = currentUser.role
@@ -392,9 +398,9 @@ class createJobsite(View):
             possibleUserEmails = []
             for user in allUsers:
                 if user.role == "S":
-                    possibleOwnersEmails.append(user.email)
+                    possibleOwnersEmails.append(user)
                 elif user.role == "U":
-                    possibleUserEmails.append(user.email)
+                    possibleUserEmails.append(user)
             currentUserEmail = request.session["username"]
             currentUser = User.objects.get(email=currentUserEmail)
             currentUserRole = currentUser.role
@@ -415,20 +421,23 @@ class editJobsite(View):
         try:
             allUsers = User.objects.all()
             assignedUsers = jobsite.assigned.all()
+            possibleRemovals = []
+            for user in assignedUsers:
+                possibleRemovals.append(user)
             possibleOwnersEmails = []
             possibleUserEmails = []
             for user in allUsers:
                 if user.role == "S":
-                    possibleOwnersEmails.append(user.email)
+                    possibleOwnersEmails.append(user)
                 elif user.role == "U":
-                    possibleUserEmails.append(user.email)
+                    possibleUserEmails.append(user)
         except Exception as e:
-            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
+            return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': possibleRemovals, 'owners': possibleOwnersEmails})
         
-        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails, 'role': currentUserRole})
+        return render(request, 'editJobsite.html', {'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': possibleRemovals, 'owners': possibleOwnersEmails, 'role': currentUserRole})
     def post(self, request, jobsite_id):
         title = request.POST.get('title')
-        email = request.POST.get('owner')
+        owner = request.POST.get('owner')
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
@@ -440,49 +449,63 @@ class editJobsite(View):
                 allUsers = User.objects.all()
                 jobsite = Jobsite.objects.get(id = jobsite_id)
                 assignedUsers = jobsite.assigned.all()
+                possibleRemovals = []
+                for user in assignedUsers:
+                    possibleRemovals.append(user)
                 possibleOwnersEmails = []
                 possibleUserEmails = []
                 for user in allUsers:
                     if user.role == "S":
-                        possibleOwnersEmails.append(user.email)
+                        possibleOwnersEmails.append(user)
                     elif user.role == "U":
-                        possibleUserEmails.append(user.email)
-                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
+                        possibleUserEmails.append(user)
+                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': possibleRemovals, 'owners': possibleOwnersEmails})
         else:
             try:
                 if (len(title) != 0):
                     JobsiteClass.assignTitle(self, jobsite_id, title)
-                if (len(email) != 0):
-                    JobsiteClass.assignOwner(self, jobsite_id, email)
+                if (len(owner) != 0):
+                    splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+                    splitOwnerEmail = splitOwnerEmailRE.group(1)
+                    JobsiteClass.assignOwner(self, jobsite_id, splitOwnerEmail)
                     jobsite = Jobsite.objects.get(id=jobsite_id)
                     toolbox = Toolbox.objects.get(jobsite=jobsite)
-                    owner = User.objects.get(email=email)
+                    owner = User.objects.get(email=splitOwnerEmail)
                     toolbox.owner = owner
                     toolbox.save()
                 email_list = request.POST.get('email_list', '').split(',')
                 remove_email_list = request.POST.get('remove_email_list', '').split(',')
-                if email_list:
+                if len(email_list) != 0:
                     for email in email_list:
                         if len(email) != 0:
-                            JobsiteClass.addUser(self, jobsite_id, email)
+                            splitUserEmailRE = re.search(r'\((.*?)\)', email)
+                            splitUserEmail = splitUserEmailRE.group(1)
+                            if len(splitUserEmail) != 0:
+                                JobsiteClass.addUser(self, jobsite_id, splitUserEmail)
 
-                if remove_email_list:
+                if len(remove_email_list) != 0:
                     for email in remove_email_list:
                         if len(email) != 0:
-                            JobsiteClass.removeUser(self, jobsite_id, email)
+                            splitUserEmailRE = re.search(r'\((.*?)\)', email)
+                            splitUserEmail = splitUserEmailRE.group(1)
+                            if len(splitUserEmail) != 0:
+                                JobsiteClass.removeUser(self, jobsite_id, splitUserEmail)
                 return redirect("/jobsites/")
             except Exception as e:
                 allUsers = User.objects.all()
                 jobsite = Jobsite.objects.get(id = jobsite_id)
                 assignedUsers = jobsite.assigned.all()
+                possibleRemovals = []
+                for user in assignedUsers:
+                    possibleRemovals.append(user)
                 possibleOwnersEmails = []
                 possibleUserEmails = []
                 for user in allUsers:
                     if user.role == "S":
-                        possibleOwnersEmails.append(user.email)
+                        possibleOwnersEmails.append(user)
                     elif user.role == "U":
-                        possibleUserEmails.append(user.email)
-                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': assignedUsers, 'owners': possibleOwnersEmails})
+                        possibleUserEmails.append(user)
+                return render(request, 'editJobsite.html', {'error_message': str(e), 'role': currentUserRole, 'jobsite': jobsite, 'users': possibleUserEmails, 'assingedUsers': possibleRemovals, 'owners': possibleOwnersEmails})
 
 
 class createTool(View):
@@ -493,7 +516,7 @@ class createTool(View):
         possibleUserToolboxes = []
         for user in allUsers:
             if user.role != "A":
-                possibleUserToolboxes.append(user.email)
+                possibleUserToolboxes.append(user)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
 
         currentUserEmail = request.session["username"]
@@ -505,6 +528,8 @@ class createTool(View):
     def post(self, request):
         name = request.POST.get('name')
         owner = request.POST.get('toolboxOwner')
+        splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+        splitOwnerEmail = splitOwnerEmailRE.group(1)
         jobsiteName = request.POST.get('jobsiteName')
         toolbox_type = request.POST.get('toolboxType')
         tool_type = request.POST.get('toolType')
@@ -554,8 +579,8 @@ class createTool(View):
                 return render(request, 'createTool.html',
                               {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif (toolbox_type == "UserToolbox"):
-            if (len(owner) != 0):
-                test = list(map(str, User.objects.filter(email=owner)))
+            if (len(splitOwnerEmail) != 0):
+                test = list(map(str, User.objects.filter(email=splitOwnerEmail)))
                 if len(test) != 0:
                     try:
                         ToolClass.createTool(self, name, type)
@@ -563,7 +588,7 @@ class createTool(View):
                         tool.checkout_datetime = datetime.now()
                         tool.save()
                         tool.prevToolbox = None
-                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
+                        toolbox = Toolbox.objects.get(owner=splitOwnerEmail, jobsite=None)
                         ToolClass.addToToolbox(self, tool.id, toolbox.id)
                         return render(request, 'createTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
                                                                    'success_message': "Tool successfully created!",
@@ -1277,7 +1302,7 @@ class editTool(View):
         possibleUserToolboxes = []
         for user in allUsers:
             if user.role != "A":
-                possibleUserToolboxes.append(user.email)
+                possibleUserToolboxes.append(user)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
@@ -1308,7 +1333,7 @@ class editTool(View):
         possibleUserToolboxes = []
         for user in allUsers:
             if user.role != "A":
-                possibleUserToolboxes.append(user.email)
+                possibleUserToolboxes.append(user)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
 
         if (tool_type == "Handtool"):
@@ -1351,7 +1376,9 @@ class editTool(View):
                               {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif (toolbox_type == "UserToolbox"):
             if (len(owner) != 0):
-                test = list(map(str, User.objects.filter(email=owner)))
+                splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+                splitOwnerEmail = splitOwnerEmailRE.group(1)
+                test = list(map(str, User.objects.filter(email=splitOwnerEmail)))
                 if len(test) != 0:
                     try:
                         if (len(name) != 0):
@@ -1361,7 +1388,7 @@ class editTool(View):
                             tool.toolType = type
                         tool.checkout_datetime = datetime.now()
                         tool.prevToolbox = None
-                        toolbox = Toolbox.objects.get(owner=owner, jobsite=None)
+                        toolbox = Toolbox.objects.get(owner=splitOwnerEmail, jobsite=None)
                         tool.toolbox = toolbox
                         tool.save()
                         return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,

@@ -14,6 +14,7 @@
   <body>
     <div class="container">
       <section class="mx-auto" style="max-width: 30rem;">
+        <br>
         {% if error_message %}
             <div class="alert alert-danger text-center">{{ error_message }}</div>
         {% endif %}
@@ -33,7 +34,7 @@
                   <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="User To Edit" placeholder="User Email" autocomplete="off" required>
                   <select hidden id="userDropdown" class="select-dropdown">
                       {% for user in users %}
-                      <option value="{{ user }}">{{ user }}</option>
+                      <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                       {% endfor %}
                   </select>
                 </div>
@@ -73,6 +74,8 @@
             </form>
           </div>
         </div>
+        <br>
+        <br>
       </section>
     </div>
     <script>

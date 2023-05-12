@@ -54,7 +54,7 @@
 
                                 <select hidden id="userDropdown">
                                     {% for user in users %}
-                                    <option value="{{ user }}">{{ user }}</option>
+                                        <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -133,6 +133,8 @@
                         </form>
                     </div>
                 </div>
+                <br>
+                <br>
             </section>
         </div>
         <script>
