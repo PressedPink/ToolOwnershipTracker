@@ -1132,7 +1132,38 @@ class jobsiteInventory(View):
 
         return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox, 'role': userRole})
     def post(self, request, jobsite_id):
-        pass
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        if 'return' in request.POST:
+            checked_tools = request.POST.getlist('tools')
+            if len(checked_tools) != 0:
+                for toolID in checked_tools:
+                    currentTool = Tool.objects.get(id=toolID)
+                    if currentTool.prevToolbox == None:
+                        currentTool.toolbox = None
+                        currentTool.save()
+                    else:
+                        currentTool.toolbox = currentTool.prevToolbox
+                        currentTool.prevToolbox = None
+                        currentTool.save()
+                jobsite = Jobsite.objects.get(id=jobsite_id)
+                toolbox = Toolbox.objects.get(jobsite=jobsite)
+                toolsInBox = []
+                tools = Tool.objects.all()
+                for i in tools:
+                    if i.toolbox == toolbox:
+                        toolsInBox.append(i)
+                return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox, 'role': currentUserRole})
+            else:
+                jobsite = Jobsite.objects.get(id=jobsite_id)
+                toolbox = Toolbox.objects.get(jobsite=jobsite)
+                toolsInBox = []
+                tools = Tool.objects.all()
+                for i in tools:
+                    if i.toolbox == toolbox:
+                        toolsInBox.append(i)
+                return render(request, 'jobsiteInventory.html', {"site": jobsite, "tools": toolsInBox, 'role': currentUserRole, 'error_message': "Please select tool(s) to return!"})
 
 
 class ScanToUserToolbox(View):
