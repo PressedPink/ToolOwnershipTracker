@@ -43,6 +43,8 @@
                         <h1 class = text-center style="color: #004346;">Create Tool</h1>
                     </div>
                     <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+                        <p class = text-center>Enter a valid supervisor or user email and select 'User Toolbox' to assign tool directly to an individuals toolbox<p>
+                        <p class = text-center>Enter a jobsite name and select 'Jobsite Toolbox' to assign tool directly to an jobsite toolbox</p>
                         <form action="{% url 'createTool'%}" method="post" class="text-center" autocomplete="off">
                             {% csrf_token %}
                             <div class="form-group">
@@ -55,7 +57,7 @@
 
                                 <select hidden id="userDropdown">
                                     {% for user in users %}
-                                    <option value="{{ user }}">{{ user }}</option>
+                                        <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -127,6 +129,8 @@
                         </form>
                     </div>
                 </div>
+                <br>
+                <br>
             </section>
         </div>
         <script>

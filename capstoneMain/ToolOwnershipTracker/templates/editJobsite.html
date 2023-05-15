@@ -41,7 +41,7 @@
                 </div>
                 <select hidden id ="ownerDropdown">
                   {% for owner in owners %}
-                    <option value = "{{ owner }}">{{ owner }}</option>
+                    <option value = "{{ owner.email }}">{{ owner.firstName }} {{owner.lastName}} ({{owner.email}})</option>
                   {% endfor %}
                 </select>  
               </div>
@@ -53,7 +53,7 @@
                 <input type="hidden" name="email_list" id="email-list-input">
                 <select hidden id="dropdown">
                   {% for user in users %}
-                    <option value="{{ user }}">{{ user }}</option>
+                      <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -75,7 +75,7 @@
                 <input type="hidden" name="remove_email_list" id="remove_email_list_input">
                 <select hidden id="removeDropdown">
                   {% for user in assingedUsers %}
-                    <option value="{{ user }}">{{ user.email }}</option>
+                      <option value="{{ user.email }}">{{ user.firstName }} {{user.lastName}} ({{user.email}})</option>
                   {% endfor %}
                 </select>
               </div>
@@ -95,6 +95,8 @@
             </form>
           </div>
         </div>
+        <br>
+        <br>
       </section>
     </div>
     <script>

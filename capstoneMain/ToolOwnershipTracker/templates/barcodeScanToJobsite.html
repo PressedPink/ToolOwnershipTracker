@@ -49,7 +49,7 @@
         <section class="mx-auto" style="max-width: 30rem;">
             <div class="card rounded-top">
                 <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
-                    <h1 class = text-center style="color: #004346;">Scan Tool To Jobsite</h1>
+                    <h1 class = text-center style="color: #004346;">Scan Tool To Jobsite Toolbox</h1>
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
                     <div class="row justify-content-center">
@@ -64,17 +64,23 @@
                             {% csrf_token %}
                             <div>
                                 <input name="result" id="result" class = "rounded-top rounded-bottom" required disabled value={{message}}></input>
-                                <select type="text" id="userSites" name="userSites" class = "rounded-top rounded-bottom">
-                                    {% for jobsite in jobsites%}
-                                        <option>{{jobsite.title}}</option>
-                                    {% endfor%}
-                                </select>
+                                <br>
+                                <div class="form-group">
+                                    <label for="jobsite">Jobsite</label>
+                                    <select type="text" id="userSites" name="userSites" class="form-control pages rounded-top rounded-bottom text-center">
+                                        {% for jobsite in jobsites%}
+                                            <option>{{jobsite.title}}</option>
+                                        {% endfor%}
+                                    </select>
+                                </div>   
                             </div>
                             <div id="addButton" hidden><button>Add to Toolbox</button></div>
                         </form>
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
         </section>
     </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>

@@ -9,7 +9,7 @@
 body{
     background-image: url("/static/images/backgroundImage.png");
     background-size: 100%;
-    overflow:hidden;
+    overflow: auto;
 }
 
 .card {

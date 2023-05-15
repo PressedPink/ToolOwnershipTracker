@@ -26,37 +26,43 @@
                     <h1 class = text-center style="color: #004346;">{{ site.title }}'s Toolbox</h1>
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
-                    <form method="post" style="text-align: center;" action="{% url 'jobsiteInventory' site.id %}" autocomplete="off" id="form">
+                    <form method="post" action="{% url 'jobsiteInventory' site.id %}" autocomplete="off" id="form">
                         {% csrf_token %}
-                        <button type="submit" name="scanTools" class="btn btn-primary" style="max-width: 15rem;">Checkout Tool(s)</button>
-                    </form>
-                    <div class="row justify-content-center tableWrapper" >
-                        <table class = "table table-responsive" style = "border-color: #09bc8a;">
-                            <thead class="thead-light">
-                                <tr class="text-left">
-                                    <th>Tool</th>
-                                    <th>Type</th>
-                                    <th>Checkout Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in tools %}
+                        <div class="row justify-content-center tableWrapper">
+                            <button type="submit" name="scanTools" class="btn btn-primary" style="max-width: 10rem;">Checkout Tool(s)</button>
+                            <table class = "table table-responsive" style = "border-color: #09bc8a;">
+                                <thead class="thead-light">
                                     <tr class="text-left">
-                                        {% if role == "A" %}
-                                            <td><a href="{% url 'editTool' row.id %}">{{ row.name }}</a></td>
-                                        {% endif %}
-                                        {% if role != "A" %}
-                                            <td>{{ row.name }}</td>
-                                        {% endif %}
-                                        <td>{{ row.toolType }}</td>
-                                        <td>{{ row.checkout_datetime }}</td>
+                                        <th class="text-left" style="text-align: left;">Select</th>
+                                        <th>Tool</th>
+                                        <th>Type</th>
+                                        <th>Checkout Date</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {% for row in tools %}
+                                        <tr class="text-left">
+                                            <td class = "text-center" style="justify-content: center; vertical-align: middle;"><input class="form-check-input" name ="tools" type="checkbox" value="{{ row.id }}"></td>
+                                            {% if role == "A" %}
+                                                <td><a href="{% url 'editTool' row.id %}">{{ row.name }}</a></td>
+                                            {% endif %}
+                                            {% if role != "A" %}
+                                                <td>{{ row.name }}</td>
+                                            {% endif %}
+                                            <td>{{ row.toolType }}</td>
+                                            <td>{{ row.checkout_datetime }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+                            <button type="submit" name="return" class="btn btn-primary" style="max-width: 10rem;">Return Tool(s)</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+            <br>
+            <br>
         </section>
     </div>
   </body>
