@@ -528,8 +528,6 @@ class createTool(View):
     def post(self, request):
         name = request.POST.get('name')
         owner = request.POST.get('toolboxOwner')
-        splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
-        splitOwnerEmail = splitOwnerEmailRE.group(1)
         jobsiteName = request.POST.get('jobsiteName')
         toolbox_type = request.POST.get('toolboxType')
         tool_type = request.POST.get('toolType')
@@ -579,7 +577,9 @@ class createTool(View):
                 return render(request, 'createTool.html',
                               {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif (toolbox_type == "UserToolbox"):
-            if (len(splitOwnerEmail) != 0):
+            if (len(owner) != 0):
+                splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+                splitOwnerEmail = splitOwnerEmailRE.group(1)
                 test = list(map(str, User.objects.filter(email=splitOwnerEmail)))
                 if len(test) != 0:
                     try:
