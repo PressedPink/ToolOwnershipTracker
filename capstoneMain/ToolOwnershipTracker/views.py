@@ -540,7 +540,7 @@ class createTool(View):
         possibleUserToolboxes = []
         for user in allUsers:
             if user.role != "A":
-                possibleUserToolboxes.append(user.email)
+                possibleUserToolboxes.append(user)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
 
         currentUserEmail = request.session["username"]
