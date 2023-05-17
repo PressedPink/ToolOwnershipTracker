@@ -26,6 +26,7 @@
             <h1 class = text-center style="color: #004346;">Signup</h1>
           </div>
           <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+            <p class = text-center>Password must contain an uppercase and lowercase letter, a number, a symbol, and be at least 12 characters long</p>
             <form action= "{% url 'signup'%}" method="post" class="text-center" autocomplete="off">
               {%  csrf_token %}
               <div>
