@@ -162,7 +162,7 @@ class Profile(View):
     def get(self, request):
         # if helpers.redirectIfNotLoggedIn(request):
         #     return redirect("/")
-
+        
         a = request.session["username"]
         b = User.objects.get(email=a)
         role = b.role

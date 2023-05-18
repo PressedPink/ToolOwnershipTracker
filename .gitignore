@@ -131,3 +131,5 @@ dmypy.json
 #certs
 cert.pem
 key.pem
+2a0d89d2224380e5.crt
+tooltracker.key
