@@ -156,7 +156,7 @@ class UserClass:
 
     def send_forget_password_mail(email, token):
         subject = 'Your password reset link'
-        message = f'Hello, click the following link to be redirected to form to reset your password: http://127.0.0.1:8000/password_reset_form/{token}'
+        message = f'Hello, click the following link to be redirected to form to reset your password: https://tooltracker.app/password_reset_form/{token}'
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [email, ]
         send_mail(subject, message, email_from, recipient_list)

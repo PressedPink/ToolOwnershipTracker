@@ -131,25 +131,22 @@
                     console.log('Error initializing QuaggaJS:', error);
                     return;
                 }
+                console.log("Start Scan")
                 Quagga.start();
             });
 
             Quagga.onDetected(async (result) => {
                 Quagga.stop();
 
-                canvasElement.width = cameraElement.videoWidth;
-                canvasElement.height = cameraElement.videoHeight;
-                const context = canvasElement.getContext('2d');
-                context.drawImage(cameraElement, 0, 0);
-                const capturedImageDataUrl = canvasElement.toDataURL('image/png');
-                const imageData = capturedImageDataUrl.split(',')[1];
+
+                const codeResult = result.codeResult.code; // Extract the decoded barcode value
 
                 const response = await fetch('/process_image_to_tool/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `image=${encodeURIComponent(imageData)}`,
+                    body: `barcode=${encodeURIComponent(codeResult)}`, // Send the barcode value instead of the full image data
                 });
 
                 if (response.ok) {

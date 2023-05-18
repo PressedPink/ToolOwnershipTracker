@@ -306,15 +306,11 @@ def process_image(request):
 def process_image_to_tool(request):
     if request.method == 'POST':
         # Decode the base64 image data
-        image_data = base64.b64decode(request.POST.get('image'))
+        toolID = request.POST.get('barcode')
+        #check and see if it is in DB
+        Tool.objects.get(id=toolID)
+         
 
-        # Convert the image data to a PIL Image
-        image = Image.open(io.BytesIO(image_data))
-
-        # Process the image using Pyzbar
-        decoded_objects = decode(image)
-        results = []
-        toolID = ""
         for obj in decoded_objects:
             if (obj.data.decode("utf-8")):
                 toolID = obj.data.decode("utf-8")
