@@ -52,10 +52,12 @@
                   <h1 class = text-center style="color: #004346;">Tools</h1>
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
-                    <form class="text-center" autocomplete="off">
+                        <form method="post" class="text-center" style="text-align: center" action="/createAllBarcodes/" autocomplete="off">
                         <button type="submit" name="generateBarcodes" class="btn btn-primary">Generate Barcodes</button>
                         <br>
                         <br>
+                        </form>
+                        <form class="text-center" autocomplete="off">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="title">Filter By</label>

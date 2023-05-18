@@ -1,3 +1,5 @@
+from reportlab.lib.utils import ImageReader
+from barcode.writer import ImageWriter
 import logging
 import json
 from PIL import Image
@@ -18,6 +20,10 @@ from django.db import connections
 from datetime import datetime
 from django.views.decorators.cache import cache_control
 import re
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+import barcode
 
 
 # Create your views here.
@@ -325,9 +331,70 @@ def process_image_to_tool(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
+@csrf_exempt
+def createAllBarcodes(request):
+    if request.method == 'POST':
+        barcode_values = Tool.objects.all()
+        # str(barcode_value.id)
+        
+        
+        # Create an in-memory bytes buffer
+        pdf_filelike = io.BytesIO()
+
+        # Create a new PDF with Reportlab in the file-like object
+        c = canvas.Canvas(pdf_filelike)
+
+        y_position = 720  # Starting position, adjust this as needed
+
+        for barcode_value in barcode_values:
+            # Create an in-memory bytes buffer
+            barcode_filelike = io.BytesIO()
+
+            # Generate a barcode object. Change 'ean13' to 'code128'
+            ean = barcode.get('code128', str(
+                barcode_value.id), writer=ImageWriter())
+
+            # Write barcode image to file-like object instead of to disk
+            ean.write(barcode_filelike)
+
+            # Be sure to go back to the start of the file-like object before reading
+            barcode_filelike.seek(0)
+
+            # Open the image from the file-like object
+            barcode_image = Image.open(barcode_filelike)
+
+            # Draw the barcode image onto the PDF
+            # you can adjust the width and height here
+            c.drawImage(ImageReader(barcode_image), 50, y_position, 300, 100)
+
+            # Move the y position down for the next barcode
+            y_position -= 150  # Adjust spacing as needed
+
+            # If y_position goes off page, start a new page
+            if y_position < 50:
+                c.showPage()  # End current page
+                y_position = 720  # Reet y_position for new page
+
+        # Save the PDF
+        c.save()
+
+        # Go back to the start of the file-like object before reading
+        pdf_filelike.seek(0)
+
+        # Create a FileResponse to send to the user
+        response = FileResponse(pdf_filelike, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="barcodes.pdf"'
+        return response
+
+    else:
+        # Return some kind of error response
+        pass
+
 class barCodeTest(View):
     def get(self, request):
         return render(request, "barcodeTest.html")
+
+
 
 
 class Jobsites(View):
