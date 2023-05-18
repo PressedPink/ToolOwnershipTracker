@@ -308,15 +308,19 @@ def process_image_to_tool(request):
         # Decode the base64 image data
         toolID = request.POST.get('barcode')
         #check and see if it is in DB
-        Tool.objects.get(id=toolID)
-         
+        
+        
+        try:
+            isinDB = Tool.objects.get(id=toolID)
+            response_data = {"toolID": toolID}
+            print()
+            return JsonResponse(response_data)
+        
+        except Tool.DoesNotExist:
+            return JsonResponse({'error': 'ToolNotFound'})
 
-        for obj in decoded_objects:
-            if (obj.data.decode("utf-8")):
-                toolID = obj.data.decode("utf-8")
-                # Return the results as a JSON response
-        response_data = {"toolID": toolID}
-        return JsonResponse(response_data)
+        
+        
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
