@@ -77,7 +77,6 @@ class EditUser(View):
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
         allUsers = User.objects.all()
-        allUserEmails = [user.email for user in allUsers]
 
         email = request.session["username"]
         user = User.objects.get(email=email)
@@ -93,16 +92,17 @@ class EditUser(View):
             userToEdit = User.objects.get(email=splitEmail)
 
             if 'deleteUser' in request.POST:
-                toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                 tools = Tool.objects.all()
                 jobsites = Jobsite.objects.all()
                 reports = ToolReport.objects.all()
                 if userToEdit.role == "U":
+                    toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                     for jobsite in jobsites:
                         if jobsite.assigned.filter(email=splitEmail).exists():
                             jobsite.assigned.remove(userToEdit)
                             jobsite.save()
                 if userToEdit.role == "S":
+                    toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                     for jobsite in jobsites:
                         if jobsite.owner == userToEdit:
                             jobsite.owner = currentUser
@@ -115,13 +115,14 @@ class EditUser(View):
                         report.reporter = currentUser
                         report.toolbox = None
                         report.save()
-                for tool in tools:
-                    if tool.toolbox == toolbox:
-                        tool.toolbox = None
-                        tool.prevToolbox = None
-                        tool.save()
+                if userToEdit.role != 'A':
+                    for tool in tools:
+                        if tool.toolbox == toolbox:
+                            tool.toolbox = None
+                            tool.prevToolbox = None
+                            tool.save()
                 userToEdit.delete()
-                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUsers,
                                                          'success_message': "User successfully deleted!"})
             else:
                 userToEdit.role = role
@@ -136,12 +137,12 @@ class EditUser(View):
                             UserClass.change_password(splitEmail, newPassword, confirmPassword)
                         except Exception as e:
                             return render(request, "editUser.html",
-                                          {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                          {'role': currentUserRole, 'users': allUsers, 'error_message': str(e)})
                     else:
                         return render(request, "editUser.html",
-                                      {'role': currentUserRole, 'users': allUserEmails,
+                                      {'role': currentUserRole, 'users': allUsers,
                                        'error_message': "Cannot update password without confirm password field!"})
-                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUsers,
                                                          'success_message': "User information successfully edited!"})
 
         else:
@@ -155,10 +156,10 @@ class EditUser(View):
                         UserClass.change_password(email, newPassword, confirmPassword)
                     except Exception as e:
                         return render(request, "editUser.html",
-                                      {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                      {'role': currentUserRole, 'users': allUsers, 'error_message': str(e)})
                 else:
                     return render(request, "editUser.html",
-                                  {'role': currentUserRole, 'users': allUserEmails,
+                                  {'role': currentUserRole, 'users': allUsers,
                                    'error_message': "Cannot update password without confirm password field!"})
             return redirect("/profile/")
 
@@ -176,11 +177,11 @@ class Profile(View):
         if b.role == "U":
             for site in allSites:
                 if JobsiteClass.containsUser(self, site.id, b.email):
-                    assignedSites.append(site.id)
+                    assignedSites.append(site.title)
         elif b.role == "S":
             for site in allSites:
                 if site.owner == b:
-                    assignedSites.append(site.id)
+                    assignedSites.append(site.title)
 
         return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites, 'role': role})
 
@@ -840,8 +841,9 @@ class myToolbox(View):
                             if searchUser != user:
                                 if jobsite.assigned.filter(email = searchUser.email).exists():
                                     tradeableUsers.append(searchUser.email)
-                        elif searchUser.role == "S" and user is not searchUser:
-                            tradeableUsers.append(searchUser.email)
+            for searchUser in allUsers:
+                if searchUser.role == "S":
+                    tradeableUsers.append(searchUser.email)
         currentUserRole = user.role
         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
         toolsInBox = []
@@ -991,11 +993,35 @@ class fileToolReport(View):
         if currentUserRole != "A":
             toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
             tools = Tool.objects.all()
+            toolReports = ToolReport.objects.all()
+            toolTrades = ToolTrade.objects.all()
             for tool in tools:
                 if tool.toolbox == toolbox:
-                    toolsInPersonalToolbox.append(tool)
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
         else:
-            toolsInPersonalToolbox = Tool.objects.all()
+            tools = Tool.objects.all()
+            toolReports = ToolReport.objects.all()
+            toolTrades = ToolTrade.objects.all()
+            for tool in tools:
+                noReport = True
+                noTrade = True
+                for report in toolReports:
+                    if report.tool == tool:
+                        noReport = False
+                for trade in toolTrades:
+                    if trade.tool == tool:
+                        noTrade = False
+                if noReport and noTrade:
+                    toolsInPersonalToolbox.append(tool)
 
         allJobsites = Jobsite.objects.all()
         allTools = Tool.objects.all()
@@ -1018,13 +1044,6 @@ class fileToolReport(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-
-        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
-        toolsInBox = []
-        tools = Tool.objects.all()
-        for tool in tools:
-            if tool.toolbox == toolbox:
-                toolsInBox.append(tool)
 
         toolName = request.POST.get('toolDropdown')
         description = request.POST.get('description')
@@ -1068,7 +1087,41 @@ class fileToolReport(View):
                                 if tool.toolbox.jobsite == jobsite:
                                     currentSiteTools.append(tool)
                     jobsiteToolDictionary.update({jobsite: currentSiteTools})
-            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox,
+            toolsInPersonalToolbox = []
+
+            if currentUserRole != "A":
+                toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        noReport = True
+                        noTrade = True
+                        for report in toolReports:
+                            if report.tool == tool:
+                                noReport = False
+                        for trade in toolTrades:
+                            if trade.tool == tool:
+                                noTrade = False
+                        if noReport and noTrade:
+                            toolsInPersonalToolbox.append(tool)
+            else:
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
+            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInPersonalToolbox,
                                                            'success_message': "Tool report successfully created!",
                                                            'jobsiteToolDictionary': jobsiteToolDictionary})
         except Exception as e:
@@ -1084,8 +1137,43 @@ class fileToolReport(View):
                                 if tool.toolbox.jobsite == jobsite:
                                     currentSiteTools.append(tool)
                     jobsiteToolDictionary.update({jobsite: currentSiteTools})
+
+            toolsInPersonalToolbox = []
+
+            if currentUserRole != "A":
+                toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        noReport = True
+                        noTrade = True
+                        for report in toolReports:
+                            if report.tool == tool:
+                                noReport = False
+                        for trade in toolTrades:
+                            if trade.tool == tool:
+                                noTrade = False
+                        if noReport and noTrade:
+                            toolsInPersonalToolbox.append(tool)
+            else:
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
             return render(request, 'toolReportForm.html',
-                          {'role': currentUserRole, 'tools': toolsInBox, 'error_message': str(e),
+                          {'role': currentUserRole, 'tools': toolsInPersonalToolbox, 'error_message': str(e),
                            'jobsiteToolDictionary': jobsiteToolDictionary})
 
 
@@ -1386,6 +1474,7 @@ class editTool(View):
                             tool.save()
                         if (tool_type != "doNothing"):
                             tool.toolType = type
+                            tool.save()
                         tool.checkout_datetime = datetime.now()
                         tool.prevToolbox = None
                         jobsite = Jobsite.objects.get(title=jobsiteName)
@@ -1417,6 +1506,7 @@ class editTool(View):
                             tool.save()
                         if (tool_type != "doNothing"):
                             tool.toolType = type
+                            tool.save()
                         tool.checkout_datetime = datetime.now()
                         tool.prevToolbox = None
                         toolbox = Toolbox.objects.get(owner=splitOwnerEmail, jobsite=None)
@@ -1439,10 +1529,11 @@ class editTool(View):
             try:
                 if (len(name) != 0):
                     tool.name = name
-                    tool.save()
                 if (tool_type != "doNothing"):
                     tool.toolType = type
+                    
                 tool.toolbox = None
+                tool.save()
                 return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
                                                            'success_message': "Tool successfully edited!",
                                                            'role': currentUserRole, 'tool': tool})
@@ -1450,11 +1541,13 @@ class editTool(View):
                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         else:
             try:
+                print("Made here")
                 if (len(name) != 0):
                     tool.name = name
                     tool.save()
                 if (tool_type != "doNothing"):
                     tool.toolType = type
+                    tool.save()
                 return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
                                                            'success_message': "Tool successfully edited!",
                                                            'role': currentUserRole, 'tool': tool})

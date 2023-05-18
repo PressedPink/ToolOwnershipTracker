@@ -11,10 +11,28 @@
     <title>Tool Login</title>
     <link rel="stylesheet" href="/static/css/custom/backgroundStyle.css">
     <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+      @media (max-width: 600px) {
+          .pageWidth {
+              max-width: 100%;
+          }
+          body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+      }
+
+      @media(min-width: 601px) {
+          .pageWidth {
+              max-width: 40rem;
+          }
+      }
+    </style>
   </head>
   <body>
       <div class="container">
-        <section class="mx-auto" style="max-width: 30rem;">
+        <section class="mx-auto pageWidth">
           <br>
           {% if error_message %}
             <div class="alert alert-danger text-center">{{ error_message }}</div>

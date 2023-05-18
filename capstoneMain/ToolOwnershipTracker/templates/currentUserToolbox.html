@@ -14,6 +14,26 @@
             user-select: none;
             word-break: break-word;
         }
+        th {
+            padding: 0%;
+            width: auto;
+            white-space: nowrap;
+        }
+        @media (max-width: 600px) {
+            .pageWidth {
+                max-width: 100%;
+            }
+            body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+        }
+        @media(min-width: 601px) {
+            .pageWidth {
+                max-width: 40rem;
+            }
+        }
       </style>
   </head>
 
@@ -21,7 +41,7 @@
 
   <body>
     <div class="container">
-        <section class="mx-auto" style="max-width: 30rem;">
+        <section class="mx-auto pageWidth">
             <br>
             {% if error_message %}
                 <div class="alert alert-danger text-center">{{ error_message }} </div>
@@ -51,7 +71,7 @@
                                         <tr class="text-left">
                                             <td class = "text-center" style="justify-content: center; vertical-align: middle;"><input class="form-check-input" name ="tools" type="checkbox" value="{{ tool.id }}"></td>
                                             <td class = "text-left" style="text-align: left;">{{ tool.name }}</td>
-                                            <td class = "text-left" style="text-align: left;">{{ tool.toolType }}</td>
+                                            <td class = "text-center" style="text-align: center;">{{ tool.toolType }}</td>
                                             <td class = "text-left" style="text-align: left;">{{ tool.checkout_datetime }}</td>
                                         </tr>
                                     {% endfor %}

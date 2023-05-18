@@ -14,12 +14,32 @@
             user-select: none;
             word-break: break-word;
         }
+        @media (max-width: 600px) {
+            .pageWidth {
+                max-width: 100%;
+            }
+            body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+        }
+        @media(min-width: 601px) {
+            .pageWidth {
+                max-width: 40rem;
+            }
+        }
+        th {
+            padding: 0%;
+            width: auto;
+            white-space: nowrap;
+        }
       </style>
   </head>
   {% include  "navbar.html" %}
   <body>
     <div class="container">
-      <section class="mx-auto my-5" style="max-width: 30rem;">
+      <section class="mx-auto pageWidth">
         <br>
         {% if error_message %}
           <div class="alert alert-danger text-center">{{ error_message }}</div>
