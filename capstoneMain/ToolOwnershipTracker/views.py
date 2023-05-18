@@ -1541,7 +1541,6 @@ class editTool(View):
                 return render(request, 'editTool.html', {'error_message': str(e), 'role': currentUserRole, 'tool': tool, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         else:
             try:
-                print("Made here")
                 if (len(name) != 0):
                     tool.name = name
                     tool.save()

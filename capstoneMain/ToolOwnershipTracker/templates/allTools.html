@@ -53,6 +53,9 @@
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
                     <form class="text-center" autocomplete="off">
+                        <button type="submit" name="generateBarcodes" class="btn btn-primary">Generate Barcodes</button>
+                        <br>
+                        <br>
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="title">Filter By</label>
