@@ -29,13 +29,14 @@
               background-image: url("/static/images/backgroundImageMobile.png");
               background-size: 100%;
               overflow: auto;
-          }
+            }
         }
         @media(min-width: 601px) {
             .pageWidth {
                 max-width: 40rem;
             }
         }
+      </style>
     </style>
 
   </head>
@@ -54,17 +55,16 @@
                 {% endif %}
                 <div class="card rounded-top">
                     <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
-                        <h1 class = text-center style="color: #004346;">Edit {{tool.name}}</h1>
+                        <h1 class = text-center style="color: #004346;">Create Tool</h1>
                     </div>
                     <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
                         <p class = text-center>Enter a valid supervisor or user email and select 'User Toolbox' to assign tool directly to an individuals toolbox<p>
                         <p class = text-center>Enter a jobsite name and select 'Jobsite Toolbox' to assign tool directly to an jobsite toolbox</p>
-                        <p class = text-center>Leave fields blank and select 'Unassigned' to move tool to unassigned, or make no button selection to leave assignment/type as is</p>
-                        <form action="{% url 'editTool' tool.id%}" method="post" class="text-center" autocomplete="off">
+                        <form action="{% url 'createTool'%}" method="post" class="text-center" autocomplete="off">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" aria-describedby="name" placeholder="Name">
+                                <input type="text" class="form-control" id="name" name="name" aria-describedby="name" placeholder="Name" required>
                             </div>
                             <div class="form-group">
                                 <label for="name">Toolbox Owner</label>
@@ -86,7 +86,7 @@
                                 </select>
                             </div>
                             <br>
-                            Assign To
+                            Assign To:
                             <div class="d-flex justify-content-center">
                                 <div class="radiocontainer">
                                     <div class="form-check">
@@ -107,13 +107,10 @@
                                             Unassigned
                                         </label>
                                     </div>
-                                    <div class="form-check" style="display: none;">
-                                            <input class="form-check-input" type="radio" id="JobsiteToolbox" name="toolboxType" value="doNothing" required checked hidden>
-                                    </div>
                                 </div>
                             </div>
                             <br>
-                            Tool Type
+                            Tool Type:
                             <div class="d-flex justify-content-center">
                                 <div class="radiocontainer">
                                     <div class="form-check">
@@ -138,10 +135,6 @@
                                         <label class="form-check-label" for="toolType4">
                                             <input class="form-check-input" type="radio" id="toolType4" name="toolType" value="Other" required>
                                             Other
-                                        </label>
-                                    </div>
-                                    <div class="form-check" style="display: none;">
-                                            <input class="form-check-input" type="radio" id="toolType4" name="toolType" value="doNothing" required checked hidden>
                                         </label>
                                     </div>
                                 </div>

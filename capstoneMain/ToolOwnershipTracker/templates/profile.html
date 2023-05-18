@@ -9,52 +9,70 @@
     <link rel="stylesheet" href="/static/css/custom/backgroundStyle.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <style>
+      @media (max-width: 600px) {
+          .pageWidth {
+              max-width: 100%;
+          }
+          body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+      }
+
+      @media(min-width: 601px) {
+          .pageWidth {
+              max-width: 40rem;
+          }
+      }
+    </style>
   </head>
 
   {% include  "navbar.html" %}
   <body>
-    <div class="backgroundContainerProfile">
-      <div class="container">
-        <section class="mx-auto my-5" style="max-width: 30rem;">
-          <div class="card rounded-top">
-            <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
-              <h1 class="text-center" style="color: #004346;">{{currentUser.firstName}}'s Profile</h1>
-            </div>
-            <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
-              <div class="row">
-                <div class="col-sm-4"><strong>Name:</strong></div>
-                <div class="col-sm-8">{{currentUser.firstName}} {{currentUser.lastName}}</div>
-              </div>
-              <div class="row">
-                <div class="col-sm-4"><strong>Email:</strong></div>
-                <div class="col-sm-8">{{currentUser.email}}</div>
-              </div>
-              <div class="row">
-                <div class="col-sm-4"><strong>Role:</strong></div>
-                <div class="col-sm-8">{{currentUser.role}}</div>
-              </div>
-              <div class="row">
-                <div class="col-sm-4"><strong>Address:</strong></div>
-                <div class="col-sm-8">{{currentUser.address}}</div>
-              </div>
-              <div class="row">
-                <div class="col-sm-4"><strong>Phone:</strong></div>
-                <div class="col-sm-8">{{currentUser.phone}}</div>
-              </div>
-              {% if role != "A" %}
-                <div class="row">
-                  <div class="col-sm-4"><strong>Jobsites:</strong></div>
-                  <div class="col-sm-8">
-                    {% for jobsite in assignedSites %}
-                      {{jobsite}}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endif %}
-            </div>
+    <div class="container">
+      <section class="mx-auto pageWidth">
+        <div class="card rounded-top">
+          <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
+            <h1 class="text-center" style="color: #004346;">{{currentUser.firstName}}'s Profile</h1>
           </div>
-        </section>
-      </div>
+          <div class="card-body rounded-bottom" style="background-color: #e5ecf4;" >
+            <div class="row">
+              <div class="col-sm-4"><strong>Name:</strong></div>
+              <div class="col-sm-8">{{currentUser.firstName}} {{currentUser.lastName}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><strong>Email:</strong></div>
+              <div class="col-sm-8">{{currentUser.email}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><strong>Role:</strong></div>
+              <div class="col-sm-8">{{currentUser.role}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><strong>Address:</strong></div>
+              <div class="col-sm-8">{{currentUser.address}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><strong>Phone:</strong></div>
+              <div class="col-sm-8">{{currentUser.phone}}</div>
+            </div>
+            {% if role != "A" %}
+              <div class="row">
+                <div class="col-sm-4"><strong>Jobsites:</strong></div>
+                <div class="col-sm-8">
+                  {% for jobsite in assignedSites %}
+                    {{jobsite}}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+      <br>
+      <br>
     </div>
   </body>
 </html>

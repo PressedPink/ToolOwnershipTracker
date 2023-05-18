@@ -22,8 +22,6 @@
             <a class="dropdown-item" href="/signup/">Signup</a>
           {% endif %}
           <a class="dropdown-item" href="/edituser/">Edit User</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/barcodeScanToUser/" >Scan Tool to My Toolbox</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -35,6 +33,9 @@
             <a class="dropdown-item" href="/createTool/">Create Tool</a>
           {% endif %}
             <a class="dropdown-item" href="/fileToolReport/">File Tool Report</a>
+          {% if role != "A" %}
+            <a class="dropdown-item" href="/toolTrades/">Pending Tool Trades</a>
+          {% endif %}
           {% if role == "A" %}
             <a class="dropdown-item" href="/viewToolReports/">View Tool Reports</a>
           {% endif %}
@@ -64,12 +65,21 @@
           {% if role != "U" %}
             <a class="dropdown-item" href="/userToolboxes/">User's Toolboxes</a>
             <a class="dropdown-item" href="/jobsiteToolboxes/">Jobsite Toolboxes</a>
+          {% endif %}
+          {% if role == "A" %}
             <a class="dropdown-item" href="/allTools/">Global Toolbox</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/barcodeScanToUser/" >Scan Tool to User</a>
           {% endif %}
         </div>
       </li>
       <li class="nav-item dropdown">
-        <a class = "nav-link" id="navbarDropdown" href ="">Logout</a>
+        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img id = "icon" src="{% static 'images/bellNoNotification.png' %}"></img>
+        </a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class = "nav-link" id="navbarDropdown" href ="/logout/">Logout</a>
       </li>
     </ul>
     
