@@ -1353,8 +1353,8 @@ class ScanToUserToolbox(View):
         toolID = "base"
         result = request.POST.get('result')
         
-        # Think this might need adjustment (probably in the front end too so it's pulling the right user toolbox to add to instead of jobsite)
         selectedUser = request.POST.get('userSites').split('|')[0].strip()
+        
         try:
 
             dict = json.loads(result)
@@ -1372,12 +1372,12 @@ class ScanToUserToolbox(View):
 
         try:
             sendtouser = User.objects.get(email=selectedUser)
-            # Think this will also need adjustment so that it is adding it to the pulled users toolbox instead of the logged in users toolbox
-            userToolbox = Toolbox.objects.get(owner=sendtouser)
-            if (ToolClass.containedInAnyToolbox(sysTool.id)):
-                ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
+            userToolbox = Toolbox.objects.get(owner=sendtouser, jobsite = None)
 
-            ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
 
         except:
             message = message + "Tool was not moved properly!"
@@ -1406,11 +1406,48 @@ class ScanToJobsiteToolbox(View):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        message = "error"
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+        jobsiteList = Jobsite.objects.all()
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
 
-        #Needs adjustments to actually do the transfer to the chosen jobsite from front end
+        selectedSite = request.POST.get('userSites').split('|')[0].strip()
+        try:
 
-        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, 'role': currentUserRole})
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            sendtouser = Jobsite.objects.get(id=selectedSite)
+            userToolbox = Toolbox.objects.get(jobsite=sendtouser)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            print(e)
+            message = message + "Tool was not moved properly!"
+
+        message = "Sent!"
+
+        return render(request, 'barcodeScanToJobsite.html',
+                      {"user": user, "message": message, "jobsites": jobsiteList, "toolboxList": toolboxList, 'role': currentUserRole})
 
 
 class viewToolReports(View):
@@ -1708,4 +1745,107 @@ def logout(request):
     request.session.flush()
     return redirect("/")
 
+
+class ScanToOwnToolbox(View):
     
+    def post(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+        
+        
+        
+        try:
+
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            
+            userToolbox = Toolbox.objects.get(owner=user, jobsite=None)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+                print(sysTool)
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            message = message + "Tool was not moved properly!"
+            print(e)
+
+        message = "Sent!"
+
+        return redirect("/currentUserToolbox/")
+
+
+class ScanToJobToolbox(View):
+
+    def post(self, request, jobsite_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        
+        
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+
+        #selectedSite = request.POST.get('userSites').split('|')[0].strip()
+        try:
+
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            sendtouser = Jobsite.objects.get(id=jobsite_id)
+            print(sendtouser)
+            userToolbox = Toolbox.objects.get(jobsite=sendtouser)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            print(e)
+            message = message + "Tool was not moved properly!"
+
+        message = "Sent!"
+
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
