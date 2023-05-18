@@ -84,7 +84,7 @@
                                     <label for="users">Users</label>
                                     <select type="text" id="userSites" name="userSites" class="form-control pages rounded-top rounded-bottom text-center">
                                         {% for toolbox in toolboxList%}
-                                            <option>{{toolbox.owner.firstName}} {{toolbox.owner.lastName}}</option>
+                                            <option>{{toolbox.owner.email}}|{{toolbox.owner.firstName}} {{toolbox.owner.lastName}}</option>
                                         {% endfor%}
                                     </select>
                                 </div>

@@ -1352,7 +1352,9 @@ class ScanToUserToolbox(View):
         message = ""
         toolID = "base"
         result = request.POST.get('result')
-        siteSelection = request.POST.get('userSites').split('|')[0].strip()  #Think this might need adjustment (probably in the front end too so it's pulling the right user toolbox to add to instead of jobsite)
+        
+        # Think this might need adjustment (probably in the front end too so it's pulling the right user toolbox to add to instead of jobsite)
+        selectedUser = request.POST.get('userSites').split('|')[0].strip()
         try:
 
             dict = json.loads(result)
@@ -1369,7 +1371,9 @@ class ScanToUserToolbox(View):
             message = message + "Tool does not exist in system!"
 
         try:
-            userToolbox = Toolbox.objects.get(owner=user, jobsite=siteSelection)   #Think this will also need adjustment so that it is adding it to the pulled users toolbox instead of the logged in users toolbox
+            sendtouser = User.objects.get(email=selectedUser)
+            # Think this will also need adjustment so that it is adding it to the pulled users toolbox instead of the logged in users toolbox
+            userToolbox = Toolbox.objects.get(owner=sendtouser)
             if (ToolClass.containedInAnyToolbox(sysTool.id)):
                 ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
 
@@ -1378,7 +1382,7 @@ class ScanToUserToolbox(View):
         except:
             message = message + "Tool was not moved properly!"
 
-        message = siteSelection
+        message = "Sent!"
 
         return render(request, 'barcodeScanToUser.html',
                       {"user": user, "message": message, "toolboxList": toolboxList, 'role': currentUserRole})
