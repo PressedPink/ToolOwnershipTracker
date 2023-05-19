@@ -21,6 +21,21 @@
             flex-direction: column;
             justify-content: center;
         }
+        @media (max-width: 600px) {
+            .pageWidth {
+                max-width: 100%;
+            }
+            body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+        }
+        @media(min-width: 601px) {
+            .pageWidth {
+                max-width: 40rem;
+            }
+        }
     </style>
 
   </head>
@@ -29,7 +44,7 @@
 
     <body>
         <div class="container">
-            <section class="mx-auto" style="max-width: 30rem;">
+            <section class="mx-auto pageWidth">
                 <br>
                 {% if error_message %}
                     <div class="alert alert-danger text-center">{{ error_message }}</div>
@@ -42,6 +57,9 @@
                         <h1 class = text-center style="color: #004346;">Edit {{tool.name}}</h1>
                     </div>
                     <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
+                        <p class = text-center>Enter a valid supervisor or user email and select 'User Toolbox' to assign tool directly to an individuals toolbox<p>
+                        <p class = text-center>Enter a jobsite name and select 'Jobsite Toolbox' to assign tool directly to an jobsite toolbox</p>
+                        <p class = text-center>Leave fields blank and select 'Unassigned' to move tool to unassigned, or make no button selection to leave assignment/type as is</p>
                         <form action="{% url 'editTool' tool.id%}" method="post" class="text-center" autocomplete="off">
                             {% csrf_token %}
                             <div class="form-group">

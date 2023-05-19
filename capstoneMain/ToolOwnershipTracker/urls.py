@@ -5,7 +5,7 @@ from django.urls import include
 from django.views.generic import RedirectView
 
 import base
-from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, allTools, editTool, logout, toolTrades
+from ToolOwnershipTracker.views import Profile, Login, PasswordReset, PasswordResetSent, PasswordResetForm, PasswordResetDone, SignUp, Jobsites, createJobsite, editJobsite, EditUser, createTool, UserToolboxes, viewToolbox, myToolbox, jobsiteToolboxes, jobsiteInventory, barCodeTest, process_image, process_image_to_tool, ScanToJobsiteToolbox, ScanToUserToolbox, fileToolReport, viewToolReports, toolReportDetails, allTools, editTool, logout, toolTrades, createAllBarcodes, ScanToOwnToolbox, ScanToJobToolbox
 
     
 
@@ -34,8 +34,10 @@ urlpatterns = [
     path('', Login.as_view(), name='login'),
     path('barcodeTest/', barCodeTest.as_view(), name="barcodeTest"),
     path('process_image/', process_image, name='process_image'),
-    path('barcodeScanToUser/', ScanToUserToolbox.as_view(), name="scanUser"),
-    path('barcodeScanToJobsite/', ScanToJobsiteToolbox.as_view(), name="scanJobsite"),
+    path('barcodeScanToUser/', ScanToUserToolbox.as_view(),
+         name="barcodeScanToUser"),
+    path('barcodeScanToJobsite/', ScanToJobsiteToolbox.as_view(),
+         name="barcodeScanToJobsite"),
     path('process_image_to_tool/', process_image_to_tool, name='process_image'),
     path('fileToolReport/', fileToolReport.as_view(), name="fileToolReport"),
     path('viewToolReports/', viewToolReports.as_view(), name="viewToolReports"),
@@ -44,4 +46,8 @@ urlpatterns = [
     path('editTool/<int:tool_id>', editTool.as_view(), name='editTool'),
     path('logout/', logout, name='logout'),
     path('toolTrades/', toolTrades.as_view(), name='toolTrades'),
+    path('createAllBarcodes/', createAllBarcodes, name='createAllBarcodes'),
+    path('ScanToOwnToolbox/', ScanToOwnToolbox.as_view(), name='ScanToOwnToolbox'),
+    path('ScanToJobToolbox/<int:jobsite_id>', ScanToJobToolbox.as_view(),
+         name='ScanToJobToolbox'),
 ]

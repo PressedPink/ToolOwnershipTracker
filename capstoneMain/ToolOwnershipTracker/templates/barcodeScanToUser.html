@@ -38,6 +38,22 @@
         .camera-controls {
             margin-top: 10px;
         }
+        @media (max-width: 600px) {
+            .pageWidth {
+                max-width: 100%;
+            }
+            body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+        }
+
+        @media(min-width: 601px) {
+            .pageWidth {
+                max-width: 40rem;
+            }
+        }
     </style>
 </head>
 
@@ -46,7 +62,7 @@
 <body>
     
     <div class="container">
-        <section class="mx-auto" style="max-width: 30rem;">
+        <section class="mx-auto pageWidth">
             <div class="card rounded-top">
                 <div class="card-header" style="background-color: #e5ecf4; border-color: #09bc8a;">
                     <h1 class = text-center style="color: #004346;">Scan Tool To User Toolbox</h1>
@@ -68,7 +84,7 @@
                                     <label for="users">Users</label>
                                     <select type="text" id="userSites" name="userSites" class="form-control pages rounded-top rounded-bottom text-center">
                                         {% for toolbox in toolboxList%}
-                                            <option>{{toolbox.owner.firstName}} {{toolbox.owner.lastName}}</option>
+                                            <option>{{toolbox.owner.email}}|{{toolbox.owner.firstName}} {{toolbox.owner.lastName}}</option>
                                         {% endfor%}
                                     </select>
                                 </div>
@@ -115,25 +131,22 @@
                     console.log('Error initializing QuaggaJS:', error);
                     return;
                 }
+                console.log("Start Scan")
                 Quagga.start();
             });
 
             Quagga.onDetected(async (result) => {
                 Quagga.stop();
 
-                canvasElement.width = cameraElement.videoWidth;
-                canvasElement.height = cameraElement.videoHeight;
-                const context = canvasElement.getContext('2d');
-                context.drawImage(cameraElement, 0, 0);
-                const capturedImageDataUrl = canvasElement.toDataURL('image/png');
-                const imageData = capturedImageDataUrl.split(',')[1];
+
+                const codeResult = result.codeResult.code; // Extract the decoded barcode value
 
                 const response = await fetch('/process_image_to_tool/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `image=${encodeURIComponent(imageData)}`,
+                    body: `barcode=${encodeURIComponent(codeResult)}`, // Send the barcode value instead of the full image data
                 });
 
                 if (response.ok) {

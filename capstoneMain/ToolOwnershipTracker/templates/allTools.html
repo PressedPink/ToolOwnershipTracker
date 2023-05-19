@@ -12,7 +12,29 @@
       <style>
         .tableWrapper {
             user-select: none;
+            word-break: break-word;
         }
+        @media (max-width: 600px) {
+            .pageWidth {
+                max-width: 100%;
+            }
+            body{
+              background-image: url("/static/images/backgroundImageMobile.png");
+              background-size: 100%;
+              overflow: auto;
+          }
+        }
+
+        @media(min-width: 601px) {
+            .pageWidth {
+                max-width: 40rem;
+            }
+        }
+        th {
+            padding: 0%;
+            width: auto;
+            white-space: nowrap;
+            }
       </style>
     </head>
 
@@ -20,7 +42,7 @@
 
   <body>
     <div class="container">
-        <section class="mx-auto" style="max-width: 30rem;">
+        <section class="mx-auto pageWidth">
             <br>
             {% if error_message %}
                 <div class="alert alert-danger text-center">{{ error_message }}</div>
@@ -30,7 +52,12 @@
                   <h1 class = text-center style="color: #004346;">Tools</h1>
                 </div>
                 <div class="card-body rounded-bottom" style="background-color: #e5ecf4;">
-                    <form class="text-center" autocomplete="off">
+                        <form method="post" class="text-center" style="text-align: center" action="/createAllBarcodes/" autocomplete="off">
+                        <button type="submit" name="generateBarcodes" class="btn btn-primary">Generate Barcodes</button>
+                        <br>
+                        <br>
+                        </form>
+                        <form class="text-center" autocomplete="off">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="title">Filter By</label>

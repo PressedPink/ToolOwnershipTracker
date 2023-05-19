@@ -1,3 +1,5 @@
+from reportlab.lib.utils import ImageReader
+from barcode.writer import ImageWriter
 import logging
 import json
 from PIL import Image
@@ -18,6 +20,10 @@ from django.db import connections
 from datetime import datetime
 from django.views.decorators.cache import cache_control
 import re
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+import barcode
 
 
 # Create your views here.
@@ -77,7 +83,6 @@ class EditUser(View):
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
         allUsers = User.objects.all()
-        allUserEmails = [user.email for user in allUsers]
 
         email = request.session["username"]
         user = User.objects.get(email=email)
@@ -93,16 +98,17 @@ class EditUser(View):
             userToEdit = User.objects.get(email=splitEmail)
 
             if 'deleteUser' in request.POST:
-                toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                 tools = Tool.objects.all()
                 jobsites = Jobsite.objects.all()
                 reports = ToolReport.objects.all()
                 if userToEdit.role == "U":
+                    toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                     for jobsite in jobsites:
                         if jobsite.assigned.filter(email=splitEmail).exists():
                             jobsite.assigned.remove(userToEdit)
                             jobsite.save()
                 if userToEdit.role == "S":
+                    toolbox = Toolbox.objects.get(owner=userToEdit, jobsite=None)
                     for jobsite in jobsites:
                         if jobsite.owner == userToEdit:
                             jobsite.owner = currentUser
@@ -115,13 +121,14 @@ class EditUser(View):
                         report.reporter = currentUser
                         report.toolbox = None
                         report.save()
-                for tool in tools:
-                    if tool.toolbox == toolbox:
-                        tool.toolbox = None
-                        tool.prevToolbox = None
-                        tool.save()
+                if userToEdit.role != 'A':
+                    for tool in tools:
+                        if tool.toolbox == toolbox:
+                            tool.toolbox = None
+                            tool.prevToolbox = None
+                            tool.save()
                 userToEdit.delete()
-                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUsers,
                                                          'success_message': "User successfully deleted!"})
             else:
                 userToEdit.role = role
@@ -136,12 +143,12 @@ class EditUser(View):
                             UserClass.change_password(splitEmail, newPassword, confirmPassword)
                         except Exception as e:
                             return render(request, "editUser.html",
-                                          {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                          {'role': currentUserRole, 'users': allUsers, 'error_message': str(e)})
                     else:
                         return render(request, "editUser.html",
-                                      {'role': currentUserRole, 'users': allUserEmails,
+                                      {'role': currentUserRole, 'users': allUsers,
                                        'error_message': "Cannot update password without confirm password field!"})
-                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUserEmails,
+                return render(request, "editUser.html", {'role': currentUserRole, 'users': allUsers,
                                                          'success_message': "User information successfully edited!"})
 
         else:
@@ -155,10 +162,10 @@ class EditUser(View):
                         UserClass.change_password(email, newPassword, confirmPassword)
                     except Exception as e:
                         return render(request, "editUser.html",
-                                      {'role': currentUserRole, 'users': allUserEmails, 'error_message': str(e)})
+                                      {'role': currentUserRole, 'users': allUsers, 'error_message': str(e)})
                 else:
                     return render(request, "editUser.html",
-                                  {'role': currentUserRole, 'users': allUserEmails,
+                                  {'role': currentUserRole, 'users': allUsers,
                                    'error_message': "Cannot update password without confirm password field!"})
             return redirect("/profile/")
 
@@ -176,11 +183,11 @@ class Profile(View):
         if b.role == "U":
             for site in allSites:
                 if JobsiteClass.containsUser(self, site.id, b.email):
-                    assignedSites.append(site.id)
+                    assignedSites.append(site.title)
         elif b.role == "S":
             for site in allSites:
                 if site.owner == b:
-                    assignedSites.append(site.id)
+                    assignedSites.append(site.title)
 
         return render(request, "profile.html", {"currentUser": b, "assignedSites": assignedSites, 'role': role})
 
@@ -191,7 +198,7 @@ class Login(View):
         return render(request, "login.html")
 
     def post(self, request):
-
+        print(UserClass.hashPass("alexf"))
         if 'forgot_password' in request.POST:
             return redirect("/password_reset/")
 
@@ -305,28 +312,89 @@ def process_image(request):
 def process_image_to_tool(request):
     if request.method == 'POST':
         # Decode the base64 image data
-        image_data = base64.b64decode(request.POST.get('image'))
+        toolID = request.POST.get('barcode')
+        #check and see if it is in DB
+        
+        
+        try:
+            isinDB = Tool.objects.get(id=toolID)
+            response_data = {"toolID": toolID}
+            print()
+            return JsonResponse(response_data)
+        
+        except Tool.DoesNotExist:
+            return JsonResponse({'error': 'ToolNotFound'})
 
-        # Convert the image data to a PIL Image
-        image = Image.open(io.BytesIO(image_data))
-
-        # Process the image using Pyzbar
-        decoded_objects = decode(image)
-        results = []
-        toolID = ""
-        for obj in decoded_objects:
-            if (obj.data.decode("utf-8")):
-                toolID = obj.data.decode("utf-8")
-                # Return the results as a JSON response
-        response_data = {"toolID": toolID}
-        return JsonResponse(response_data)
+        
+        
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
+@csrf_exempt
+def createAllBarcodes(request):
+    if request.method == 'POST':
+        barcode_values = Tool.objects.all()
+        # str(barcode_value.id)
+        
+        
+        # Create an in-memory bytes buffer
+        pdf_filelike = io.BytesIO()
+
+        # Create a new PDF with Reportlab in the file-like object
+        c = canvas.Canvas(pdf_filelike)
+
+        y_position = 720  # Starting position, adjust this as needed
+
+        for barcode_value in barcode_values:
+            # Create an in-memory bytes buffer
+            barcode_filelike = io.BytesIO()
+
+            # Generate a barcode object. Change 'ean13' to 'code128'
+            ean = barcode.get('code128', str(
+                barcode_value.id), writer=ImageWriter())
+
+            # Write barcode image to file-like object instead of to disk
+            ean.write(barcode_filelike)
+
+            # Be sure to go back to the start of the file-like object before reading
+            barcode_filelike.seek(0)
+
+            # Open the image from the file-like object
+            barcode_image = Image.open(barcode_filelike)
+
+            # Draw the barcode image onto the PDF
+            # you can adjust the width and height here
+            c.drawImage(ImageReader(barcode_image), 50, y_position, 300, 100)
+
+            # Move the y position down for the next barcode
+            y_position -= 150  # Adjust spacing as needed
+
+            # If y_position goes off page, start a new page
+            if y_position < 50:
+                c.showPage()  # End current page
+                y_position = 720  # Reet y_position for new page
+
+        # Save the PDF
+        c.save()
+
+        # Go back to the start of the file-like object before reading
+        pdf_filelike.seek(0)
+
+        # Create a FileResponse to send to the user
+        response = FileResponse(pdf_filelike, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="barcodes.pdf"'
+        return response
+
+    else:
+        # Return some kind of error response
+        pass
+
 class barCodeTest(View):
     def get(self, request):
         return render(request, "barcodeTest.html")
+
+
 
 
 class Jobsites(View):
@@ -528,8 +596,6 @@ class createTool(View):
     def post(self, request):
         name = request.POST.get('name')
         owner = request.POST.get('toolboxOwner')
-        splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
-        splitOwnerEmail = splitOwnerEmailRE.group(1)
         jobsiteName = request.POST.get('jobsiteName')
         toolbox_type = request.POST.get('toolboxType')
         tool_type = request.POST.get('toolType')
@@ -540,7 +606,7 @@ class createTool(View):
         possibleUserToolboxes = []
         for user in allUsers:
             if user.role != "A":
-                possibleUserToolboxes.append(user.email)
+                possibleUserToolboxes.append(user)
         allJobsiteNames = [jobsite.title for jobsite in jobsites]
 
         currentUserEmail = request.session["username"]
@@ -579,7 +645,9 @@ class createTool(View):
                 return render(request, 'createTool.html',
                               {'error_message': 'Please input a jobsite to assign tool to!', 'role': currentUserRole, 'users': possibleUserToolboxes, 'jobsites': allJobsiteNames})
         elif (toolbox_type == "UserToolbox"):
-            if (len(splitOwnerEmail) != 0):
+            if (len(owner) != 0):
+                splitOwnerEmailRE = re.search(r'\((.*?)\)', owner)
+                splitOwnerEmail = splitOwnerEmailRE.group(1)
                 test = list(map(str, User.objects.filter(email=splitOwnerEmail)))
                 if len(test) != 0:
                     try:
@@ -840,8 +908,9 @@ class myToolbox(View):
                             if searchUser != user:
                                 if jobsite.assigned.filter(email = searchUser.email).exists():
                                     tradeableUsers.append(searchUser.email)
-                        elif searchUser.role == "S" and user is not searchUser:
-                            tradeableUsers.append(searchUser.email)
+            for searchUser in allUsers:
+                if searchUser.role == "S":
+                    tradeableUsers.append(searchUser.email)
         currentUserRole = user.role
         toolbox = Toolbox.objects.get(owner=user, jobsite=None)
         toolsInBox = []
@@ -991,11 +1060,35 @@ class fileToolReport(View):
         if currentUserRole != "A":
             toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
             tools = Tool.objects.all()
+            toolReports = ToolReport.objects.all()
+            toolTrades = ToolTrade.objects.all()
             for tool in tools:
                 if tool.toolbox == toolbox:
-                    toolsInPersonalToolbox.append(tool)
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
         else:
-            toolsInPersonalToolbox = Tool.objects.all()
+            tools = Tool.objects.all()
+            toolReports = ToolReport.objects.all()
+            toolTrades = ToolTrade.objects.all()
+            for tool in tools:
+                noReport = True
+                noTrade = True
+                for report in toolReports:
+                    if report.tool == tool:
+                        noReport = False
+                for trade in toolTrades:
+                    if trade.tool == tool:
+                        noTrade = False
+                if noReport and noTrade:
+                    toolsInPersonalToolbox.append(tool)
 
         allJobsites = Jobsite.objects.all()
         allTools = Tool.objects.all()
@@ -1018,13 +1111,6 @@ class fileToolReport(View):
         currentUserEmail = request.session["username"]
         currentUser = User.objects.get(email=currentUserEmail)
         currentUserRole = currentUser.role
-
-        toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
-        toolsInBox = []
-        tools = Tool.objects.all()
-        for tool in tools:
-            if tool.toolbox == toolbox:
-                toolsInBox.append(tool)
 
         toolName = request.POST.get('toolDropdown')
         description = request.POST.get('description')
@@ -1068,7 +1154,41 @@ class fileToolReport(View):
                                 if tool.toolbox.jobsite == jobsite:
                                     currentSiteTools.append(tool)
                     jobsiteToolDictionary.update({jobsite: currentSiteTools})
-            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInBox,
+            toolsInPersonalToolbox = []
+
+            if currentUserRole != "A":
+                toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        noReport = True
+                        noTrade = True
+                        for report in toolReports:
+                            if report.tool == tool:
+                                noReport = False
+                        for trade in toolTrades:
+                            if trade.tool == tool:
+                                noTrade = False
+                        if noReport and noTrade:
+                            toolsInPersonalToolbox.append(tool)
+            else:
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
+            return render(request, 'toolReportForm.html', {'role': currentUserRole, 'tools': toolsInPersonalToolbox,
                                                            'success_message': "Tool report successfully created!",
                                                            'jobsiteToolDictionary': jobsiteToolDictionary})
         except Exception as e:
@@ -1084,8 +1204,43 @@ class fileToolReport(View):
                                 if tool.toolbox.jobsite == jobsite:
                                     currentSiteTools.append(tool)
                     jobsiteToolDictionary.update({jobsite: currentSiteTools})
+
+            toolsInPersonalToolbox = []
+
+            if currentUserRole != "A":
+                toolbox = Toolbox.objects.get(owner=currentUser, jobsite=None)
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    if tool.toolbox == toolbox:
+                        noReport = True
+                        noTrade = True
+                        for report in toolReports:
+                            if report.tool == tool:
+                                noReport = False
+                        for trade in toolTrades:
+                            if trade.tool == tool:
+                                noTrade = False
+                        if noReport and noTrade:
+                            toolsInPersonalToolbox.append(tool)
+            else:
+                tools = Tool.objects.all()
+                toolReports = ToolReport.objects.all()
+                toolTrades = ToolTrade.objects.all()
+                for tool in tools:
+                    noReport = True
+                    noTrade = True
+                    for report in toolReports:
+                        if report.tool == tool:
+                            noReport = False
+                    for trade in toolTrades:
+                        if trade.tool == tool:
+                            noTrade = False
+                    if noReport and noTrade:
+                        toolsInPersonalToolbox.append(tool)
             return render(request, 'toolReportForm.html',
-                          {'role': currentUserRole, 'tools': toolsInBox, 'error_message': str(e),
+                          {'role': currentUserRole, 'tools': toolsInPersonalToolbox, 'error_message': str(e),
                            'jobsiteToolDictionary': jobsiteToolDictionary})
 
 
@@ -1197,7 +1352,9 @@ class ScanToUserToolbox(View):
         message = ""
         toolID = "base"
         result = request.POST.get('result')
-        siteSelection = request.POST.get('userSites').split('|')[0].strip()  #Think this might need adjustment (probably in the front end too so it's pulling the right user toolbox to add to instead of jobsite)
+        
+        selectedUser = request.POST.get('userSites').split('|')[0].strip()
+        
         try:
 
             dict = json.loads(result)
@@ -1214,16 +1371,18 @@ class ScanToUserToolbox(View):
             message = message + "Tool does not exist in system!"
 
         try:
-            userToolbox = Toolbox.objects.get(owner=user, jobsite=siteSelection)   #Think this will also need adjustment so that it is adding it to the pulled users toolbox instead of the logged in users toolbox
-            if (ToolClass.containedInAnyToolbox(sysTool.id)):
-                ToolClass.removeFromToolbox(self, sysTool.id, sysTool.toolbox.id)
+            sendtouser = User.objects.get(email=selectedUser)
+            userToolbox = Toolbox.objects.get(owner=sendtouser, jobsite = None)
 
-            ToolClass.addToToolbox(self, sysTool.id, userToolbox.id)
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
 
         except:
             message = message + "Tool was not moved properly!"
 
-        message = siteSelection
+        message = "Sent!"
 
         return render(request, 'barcodeScanToUser.html',
                       {"user": user, "message": message, "toolboxList": toolboxList, 'role': currentUserRole})
@@ -1247,11 +1406,48 @@ class ScanToJobsiteToolbox(View):
         a = request.session["username"]
         user = User.objects.get(email=a)
         currentUserRole = user.role
-        message = "error"
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+        jobsiteList = Jobsite.objects.all()
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
 
-        #Needs adjustments to actually do the transfer to the chosen jobsite from front end
+        selectedSite = request.POST.get('userSites').split('|')[0].strip()
+        try:
 
-        return render(request, 'barcodeScanToUser.html', {"user": user, "message": message, 'role': currentUserRole})
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            sendtouser = Jobsite.objects.get(id=selectedSite)
+            userToolbox = Toolbox.objects.get(jobsite=sendtouser)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            print(e)
+            message = message + "Tool was not moved properly!"
+
+        message = "Sent!"
+
+        return render(request, 'barcodeScanToJobsite.html',
+                      {"user": user, "message": message, "jobsites": jobsiteList, "toolboxList": toolboxList, 'role': currentUserRole})
 
 
 class viewToolReports(View):
@@ -1386,6 +1582,7 @@ class editTool(View):
                             tool.save()
                         if (tool_type != "doNothing"):
                             tool.toolType = type
+                            tool.save()
                         tool.checkout_datetime = datetime.now()
                         tool.prevToolbox = None
                         jobsite = Jobsite.objects.get(title=jobsiteName)
@@ -1417,6 +1614,7 @@ class editTool(View):
                             tool.save()
                         if (tool_type != "doNothing"):
                             tool.toolType = type
+                            tool.save()
                         tool.checkout_datetime = datetime.now()
                         tool.prevToolbox = None
                         toolbox = Toolbox.objects.get(owner=splitOwnerEmail, jobsite=None)
@@ -1439,10 +1637,11 @@ class editTool(View):
             try:
                 if (len(name) != 0):
                     tool.name = name
-                    tool.save()
                 if (tool_type != "doNothing"):
                     tool.toolType = type
+                    
                 tool.toolbox = None
+                tool.save()
                 return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
                                                            'success_message': "Tool successfully edited!",
                                                            'role': currentUserRole, 'tool': tool})
@@ -1455,6 +1654,7 @@ class editTool(View):
                     tool.save()
                 if (tool_type != "doNothing"):
                     tool.toolType = type
+                    tool.save()
                 return render(request, 'editTool.html', {'users': possibleUserToolboxes, 'jobsites': allJobsiteNames,
                                                            'success_message': "Tool successfully edited!",
                                                            'role': currentUserRole, 'tool': tool})
@@ -1545,4 +1745,107 @@ def logout(request):
     request.session.flush()
     return redirect("/")
 
+
+class ScanToOwnToolbox(View):
     
+    def post(self, request):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+        
+        
+        
+        try:
+
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            
+            userToolbox = Toolbox.objects.get(owner=user, jobsite=None)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+                print(sysTool)
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            message = message + "Tool was not moved properly!"
+            print(e)
+
+        message = "Sent!"
+
+        return redirect("/currentUserToolbox/")
+
+
+class ScanToJobToolbox(View):
+
+    def post(self, request, jobsite_id):
+        a = request.session["username"]
+        user = User.objects.get(email=a)
+        currentUserRole = user.role
+        allToolboxes = Toolbox.objects.all()
+        toolboxList = []
+        
+        
+        for toolbox in allToolboxes:
+            if toolbox.jobsite == None:
+                toolboxList.append(toolbox)
+
+        message = ""
+        toolID = "base"
+        result = request.POST.get('result')
+
+        #selectedSite = request.POST.get('userSites').split('|')[0].strip()
+        try:
+
+            dict = json.loads(result)
+            toolID = dict["toolID"]
+
+        except:
+            message = message + "Bad barcode read!"
+
+        try:
+            sysTool = Tool.objects.get(id=toolID)
+
+        except:
+            message = message + "Tool does not exist in system!"
+
+        try:
+            sendtouser = Jobsite.objects.get(id=jobsite_id)
+            print(sendtouser)
+            userToolbox = Toolbox.objects.get(jobsite=sendtouser)
+
+            if ToolClass.containedInAnyToolbox(self, toolID):
+                sysTool.toolbox = None
+                sysTool.save()
+            ToolClass.addToToolbox(self, toolID, userToolbox.id)
+
+        except Exception as e:
+            print(e)
+            message = message + "Tool was not moved properly!"
+
+        message = "Sent!"
+
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
